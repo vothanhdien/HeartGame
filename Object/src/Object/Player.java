@@ -13,7 +13,7 @@ import java.util.Comparator;
  *
  * @author didim
  */
-public class Player {
+public abstract class Player {
     
     String name;
     ArrayList<Card> hand = new ArrayList<>();
@@ -38,6 +38,15 @@ public class Player {
     boolean checkType(CardType type){
         return hand.stream().anyMatch((c) -> (c.getType() == type));
     }
+    //Nếu có con 2 rô => được đánh trước.
+    boolean hasTwoOfClubs () { 
+        if (hand.isEmpty()) return false;
+        Card holder = new Card( Value.TWO, CardType.CLUBS);
+        return holder.equals(hand.get(0));
+    }
+    
+    //Đánh bài:
+    abstract Card pickCard();
     
     //----------getter, setter
     public String getName() {

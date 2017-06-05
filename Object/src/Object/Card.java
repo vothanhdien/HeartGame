@@ -10,13 +10,13 @@ package Object;
  * @author didim
  */
 public class Card {
-    Value value;
-    int Score;
-    CardType type;
+    private Value value;
+    private int Score;
+    private CardType type;
+    
     public Card(Value value, CardType type){
         this.value = value;
         this.type = type;
-        
         setScore();
     }
 
