@@ -14,5 +14,10 @@ public class AIPlayer extends Player{
     public AIPlayer(String name) {
         super(name);
     }
+
+    @Override
+    Card pickCard() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
     
 }
