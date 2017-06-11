@@ -1,1 +1,6 @@
 /Object/build/
+/Server/build/
+/Client/build/
+/Object/dist/
+/Client/dist/
+/Server/dist/
