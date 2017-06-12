@@ -44,11 +44,7 @@ public abstract class Player {
         Card holder = new Card( Value.TWO, CardType.CLUBS);
         return holder.equals(hand.get(0));
     }
-    void clearPlayer() { clearHand(); score = 0; }
     
-    private void clearHand(){
-        hand.clear();
-    }
     //Đánh bài:
     abstract Card pickCard();
     
@@ -76,7 +72,6 @@ public abstract class Player {
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
     }
-
 
     
 }

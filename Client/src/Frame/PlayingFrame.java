@@ -11,7 +11,10 @@ import java.awt.GridLayout;
 import java.awt.HeadlessException;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -65,6 +68,24 @@ public class PlayingFrame extends JFrame{
         container.add(btExit);
         
         this.setVisible(true);
+        Thread receive_thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                InputStream is;
+                try {
+                    is = s.getInputStream();
+                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+                    while(true){
+
+                            System.out.println("server: " + br.readLine());
+                    }
+                } catch (IOException ex) {
+                    Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+        });
+        receive_thread.start();
     }
     
 }

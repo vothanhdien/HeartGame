@@ -25,7 +25,7 @@ public abstract class Player {
     }
     
     //----------------
-    void addCard(Card newCard){
+    public void addCard(Card newCard){
         hand.add(newCard);
     }
     void sortHand(){ hand.sort(new Comparator<Card>() {
@@ -44,7 +44,8 @@ public abstract class Player {
         Card holder = new Card( Value.TWO, CardType.CLUBS);
         return holder.equals(hand.get(0));
     }
-    void clearPlayer() { clearHand(); score = 0; }
+    
+    public void clearPlayer() { clearHand(); score = 0; }
     
     private void clearHand(){
         hand.clear();
@@ -76,7 +77,6 @@ public abstract class Player {
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
     }
-
 
     
 }

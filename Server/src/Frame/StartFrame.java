@@ -14,10 +14,13 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -33,7 +36,7 @@ public class StartFrame extends JFrame{
     JButton btStop = new JButton("Stop server");
     JButton btStart = new JButton("Start server");
     boolean running = false;
-
+    ArrayList<Socket> listSocket = new ArrayList<>();
     private void start_server(){
         try {
             server_socket = new ServerSocket(3200);
@@ -52,7 +55,18 @@ public class StartFrame extends JFrame{
                         try {
                             s = server_socket.accept(); //synchronous
                             String name = get_string_from_client(s);
-                            System.out.println("Client " + name + " connect");
+                            listSocket.add(s);
+                            System.out.println("Client " + name + " connect at port " + s.getPort());
+//                            Thread test = new Thread(new Runnable() {
+//                                @Override
+//                                public void run() {
+//                                    if(s.isClosed())
+//                                        System.out.println("Client " + name +
+//                                                " connect at port " + s.getPort() + " have been close");
+//                                }
+//                            });
+//                            test.start();
+                            
                         } catch (IOException ex) {
                             Logger.getLogger(StartFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -110,6 +124,9 @@ public class StartFrame extends JFrame{
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e)
             {
+                listSocket.forEach((s) -> {
+                    send_string_to_client(s, "Server have been stoped!");
+                });
                 System.exit(0);
             }
         });
@@ -127,5 +144,16 @@ public class StartFrame extends JFrame{
             JOptionPane.showMessageDialog(null, "Something error");
         }
         return "";
+    }
+    private void send_string_to_client(Socket socket, String str) {
+        try {
+            java.io.OutputStream os = socket.getOutputStream();
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+            bw.write(str + "\n");
+            bw.flush();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"Something error");
+        
+        }
     }
 }

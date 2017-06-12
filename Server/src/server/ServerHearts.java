@@ -3,8 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package serverhearts;
-
+package server;
+import Object.Card;
+import Object.CardType;
+import Object.HumanPlayer;
+import Object.Player;
+import Object.Round;
+import Object.Value;
 import com.sun.corba.se.impl.orbutil.ObjectWriter;
 import java.io.*;
 import java.net.ServerSocket;
@@ -27,6 +32,24 @@ public class ServerHearts {
     static List<Card> allCards = new ArrayList<>();
     static List<Socket> listSockets = new ArrayList<>();
     static ServerSocket ss;
+    ArrayList<Card> allCard;
+   
+    int firstPlayer; // vị trí người chơi đầu tiên
+    
+    ArrayList<Integer> playerScores = new ArrayList<>();// Lưu số điểm ứng theo playerOrder
+    
+//    ArrayList<Card> currentRound;// 4 la bai trên bàn
+    Round currentRound; //4 lá bài trên bàn
+    
+    //kiểm tra xem đã đánh có 2 rô chưa
+    boolean twoClubsPlayer;
+    //Kiểm tra trạng thái heart break;
+    boolean isHeartBreak = false;
+    
+    int findTaker(int firstPlayer){
+        return (firstPlayer + currentRound.getMaxCard())%listPlayers.size();
+    }
+    
     public static void main(String[] args) {
         try {
             // TODO code application logic here
@@ -179,10 +202,10 @@ public class ServerHearts {
         HumanPlayer p4 = listPlayers.get(3);
         for(int i = 0; i < 13; i++)
         {
-            p1.hand.add(allCards.get(i*4));
-            p2.hand.add(allCards.get(i*4 + 1));
-            p3.hand.add(allCards.get(i*4 + 2));
-            p4.hand.add(allCards.get(i*4 + 3));
+            p1.addCard(allCards.get(i*4));
+            p2.addCard(allCards.get(i*4 + 1));
+            p3.addCard(allCards.get(i*4 + 2));
+            p4.addCard(allCards.get(i*4 + 3));
         }
         temp.add(p1);
         temp.add(p2);
@@ -190,4 +213,48 @@ public class ServerHearts {
         temp.add(p4);
         listPlayers = temp;
     }
+    void shotTheMoon () {
+        int index = -1;
+        for (int i = 0; i < playerScores.size(); i++) {
+            if (playerScores.get(i) == 26) {
+                System.out.println(listPlayers.get(i).getName() + " shot the moon!");
+                index = i;
+            }
+        }
+        // Old Moon: Player does not gain points this round, all others gain 26 points
+        if (index > -1) {
+            for (int i = 0; i < listPlayers.size(); i++) {
+                    if (i != index) {
+                            listPlayers.get(i).addScore(26);
+                            playerScores.set(i, 26);
+                    }
+                    // Remove the 26 points that this player received this round
+                    else {
+                            listPlayers.get(i).addScore(-26);
+                            playerScores.set(i,0);
+                    }
+            }
+            if (listPlayers.get(index).getScore()< 0)
+                    listPlayers.get(index).clearPlayer();
+        }
+    }
+    void findwinner(){
+        int minScore = findMinScore();
+        for(HumanPlayer c: listPlayers){
+            if(c.getScore() == minScore){
+                //do something
+            }
+        }
+    }
+
+    private int findMinScore() {
+        int minScore = listPlayers.get(0).getScore();
+        for(int i = 0; i< listPlayers.size(); i++){
+            if(minScore < listPlayers.get(i).getScore()){
+                minScore = listPlayers.get(i).getScore();
+            }
+        }
+        return minScore;
+    }
+    
 }

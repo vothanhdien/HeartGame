@@ -4,14 +4,14 @@
  * and open the template in the editor.
  */
 package Object;
+
 /**
  *
- * @author DaDa Wind
+ * @author didim
  */
-public class HumanPlayer extends Player {
-
-    HumanPlayer (String name)
-    { 
+public class AIPlayer extends Player{
+    
+    public AIPlayer(String name) {
         super(name);
     }
 
@@ -19,6 +19,5 @@ public class HumanPlayer extends Player {
     Card pickCard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
     
 }
