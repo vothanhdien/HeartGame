@@ -13,8 +13,11 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -29,7 +32,7 @@ public class StartFrame extends JFrame{
     ServerSocket server_socket;
     JButton btStop = new JButton("Stop server");
     JButton btStart = new JButton("Start server");
-
+    boolean running = false;
 
     private void start_server(){
         try {
@@ -37,19 +40,19 @@ public class StartFrame extends JFrame{
             btStart.setEnabled(false);
             btStart.setText("server is running");
             btStop.setEnabled(true);
-            
+            running = true;
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    while(true)
+                    while(running)
                     {
                         System.out.println("Waiting for a Client");
 
                         java.net.Socket s;
                         try {
                             s = server_socket.accept(); //synchronous
-                            System.out.println("Client connect");
-                            System.out.println(s.getPort());
+                            String name = get_string_from_client(s);
+                            System.out.println("Client " + name + " connect");
                         } catch (IOException ex) {
                             Logger.getLogger(StartFrame.class.getName()).log(Level.SEVERE, null, ex);
                         }
@@ -57,61 +60,6 @@ public class StartFrame extends JFrame{
                 }
             });
             thread.start();
-//            while(true)
-//            {
-//                System.out.println("Waiting for a Client");
-//                
-//                java.net.Socket server_socket = this.server_socket.accept(); //synchronous
-//                
-//                System.out.println("Client connect");
-//                System.out.println(server_socket.getPort());
-                    
-//                Thread receive_thread = new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        InputStream is;
-//                        try {
-//                            is = server_socket.getInputStream();
-//                            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//                            while(true){
-//                                
-//                                System.out.println("client: " + br.readLine());
-//                            }
-//                        } catch (IOException ex) {
-//                            Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                        
-//                    }
-//                });
-//                receive_thread.start();
-//                
-//                OutputStream os = server_socket.getOutputStream();
-//                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-//                
-//                Thread sent_thead = new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {                        
-//                        DataInputStream din =new DataInputStream(System.in);
-//                        BufferedReader reader = new BufferedReader(new InputStreamReader(din));
-//                        while(true){
-//                           
-//                            try {
-////                                if(!reader.readLine().isEmpty()){
-//                                    String k = reader.readLine();
-//                                    bw.write(k);
-//                                    bw.newLine();
-//                                    bw.flush();
-////                                };
-//                            } catch (IOException ex) {
-//                                Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
-//                            }
-//                         
-//                        }
-//                    }
-//                });
-//                sent_thead.start();
-//            }
-            
         } catch (IOException ex) {
            JOptionPane.showMessageDialog(null, "Can't start server");
         }
@@ -119,9 +67,11 @@ public class StartFrame extends JFrame{
     private void stop_server(){
         try {
             server_socket.close();
+            running = false;
             btStart.setText("Start server");
             btStart.setEnabled(true);
             btStop.setEnabled(false);
+            
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Can't stop server");
         }
@@ -164,8 +114,18 @@ public class StartFrame extends JFrame{
             }
         });
         
-        
         this.pack();
         this.setVisible(true);
+    }
+    
+    private String get_string_from_client(Socket s) {
+        try {
+            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
+            return br.readLine();
+            
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Something error");
+        }
+        return "";
     }
 }

@@ -14,7 +14,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +70,11 @@ public class LoginFrame extends JFrame{
                 try {
                     Socket socket = new Socket(server, port);
                     System.out.println(socket.getPort());
+                    send_string_to_server(socket,name);
+                    
+                    PlayingFrame cf = new PlayingFrame(socket);
+                    dispose();
+                    
                 } catch (IOException ex) {
                     JOptionPane.showMessageDialog(null,"Can't connect to server");
                 }
@@ -123,4 +130,16 @@ public class LoginFrame extends JFrame{
     }
     
     
+    
+    private void send_string_to_server(Socket socket, String str) {
+        try {
+            java.io.OutputStream os = socket.getOutputStream();
+            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+            bw.write(str + "\n");
+            bw.flush();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"Something error");
+        
+        }
+    }
 }
