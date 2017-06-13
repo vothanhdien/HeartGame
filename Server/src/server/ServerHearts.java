@@ -10,6 +10,8 @@ import Object.CardType;
 import Object.HumanPlayer;
 import Object.Player;
 import Object.Round;
+import Object.SocketController;
+import Object.State;
 import Object.Value;
 import java.io.*;
 import java.net.ServerSocket;
@@ -46,9 +48,9 @@ public class ServerHearts {
     static Round currentRound; //4 lá bài trên bàn
 
     //kiểm tra xem đã đánh có 2 rô chưa
-    boolean twoClubsPlayer;
+    static boolean twoClubsPlayer;
     //Kiểm tra trạng thái heart break;
-    boolean isHeartBreak = false;
+    static boolean isHeartBreak = false;
 
     static int findTaker(int firstPlayer) {
         return (firstPlayer + currentRound.getMaxCard()) % listPlayers.size();
@@ -80,22 +82,22 @@ public class ServerHearts {
                     try {
                         Socket s = ss.accept();
                         System.out.println("1");
-                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
                         listSockets.add(s);
 
                         s = ss.accept();
                         System.out.println("2");
-                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
                         listSockets.add(s);
 
                         s = ss.accept();
                         System.out.println("3");
-                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
                         listSockets.add(s);
 
                         s = ss.accept();
                         System.out.println("4");
-                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
                         listSockets.add(s);
 
                         startGame();
@@ -113,7 +115,7 @@ public class ServerHearts {
                         Socket s = ss.accept();
                         System.out.println("2");
                         listSockets.add(s);
-//                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+//                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
 //                        System.out.println("Đã có: " + listPlayers.size() + " người chơi chuẩn bị.");
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -129,7 +131,7 @@ public class ServerHearts {
                         Socket s = ss.accept();
                         System.out.println("3");
                         listSockets.add(s);
-//                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+//                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
 //                        System.out.println("Đã có: " + listPlayers.size() + " người chơi chuẩn bị.");
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -145,7 +147,7 @@ public class ServerHearts {
                         Socket s = ss.accept();
                         System.out.println("4");
                         listSockets.add(s);
-//                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+//                        listPlayers.add((HumanPlayer) SocketController.get_object_from_socket(s));
 //                        System.out.println("Đã có: " + listPlayers.size() + " người chơi chuẩn bị.");
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -170,7 +172,7 @@ public class ServerHearts {
 //                ObjectOutputStream oos = new ObjectOutputStream(os);
 //                listOos.add(oos);
 //
-//                HumanPlayer p = (HumanPlayer) get_object_from_client(listSockets.get(index));
+//                HumanPlayer p = (HumanPlayer) SocketController.get_object_from_socket(listSockets.get(index));
 //                listPlayers.add(p);
 //            } catch (Exception ex) {
 //                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -180,10 +182,12 @@ public class ServerHearts {
         createNewAllCards();
         randomAllCards();
         deal4AllPlayer();
-
+        
         //gui bai cho client
         sendInforToAllPlayer();
 
+        currentRound = new Round();
+        
         Thread playing_thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -195,7 +199,7 @@ public class ServerHearts {
                         currentRound.addCard(c);
 
                         //Gui thong tin cho client
-                        sendUpdateInforToAllClient();
+                        sendUpdateInforToAllClient(firstPlayer);
 
                         a = (a + 1) % listPlayers.size();
                     }
@@ -204,14 +208,31 @@ public class ServerHearts {
                     //Gan diem cho nguoi choi
                     int score = currentRound.getScore();
                     listPlayers.get(firstPlayer).addScore(score);
+                    if(currentRound.hasHeart())
+                        isHeartBreak = true;
+                    currentRound.renew();
+                    //
+                    sendUpdateScoreToAllClient();
                 }
+                //Kiểm tra shot the moon
+                
+                
                 //In nguoi chien thang
                 ArrayList<Integer> winnner = findwinner();
                 //gui ket qua ve toan bo nguoi choi
 
             }//run
+
+            
         });//playing thread
         //playing_thread.start();
+        
+        currentRound.addCard(new Card(Value.ACE, CardType.CLUBS));
+        currentRound.addCard(new Card(Value.ACE, CardType.DIAMONDS));
+        currentRound.addCard(new Card(Value.ACE, CardType.HEARTS));
+//        currentRound.addCard(new Card(Value.ACE, CardType.SPADES));
+        sendUpdateInforToAllClient(firstPlayer);
+            
     }
 
     static void createNewAllCards() {
@@ -326,24 +347,31 @@ public class ServerHearts {
                 });
         try {
             for (int index = 0; index < listSockets.size(); index++) {
-                List<String> temp = null;
-                send_object_to_client(listSockets.get(index), listPlayers.get(index));
-                temp = (List<String>)get_object_from_client(listSockets.get(index));
-                temp = listName;
-                send_object_to_client(listSockets.get(index), temp);
-                
+//                List<String> temp = null;
+//                SocketController.send_object_to_socket(listSockets.get(index), listPlayers.get(index));
+//                temp = (List<String>)SocketController.get_object_from_socket(listSockets.get(index));
+//                temp = listName;
+//                SocketController.send_object_to_socket(listSockets.get(index), temp);
+                State state = new State();
+                state.setPlayerIndex(index);
+                state.setNickName(listName);
+                state.setPlayer(listPlayers.get(index));
+                SocketController.send_object_to_socket(listSockets.get(index), state);
             }
         } catch (Exception ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
+        
+        
     }
 
     //Người chơi chọn bài
     private static Card player_pick_card(int a) {
         //gui thong bao va nhan object card tu client
-        send_object_to_client(listSockets.get(a), new Card(Value.ACE, currentRound.getRoundType()));
+        SocketController.send_object_to_socket(listSockets.get(a), new Card(Value.ACE, currentRound.getRoundType()));
 
-        Card c = (Card) get_object_from_client(listSockets.get(a));
+        Card c = (Card) SocketController.get_object_from_socket(listSockets.get(a));
         if (c != null) {
             return c;
         }
@@ -352,37 +380,74 @@ public class ServerHearts {
     }
 
     //Gửi thông tin update về cho tất cả người chơi
-    private static void sendUpdateInforToAllClient() {
-        for (Socket s : listSockets) {
-            send_object_to_client(s, currentRound);
+    private static void sendUpdateInforToAllClient(int firstPlayer) {
+//        Card[] listCard = new Card[]{null,null,null,null};
+//        int a = firstPlayer;
+//        for(Card c: currentRound.getListCard()){
+//            listCard[a % 4] = c;
+//            a++;
+//        }
+        ArrayList<Card> listCards = new ArrayList<Card>();
+        for(int i =0 ; i< 4; i++){
+            listCards.add(null);
+        }
+        int a = firstPlayer;
+        for(Card c: currentRound.getListCard()){
+            listCards.set(a, c);
+            a = (a + 1) % 4;
+        }
+//        for (Socket s : listSockets) {
+//            SocketController.send_object_to_socket(s, listCard);
+//        }
+        for (int index = 0; index < listSockets.size(); index++) {
+                State state = new State();
+                state.setPlayerIndex(index);
+                state.setCurrentRound(listCards);
+                state.setHasHeartsBroken(isHeartBreak);
+                SocketController.send_object_to_socket(listSockets.get(index), state);
         }
     }
-
-    //Gửi dữ liệu từ server to client   
-    private static void send_object_to_client(Socket s, Object obj) {
-        try {
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.writeObject(obj);
-            oos.flush();
-            System.out.println("Sent object");
-        } catch (IOException ex) {
-            System.out.println("Can't send object");
+    //Gửi thông tin update điểm tới toàn bộ người hơi
+    private static void sendUpdateScoreToAllClient() {
+        ArrayList<Integer> listScore = new ArrayList<>();
+        for(HumanPlayer hp : listPlayers){
+            listScore.add(hp.getScore());
         }
-    }
-
-    // lấy object từ client
-    private static Object get_object_from_client(Socket s) {
-        try {
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-
-            Object obj = (Object) ois.readObject();
-            return obj;
-        } catch (Exception ex) {
-            System.out.println("Can't read object");
+        for (int index = 0; index < listSockets.size(); index++) {
+                State state = new State();
+                state.setPlayerIndex(index);
+                state.setPlayerScores(listScore);
+                state.setHasHeartsBroken(isHeartBreak);
+                SocketController.send_object_to_socket(listSockets.get(index), state);
         }
-        return null;
+        
     }
+//    //Gửi dữ liệu từ server to client   
+//    private static void SocketController.send_object_to_socket(Socket s, Object obj) {
+//        try {
+//            OutputStream os = s.getOutputStream();
+//            ObjectOutputStream oos = new ObjectOutputStream(os);
+//
+//            oos.writeObject(obj);
+//            oos.flush();
+//            System.out.println("Sent object");
+//        } catch (IOException ex) {
+//            System.out.println("Can't send object");
+//        }
+//    }
+//
+//    // lấy object từ client
+//    private static Object SocketController.get_object_from_socket(Socket s) {
+//        try {
+//            InputStream is = s.getInputStream();
+//            ObjectInputStream ois = new ObjectInputStream(is);
+//
+//            Object obj = (Object) ois.readObject();
+//            return obj;
+//        } catch (Exception ex) {
+//            System.out.println("Can't read object");
+//        }
+//        return null;
+//    }
+    
 }

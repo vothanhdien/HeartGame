@@ -71,4 +71,12 @@ public class Round {
         
         return max;
     }
+    
+    public boolean hasHeart(){
+        for(Card c : listCard){
+            if(c.getType().equals(CardType.HEARTS))
+                return true;
+        }
+        return false;
+    }
 }

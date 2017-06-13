@@ -71,4 +71,17 @@ public class Round {
         
         return max;
     }
+
+    public void renew() {
+        listCard.removeAll(listCard);
+        Score = 0;
+    }
+    
+    public boolean hasHeart(){
+        for(Card c : listCard){
+            if(c.getType().equals(CardType.HEARTS))
+                return true;
+        }
+        return false;
+    }
 }
