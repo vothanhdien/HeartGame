@@ -5,7 +5,6 @@
  */
 package client;
 
-import Object.testobject;
 import Frame.LoginFrame;
 import Object.HumanPlayer;
 import java.io.BufferedReader;

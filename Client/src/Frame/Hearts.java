@@ -4,10 +4,16 @@
  * and open the template in the editor.
  */
 package Frame;
+
+import Object.HumanPlayer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.net.Socket;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,55 +32,84 @@ public class Hearts extends JPanel implements ActionListener {
     private static final int HEIGHT = 600;
     private static final int X = 200;
     private static final int Y = 50;
+
     /**
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        createAndShowGUI();
+//        createAndShowGUI();
+        try {
+            Socket s = new Socket("localhost", 3200);
+
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(is);
+            
+            HumanPlayer p = new HumanPlayer("Client 1");
+            oos.flush();
+            
+            oos.writeObject(p);
+            oos.flush();
+            
+            HumanPlayer p1 = (HumanPlayer) ois.readObject();
+            p1.sortHand();
+            for (int i = 0; i < 13; i++) {
+                System.out.println(p1.getHand().get(i).getValue() + " " + p1.getHand().get(i).getType());
+            }
+        } catch (Exception ex) {
+            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        try {
+            Thread.sleep(1000000000);
+            //createAndShowGUI();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
-    
-    public Hearts()
-    {
+
+    public Hearts() {
         super(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
         JButton btnNewGame = new JButton("New game");
         btnNewGame.addActionListener(this);
         btnNewGame.setActionCommand("New game");
-        
+
         c.gridx = 0;
         c.gridy = 0;
         add(btnNewGame, c);
-        
+
         JButton btnResume = new JButton("Resume");
         btnResume.addActionListener(this);
         btnResume.setActionCommand("Resume");
-        
+
         c.gridx = 0;
         c.gridy = 1;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 0, 0, 0);
         add(btnResume, c);
-        
+
         JButton btnStatistics = new JButton("Statistics");
         btnStatistics.addActionListener(this);
         btnStatistics.setActionCommand("Statistics");
-        
+
         c.gridx = 0;
         c.gridy = 2;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 0, 0, 0);
         add(btnStatistics, c);
-        
+
         JButton btnHelp = new JButton("Help");
         btnHelp.addActionListener(this);
         btnHelp.setActionCommand("Help");
-        
+
         c.gridx = 0;
         c.gridy = 3;
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 0, 0, 0);
         add(btnHelp, c);
-        
+
     }
 
     @Override
@@ -87,26 +122,16 @@ public class Hearts extends JPanel implements ActionListener {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocation(X, Y);
         JComponent comp = null;
-        if(e.getActionCommand().equals("New game"))
-        {
+        if (e.getActionCommand().equals("New game")) {
             comp = new Game();
+        } else if (e.getActionCommand().equals("Resume")) {
+
+        } else if (e.getActionCommand().equals("Statistics")) {
+
+        } else if (e.getActionCommand().equals("Help")) {
+
         }
-        else
-            if(e.getActionCommand().equals("Resume"))
-            {
-                
-            }
-            else
-                if(e.getActionCommand().equals("Statistics"))
-                {
-                    
-                }
-                else
-                    if(e.getActionCommand().equals("Help"))
-                    {
-                        
-                    }
-        
+
         comp.setOpaque(true);
         frame.setContentPane(comp);
         frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
@@ -115,11 +140,11 @@ public class Hearts extends JPanel implements ActionListener {
         frame.setVisible(true);
         return;
     }
-    
+
     private static void createAndShowGUI() {
         //Make sure we have nice window decorations.
         JFrame.setDefaultLookAndFeelDecorated(true);
-        
+
         //Create and set up the window.
         JFrame frame = new JFrame("Hearts");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
