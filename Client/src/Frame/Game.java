@@ -177,11 +177,10 @@ public class Game extends JPanel implements ActionListener {
     }
 
     private void createAllButtonCards(JPanel allCardOfPalyer, HumanPlayer player) {
-        Dimension d = new Dimension(30, 75);
+        Dimension d = new Dimension(25, 75);
 
         for (int i = 0; i < 12; i++) {
             ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), 25, 75);
-            System.out.println(player.getHand().get(i).getValue() + " " + player.getHand().get(i).getType());
             JButton btnCard = new JButton(ii);
             btnCard.setPreferredSize(d);
             allCardOfPalyer.add(btnCard);
