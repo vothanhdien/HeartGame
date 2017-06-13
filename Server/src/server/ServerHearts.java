@@ -82,22 +82,22 @@ public class ServerHearts {
                         System.out.println("1");
                         listPlayers.add((HumanPlayer) get_object_from_client(s));
                         listSockets.add(s);
-                        
+
                         s = ss.accept();
                         System.out.println("2");
                         listPlayers.add((HumanPlayer) get_object_from_client(s));
                         listSockets.add(s);
-                        
+
                         s = ss.accept();
                         System.out.println("3");
                         listPlayers.add((HumanPlayer) get_object_from_client(s));
                         listSockets.add(s);
-                        
+
                         s = ss.accept();
                         System.out.println("4");
                         listPlayers.add((HumanPlayer) get_object_from_client(s));
                         listSockets.add(s);
-                        
+
                         startGame();
                     } catch (Exception ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -262,6 +262,7 @@ public class ServerHearts {
         }
 
         for (int i = 0; i < listPlayers.size(); i++) {
+            listPlayers.get(i).sortHand();
             if (listPlayers.get(i).hasTwoOfClubs()) {
                 firstPlayer = i;
                 break;
@@ -321,52 +322,17 @@ public class ServerHearts {
 //        System.out.println("send information to all client");
         List<String> listName = new ArrayList<>();
         listPlayers.forEach((hp) -> {
-            listName.add(hp.getName());
-        });
+                    listName.add(hp.getName());
+                });
         try {
             for (int index = 0; index < listSockets.size(); index++) {
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> d7aa1e0eadff61b3650c2e6d040cf7d39063decb
-//<<<<<<< HEAD
-//<<<<<<< HEAD
-                listOos.get(index).writeObject(listPlayers.get(index));
-                listOos.get(index).flush();
-                listOos.get(index).writeObject(listName);
-                listOos.get(index).flush();
-//=======
-//=======
-//>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
-<<<<<<< HEAD
->>>>>>> d7aa1e0eadff61b3650c2e6d040cf7d39063decb
-=======
->>>>>>> d7aa1e0eadff61b3650c2e6d040cf7d39063decb
-//                listOos.get(index).writeObject(listPlayers.get(index));
-//                listOos.get(index).flush();
-//                listOos.get(index).writeObject(listName);
-//                listOos.get(index).flush();
-<<<<<<< HEAD
-<<<<<<< HEAD
-                System.out.println(listPlayers.get(index).getName());
+                List<String> temp = null;
                 send_object_to_client(listSockets.get(index), listPlayers.get(index));
-                send_object_to_client(listSockets.get(index), listName);
-=======
-=======
->>>>>>> d7aa1e0eadff61b3650c2e6d040cf7d39063decb
-                    send_object_to_client(listSockets.get(index), listPlayers.get(index));
-                    send_object_to_client(listSockets.get(index), listName);
-//<<<<<<< HEAD
-//>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
-//=======
-//>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
-<<<<<<< HEAD
->>>>>>> d7aa1e0eadff61b3650c2e6d040cf7d39063decb
-=======
->>>>>>> d7aa1e0eadff61b3650c2e6d040cf7d39063decb
+                temp = (List<String>)get_object_from_client(listSockets.get(index));
+                temp = listName;
+                send_object_to_client(listSockets.get(index), temp);
+                
             }
-//            System.out.println("send information to all client 23");
         } catch (Exception ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
@@ -397,9 +363,10 @@ public class ServerHearts {
         try {
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
-            
-            System.out.println(obj.toString());
+
             oos.writeObject(obj);
+            oos.flush();
+            System.out.println("Sent object");
         } catch (IOException ex) {
             System.out.println("Can't send object");
         }

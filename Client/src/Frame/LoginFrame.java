@@ -62,38 +62,16 @@ public class LoginFrame extends JFrame {
                 }
 
                 try {
-//                    Socket s = new Socket(server, port);
-//
-//                    OutputStream os = s.getOutputStream();
-//                    ObjectOutputStream oos = new ObjectOutputStream(os);
-//
-//                    InputStream is = s.getInputStream();
-//                    ObjectInputStream ois = new ObjectInputStream(is);
-//                    HumanPlayer p = new HumanPlayer(name);
-//                    oos.flush();
-//                    oos.writeObject(p);
-//                    oos.flush();
-//                    p = (HumanPlayer)ois.readObject();
-//                    p.sortHand();
-//                    List<String> listNickName = (List<String>)ois.readObject();
-//                    int i;
-//                    for(i = 0; i < listNickName.size(); i++)
-//                    {
-//                        if(listNickName.get(i).equals(name))
-//                        {
-//                            listNickName.remove(i);
-//                            break;
-//                        }
-//                    }
-//                    PlayingFrame cf = new PlayingFrame(s, p, listNickName);
-
                     Socket socket = new Socket(server, port);
 
                     HumanPlayer hp = new HumanPlayer(name);
                     send_object_to_server(socket, hp);
+                    
                     hp = (HumanPlayer) get_object_from_server(socket);
-                    JOptionPane.showMessageDialog(null, "Name: " + hp.getName());
-                    List<String> listNickName = (List<String>) get_object_from_server(socket);
+                    
+                    List<String> listNickName = new ArrayList<>();
+                    send_object_to_server(socket, listNickName);
+                    listNickName = (List<String>) get_object_from_server(socket);
                     listNickName = arrageListNickName(listNickName, name);
                     new PlayingFrame(socket, hp, listNickName);
                     dispose();
@@ -101,7 +79,7 @@ public class LoginFrame extends JFrame {
 
                 }
             }
-
+            
             private List<String> arrageListNickName(List<String> listNickName, String name) {
                 List<String> kq = new ArrayList<>();
                 List<String> temp = new ArrayList<>();
@@ -117,8 +95,8 @@ public class LoginFrame extends JFrame {
                 for (int i = 1; i < 5; i++) {
                     if (temp.get(i).equals(name)) {
                         kq.add(temp.get(i + 1));
-                        kq.add(temp.get(i - 1));
                         kq.add(temp.get(i + 2));
+                        kq.add(temp.get(i - 1));
                         break;
                     }
                 }
@@ -181,7 +159,6 @@ public class LoginFrame extends JFrame {
 
             oos.writeObject(obj);
             oos.flush();
-            JOptionPane.showMessageDialog(null, "Sent object");
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Can't send object");
         }
@@ -193,12 +170,7 @@ public class LoginFrame extends JFrame {
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
             
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.flush();
             Object obj = ois.readObject();
-            JOptionPane.showMessageDialog(null, "Read object: " + obj.toString());
             return obj;
         } catch (Exception ex) {
             JOptionPane.showMessageDialog(null, "Can't read object");
