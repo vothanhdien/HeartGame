@@ -4,5 +4,5 @@
 /Object/dist/
 /Client/dist/
 /Server/dist/
-/Client/nbproject
-/Object/nbproject
+/Client/nbproject/private
+/Server/nbproject/private
