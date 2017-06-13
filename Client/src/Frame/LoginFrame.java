@@ -40,7 +40,6 @@ public class LoginFrame extends JFrame {
         JLabel jlName = new JLabel("NickName: ");
         JLabel jlServer = new JLabel("Server: ");
         JLabel jlPort = new JLabel("Port: ");
-
         //Text field
         JTextField jtfName = new JTextField(15);
         JTextField jtfServer = new JTextField(15);
@@ -97,6 +96,7 @@ public class LoginFrame extends JFrame {
                         kq.add(temp.get(i + 1));
                         kq.add(temp.get(i + 2));
                         kq.add(temp.get(i - 1));
+                        kq.add(name);
                         break;
                     }
                 }
