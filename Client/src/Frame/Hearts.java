@@ -38,35 +38,30 @@ public class Hearts extends JPanel implements ActionListener {
      */
     public static void main(String[] args) {
 //        createAndShowGUI();
-        try {
-            Socket s = new Socket("localhost", 3200);
-
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-            
-            InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(is);
-            
-            HumanPlayer p = new HumanPlayer("Client 1");
-            oos.flush();
-            
-            oos.writeObject(p);
-            oos.flush();
-            
-            HumanPlayer p1 = (HumanPlayer) ois.readObject();
-            p1.sortHand();
-            for (int i = 0; i < 13; i++) {
-                System.out.println(p1.getHand().get(i).getValue() + " " + p1.getHand().get(i).getType());
-            }
-        } catch (Exception ex) {
-            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        try {
-            Thread.sleep(1000000000);
-            //createAndShowGUI();
-        } catch (InterruptedException ex) {
-            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
-        }
+//        try {
+//            Socket s = new Socket("localhost", 3200);
+//
+//            OutputStream os = s.getOutputStream();
+//            ObjectOutputStream oos = new ObjectOutputStream(os);
+//            
+//            InputStream is = s.getInputStream();
+//            ObjectInputStream ois = new ObjectInputStream(is);
+//            
+//            HumanPlayer p = new HumanPlayer("Client 1");
+//            oos.flush();
+//            
+//            oos.writeObject(p);
+//            oos.flush();
+//            
+//            HumanPlayer p1 = (HumanPlayer) ois.readObject();
+//            p1.sortHand();
+//            for (int i = 0; i < 13; i++) {
+//                System.out.println(p1.getHand().get(i).getValue() + " " + p1.getHand().get(i).getType());
+//            }
+//        } catch (Exception ex) {
+//            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+        createAndShowGUI();
     }
 
     public Hearts() {
@@ -121,9 +116,9 @@ public class Hearts extends JPanel implements ActionListener {
         JFrame frame = new JFrame("Heart");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setLocation(X, Y);
-        JComponent comp = null;
+        //JComponent comp = null;
         if (e.getActionCommand().equals("New game")) {
-            comp = new Game();
+            LoginFrame lg = new LoginFrame();
         } else if (e.getActionCommand().equals("Resume")) {
 
         } else if (e.getActionCommand().equals("Statistics")) {
@@ -132,12 +127,11 @@ public class Hearts extends JPanel implements ActionListener {
 
         }
 
-        comp.setOpaque(true);
-        frame.setContentPane(comp);
-        frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
-        //Display the window.
-        frame.pack();
-        frame.setVisible(true);
+//        
+//        frame.setPreferredSize(new Dimension(WIDTH, HEIGHT));
+//        //Display the window.
+//        frame.pack();
+//        frame.setVisible(true);
         return;
     }
 
