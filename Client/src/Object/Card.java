@@ -49,4 +49,23 @@ public class Card implements Serializable{
                 return value.compareTo(other.value);
         return type.compareTo(other.type);
     }
+    
+    //Lay so hieu hinh
+    public int getCode(){
+        Value v[] = {Value.ACE,Value.TWO,Value.THREE,Value.FOUR,Value.FIVE,Value.SIX,Value.SEVEN,
+            Value.EIGHT,Value.NINE,Value.TEN,Value.JACK,Value.QUEEN,Value.KING};
+        int vi = 0;
+        CardType t[] = {CardType.SPADES,CardType.CLUBS,CardType.DIAMONDS,CardType.HEARTS};
+        int ti = 0;
+        for(vi = 0; vi< 13 ;vi++){
+            if(v[vi].equals(getType()))
+                break;
+        }
+        for(ti =0;ti < 4;ti++){
+            if(t[ti].equals(getValue()))
+                break;
+        }
+    
+        return vi*13 + ti;
+    }
 }
