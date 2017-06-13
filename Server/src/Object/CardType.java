@@ -5,9 +5,11 @@
  */
 package Object;
 
+import java.io.Serializable;
+
 /**
  *
  * @author didim
  */
 
-public enum CardType{CLUBS, DIAMONDS, SPADES, HEARTS};
+public enum CardType implements Serializable{CLUBS, DIAMONDS, SPADES, HEARTS};

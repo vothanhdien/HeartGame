@@ -5,18 +5,20 @@
  */
 package Object;
 
+import java.io.Serializable;
+
 /**
  *
  * @author didim
  */
-public class AIPlayer extends Player{
+public class AIPlayer extends Player implements Serializable{
     
     public AIPlayer(String name) {
         super(name);
     }
 
     @Override
-    Card pickCard() {
+    public Card pickCard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

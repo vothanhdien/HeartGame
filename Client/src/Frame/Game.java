@@ -4,8 +4,10 @@
  * and open the template in the editor.
  */
 
+package Frame;
 
 import Object.Card;
+import Object.HumanPlayer;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;

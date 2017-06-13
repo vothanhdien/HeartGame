@@ -6,14 +6,17 @@
 package server;
 
 import Frame.StartFrame;
+import Object.testobject;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Serializable;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -28,7 +31,22 @@ public class Server {
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String[] args) {
+//        try {
+//            ServerSocket ss = new ServerSocket(3200);
+//            Socket s = ss.accept();
+//            InputStream is = s.getInputStream();
+//            ObjectInputStream ois = new ObjectInputStream(is);
+//            testobject to = (testobject)ois.readObject();
+////            Object to = ois.readObject();
+//            if (to!=null){System.out.println(to.toString());}
+//            System.out.println((String)ois.readObject());
+//            is.close();
+//            s.close();
+//            ss.close();
+//        }catch(Exception e){System.out.println(e);}
+          
         StartFrame st = new StartFrame();
 //        try
 //        {

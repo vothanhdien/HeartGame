@@ -5,13 +5,16 @@
  */
 package client;
 
+import Object.testobject;
 import Frame.LoginFrame;
+import Object.HumanPlayer;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
@@ -28,11 +31,21 @@ public class Client {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        LoginFrame lg = new LoginFrame();
-//        try
-//        {
-//            Socket s = new Socket("127.0.0.1",3200);
-//            System.out.println(s.getPort());
+//        LoginFrame lg = new LoginFrame();
+        try
+        {
+            Socket s = new Socket("127.0.0.1",3200);
+            System.out.println(s.getPort());
+            OutputStream os = s.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+//            testobject to = new testobject(1,"object from client");
+            HumanPlayer to = new HumanPlayer("abd0");
+            oos.writeObject(to);
+//            oos.writeObject(new String("another object from the client"));
+            oos.close();
+            os.close();
+            s.close();
+            
 //            Thread receive_thread = new Thread(new Runnable() {
 //                    @Override
 //                    public void run() {
@@ -77,43 +90,43 @@ public class Client {
 //                    }
 //                });
 //                sent_thead.start();
-////            InputStream is = s.getInputStream();
-////            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-////
-////            OutputStream os = s.getOutputStream();
-////            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-////
-////            String sentMessage="";
-////            String receivedMessage;
-////
-////            System.out.println("Talking to Server");
-////
-////            do
-////            {
-////                DataInputStream din = new DataInputStream(System.in);
-////                sentMessage=din.readLine();
-////                bw.write(sentMessage);
-////                bw.newLine();
-////                bw.flush();
-////
-////                if (sentMessage.equalsIgnoreCase("quit"))
-////                        break;
-////                else
-////                {
-////                        receivedMessage=br.readLine();
-////                        System.out.println("Received : " + receivedMessage);					
-////                }
-////
-////            }
-////            while(true);
-////
-////                bw.close();
-////                br.close();
-//        }
-//        catch(IOException e)
-//        {
-//                System.out.println("There're some error");
-//        }
+//            InputStream is = s.getInputStream();
+//            BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//
+//            OutputStream os = s.getOutputStream();
+//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
+//
+//            String sentMessage="";
+//            String receivedMessage;
+//
+//            System.out.println("Talking to Server");
+//
+//            do
+//            {
+//                DataInputStream din = new DataInputStream(System.in);
+//                sentMessage=din.readLine();
+//                bw.write(sentMessage);
+//                bw.newLine();
+//                bw.flush();
+//
+//                if (sentMessage.equalsIgnoreCase("quit"))
+//                        break;
+//                else
+//                {
+//                        receivedMessage=br.readLine();
+//                        System.out.println("Received : " + receivedMessage);					
+//                }
+//
+//            }
+//            while(true);
+//
+//                bw.close();
+//                br.close();
+        }
+        catch(IOException e)
+        {
+                System.out.println(e.getMessage());
+        }
     }
     
 }

@@ -17,6 +17,7 @@ import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import sun.awt.AWTAutoShutdown;
 
 /**
  *
@@ -32,28 +33,30 @@ public class ServerHearts {
     static List<Card> allCards = new ArrayList<>();
     static List<Socket> listSockets = new ArrayList<>();
     static ServerSocket ss;
+
+    
     ArrayList<Card> allCard;
    
-    int firstPlayer; // vị trí người chơi đầu tiên
+    static int firstPlayer; // vị trí người chơi đầu tiên
     
     ArrayList<Integer> playerScores = new ArrayList<>();// Lưu số điểm ứng theo playerOrder
     
 //    ArrayList<Card> currentRound;// 4 la bai trên bàn
-    Round currentRound; //4 lá bài trên bàn
+    static Round currentRound; //4 lá bài trên bàn
     
     //kiểm tra xem đã đánh có 2 rô chưa
     boolean twoClubsPlayer;
     //Kiểm tra trạng thái heart break;
     boolean isHeartBreak = false;
     
-    int findTaker(int firstPlayer){
+    static int findTaker(int firstPlayer){
         return (firstPlayer + currentRound.getMaxCard())%listPlayers.size();
     }
     
     public static void main(String[] args) {
         try {
             // TODO code application logic here
-            ss = new ServerSocket(1260);
+            ss = new ServerSocket(3200);
             
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -137,10 +140,10 @@ public class ServerHearts {
                OutputStream os = listSockets.get(index).getOutputStream();
                ObjectOutputStream oos = new ObjectOutputStream(os);
 
-               do {                
+//               do {                
                    HumanPlayer player = (HumanPlayer)ois.readObject();
                    listPlayers.add(index, player);
-               } while (true);
+//               } while (true);
 
            } catch (Exception ex) {
                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -150,6 +153,39 @@ public class ServerHearts {
         createNewAllCards();
         randomAllCards();
         deal4AllPlayer();
+        
+        //gui bai cho client
+        send_infor_to_all_player();
+        
+        Thread play_thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                for(int i = 0; i < 13 ;i++){
+                    int a = firstPlayer;
+                    for(int j =0 ; j < 4; j++){
+                        //Cho nguoi chon bai
+                        Card c = player_pick_card(a);
+                        currentRound.addCard(c);
+                        
+                        
+                        //Gui thong tin cho client
+                         
+                        
+                        a = (a + 1)%listPlayers.size();
+                    }
+                    //Tim nguoi choi an het bai
+                    firstPlayer = findTaker(firstPlayer);
+                    //Gan diem cho nguoi choi
+                    int score = currentRound.getScore();
+                    listPlayers.get(firstPlayer).addScore(score);
+                }
+                //In nguoi chien thang
+                ArrayList<Integer> winnner = findwinner();
+                //gui ket qua ve toan bo nguoi choi
+                
+            }
+
+        });
     }
     
     static void createNewAllCards()
@@ -212,6 +248,13 @@ public class ServerHearts {
         temp.add(p3);
         temp.add(p4);
         listPlayers = temp;
+        for(int i = 0; i < listPlayers.size(); i++){
+            if(listPlayers.get(i).hasTwoOfClubs()){
+                firstPlayer = i;
+                break;
+            }
+        }
+            
     }
     void shotTheMoon () {
         int index = -1;
@@ -238,16 +281,19 @@ public class ServerHearts {
                     listPlayers.get(index).clearPlayer();
         }
     }
-    void findwinner(){
+    static ArrayList<Integer> findwinner(){
+        ArrayList<Integer> winner = new ArrayList<>();
         int minScore = findMinScore();
-        for(HumanPlayer c: listPlayers){
-            if(c.getScore() == minScore){
-                //do something
+        for(int i = 0; i< listPlayers.size();i++)
+        {
+            if(listPlayers.get(i).getScore() == minScore){
+                winner.add(i);
             }
         }
+        return winner;
     }
 
-    private int findMinScore() {
+    private static int findMinScore() {
         int minScore = listPlayers.get(0).getScore();
         for(int i = 0; i< listPlayers.size(); i++){
             if(minScore < listPlayers.get(i).getScore()){
@@ -256,5 +302,20 @@ public class ServerHearts {
         }
         return minScore;
     }
-    
+    private static void send_infor_to_all_player() {
+//        try {
+//            for(int index = 0; index < listSockets.size(); index++)
+//            {
+//                listOos.get(index).writeObject(listPlayers.get(index));
+//                listOos.get(index).flush();
+//            }
+//        } catch (IOException ex) {
+//            Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
+//        }
+    }
+    private static Card player_pick_card(int a) {
+        //gui thong bao va nhan object card tu client
+        
+        return new Card(Value.ACE, CardType.CLUBS);
+    }
 }

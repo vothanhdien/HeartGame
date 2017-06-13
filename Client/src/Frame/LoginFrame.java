@@ -5,6 +5,9 @@
  */
 package Frame;
 
+import Object.HumanPlayer;
+import com.sun.corba.se.impl.orbutil.ObjectWriter;
+import com.sun.xml.internal.ws.api.message.Message;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,7 +20,10 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 import java.util.logging.Level;
@@ -72,9 +78,11 @@ public class LoginFrame extends JFrame{
                 try {
                     Socket socket = new Socket(server, port);
                     System.out.println(socket.getPort());
-                    send_string_to_server(socket,name);
-                    
+                    //send_string_to_server(socket,name);
+                    HumanPlayer hp = new HumanPlayer(name);
+                    send_object_to_server(socket, hp);
                     PlayingFrame cf = new PlayingFrame(socket);
+//                    Game game = new Game();
                     dispose();
                     
                 } catch (IOException ex) {
@@ -152,5 +160,36 @@ public class LoginFrame extends JFrame{
             JOptionPane.showMessageDialog(null,"Something error");
         
         }
+    }
+    private void send_object_to_server(Socket socket, Object obj){
+        try {
+            java.io.OutputStream os = socket.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            
+            oos.writeObject(obj);
+            oos.flush();
+            
+            
+            os.close();
+            oos.close();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"Can't send object");
+        }
+    }
+    // lấy object từ server
+    private Object get_object_from_server(Socket s) throws ClassNotFoundException {
+        try {
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
+            
+            Object obj = ois.readObject();
+            
+            ois.close();
+            is.close();
+            return obj;
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null, "Can't read object");
+        }
+        return null;
     }
 }

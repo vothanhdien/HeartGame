@@ -5,6 +5,7 @@
  */
 package Object;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -13,7 +14,7 @@ import java.util.Comparator;
  *
  * @author didim
  */
-public abstract class Player {
+public abstract class Player implements Serializable{
     
     String name;
     ArrayList<Card> hand = new ArrayList<>();
@@ -25,26 +26,30 @@ public abstract class Player {
     }
     
     //----------------
-    void addCard(Card newCard){
+    public void addCard(Card newCard){
         hand.add(newCard);
     }
-    void sortHand(){ hand.sort(new Comparator<Card>() {
+    public void sortHand(){ hand.sort(new Comparator<Card>() {
         @Override
         public int compare(Card t, Card t1) {
             return t.compareTo(t1);
         }
     });}
     
-    boolean checkType(CardType type){
+    public boolean checkType(CardType type){
         return hand.stream().anyMatch((c) -> (c.getType() == type));
     }
     //Nếu có con 2 rô => được đánh trước.
-    boolean hasTwoOfClubs () { 
+    public boolean hasTwoOfClubs () { 
         if (hand.isEmpty()) return false;
         Card holder = new Card( Value.TWO, CardType.CLUBS);
         return holder.equals(hand.get(0));
     }
+    public void clearPlayer() { clearHand(); score = 0; }
     
+    private void clearHand(){
+        hand.clear();
+    }
     //Đánh bài:
     abstract Card pickCard();
     
@@ -72,6 +77,7 @@ public abstract class Player {
     public void setHand(ArrayList<Card> hand) {
         this.hand = hand;
     }
+
 
     
 }

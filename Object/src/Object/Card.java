@@ -5,11 +5,13 @@
  */
 package Object;
 
+import java.io.Serializable;
+
 /**
  *
  * @author didim
  */
-public class Card {
+public class Card implements Serializable{
     private Value value;
     private int Score;
     private CardType type;

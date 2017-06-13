@@ -37,55 +37,58 @@ public class PlayingFrame extends JFrame{
         this.socket = s;
         
         Container container = this.getContentPane();
-        
-        container.setLayout(new GridLayout(3,1));
-        
-        JButton btExit = new JButton("exit");
-        btExit.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                try {
-                    socket.close();
-                    
-                    LoginFrame lg = new LoginFrame();
-                    dispose();
-                } catch (IOException ex) {
-                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                }
-            }
-        });
-        
-        JScrollPane scr = new JScrollPane();
-        
-        JTextArea chat_area = new JTextArea();
-        
-        scr.setViewportView(chat_area);
-        
-        JTextArea text_input = new JTextArea();
-        
-        container.add(chat_area);
-        container.add(text_input);
-        container.add(btExit);
-        
+        container.add(new Game());
+        this.pack();
         this.setVisible(true);
-        Thread receive_thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                InputStream is;
-                try {
-                    is = s.getInputStream();
-                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
-                    while(true){
-
-                            System.out.println("server: " + br.readLine());
-                    }
-                } catch (IOException ex) {
-                    Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-            }
-        });
-        receive_thread.start();
+//        
+//        container.setLayout(new GridLayout(3,1));
+//        
+//        JButton btExit = new JButton("exit");
+//        btExit.addActionListener(new ActionListener() {
+//            @Override
+//            public void actionPerformed(ActionEvent e) {
+//                try {
+//                    socket.close();
+//                    
+//                    LoginFrame lg = new LoginFrame();
+//                    dispose();
+//                } catch (IOException ex) {
+//                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//            }
+//        });
+//        
+//        JScrollPane scr = new JScrollPane();
+//        
+//        JTextArea chat_area = new JTextArea();
+//        
+//        scr.setViewportView(chat_area);
+//        
+//        JTextArea text_input = new JTextArea();
+//        
+//        container.add(chat_area);
+//        container.add(text_input);
+//        container.add(btExit);
+//        
+//        this.setVisible(true);
+//        Thread receive_thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                InputStream is;
+//                try {
+//                    is = s.getInputStream();
+//                    BufferedReader br = new BufferedReader(new InputStreamReader(is));
+//                    while(true){
+//
+//                            System.out.println("server: " + br.readLine());
+//                    }
+//                } catch (IOException ex) {
+//                    Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+//
+//            }
+//        });
+//        receive_thread.start();
     }
     
 }

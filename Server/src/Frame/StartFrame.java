@@ -5,6 +5,7 @@
  */
 package Frame;
 
+import Object.HumanPlayer;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -16,7 +17,10 @@ import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -54,9 +58,18 @@ public class StartFrame extends JFrame{
                         java.net.Socket s;
                         try {
                             s = server_socket.accept(); //synchronous
-                            String name = get_string_from_client(s);
-                            listSocket.add(s);
-                            System.out.println("Client " + name + " connect at port " + s.getPort());
+//                            String name = get_string_from_client(s);
+//                            System.out.println("Client " + name + " connect at port " + s.getPort());
+                            try {
+                                HumanPlayer obj = (HumanPlayer)get_object_from_client(s);
+                                
+                                listSocket.add(s);
+
+                                System.out.println("Client " + obj.getName() + " connect at port " + s.getPort());
+                                
+                            } catch (ClassNotFoundException ex) {
+                                Logger.getLogger(StartFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
 //                            Thread test = new Thread(new Runnable() {
 //                                @Override
 //                                public void run() {
@@ -138,7 +151,10 @@ public class StartFrame extends JFrame{
     private String get_string_from_client(Socket s) {
         try {
             BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            return br.readLine();
+            
+            String str = br.readLine();
+            br.close();
+            return str;
             
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null, "Something error");
@@ -151,9 +167,42 @@ public class StartFrame extends JFrame{
             BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
             bw.write(str + "\n");
             bw.flush();
+            bw.close();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null,"Something error");
         
         }
+    }
+    private void send_object_to_server(Socket socket, Object obj){
+        try {
+            java.io.OutputStream os = socket.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            
+            oos.writeObject(obj);
+            oos.flush();
+            
+            
+            os.close();
+            oos.close();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"Can't send object");
+        }
+    }
+    // lấy object từ server
+    private Object get_object_from_client(Socket s) throws ClassNotFoundException {
+        try {
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
+            
+            Object obj = ois.readObject();
+            
+            ois.close();
+            is.close();
+            return obj;
+        } catch (IOException ex) {
+//            JOptionPane.showMessageDialog(null, "Can't read object");
+            System.out.println(ex.getMessage());
+        }
+        return null;
     }
 }

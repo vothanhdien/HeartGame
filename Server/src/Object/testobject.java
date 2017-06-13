@@ -9,6 +9,13 @@ import java.io.Serializable;
 
 /**
  *
- * @author didim
+ * @author HP
  */
-public enum Value implements Serializable{TWO,THREE,FOUR,FIVE,SIX,SEVEN,EIGHT,NINE,TEN,JACK,QUEEN,KING,ACE};
+public class testobject implements Serializable {
+    int value ;
+    String id;
+    public  testobject(int v, String s ){
+        this.value=v;
+        this.id=s;
+    }   
+}

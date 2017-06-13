@@ -4,19 +4,22 @@
  * and open the template in the editor.
  */
 package Object;
+
+import java.io.Serializable;
+
 /**
  *
  * @author DaDa Wind
  */
-public class HumanPlayer extends Player {
+public class HumanPlayer extends Player implements Serializable{
 
-    HumanPlayer (String name)
+    public HumanPlayer (String name)
     { 
         super(name);
     }
 
     @Override
-    Card pickCard() {
+    public Card pickCard() {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     

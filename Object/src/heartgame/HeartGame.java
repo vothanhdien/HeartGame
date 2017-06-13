@@ -6,6 +6,8 @@
 package heartgame;
 
 import Object.CardType;
+import Object.HumanPlayer;
+import Object.Value;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,11 +25,17 @@ public class HeartGame {
      */
     
     public static void main(String[] args) {
-        ArrayList<Integer> array = new ArrayList<>();
-        for(int i =0 ;i < 52;i++)
-            array.add(i);
-        for(int i =0; i<10;i++)
-            mess(array);
+        System.out.println(Value.ACE);
+        ArrayList<HumanPlayer> array = new ArrayList<>();
+//        for(int i =0 ;i < 52;i++)
+//            array.add(i);
+//        for(int i =0; i<10;i++)
+//            mess(array);
+
+        array.add(new HumanPlayer("dien"));
+        array.get(0).addScore(100);
+        
+        System.out.println(array.get(0).getScore());
         
         // TODO code application logic here
 //        CardType type1 = CardType.SPADES;
