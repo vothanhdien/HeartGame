@@ -5,6 +5,8 @@
  */
 package Frame;
 
+import Object.HumanPlayer;
+import Object.Round;
 import java.awt.Container;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
@@ -23,21 +25,21 @@ import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
+import java.util.*;
 
 /**
  *
  * @author HP
  */
-public class PlayingFrame extends JFrame{
+public class PlayingFrame extends JFrame {
 
     Socket socket;
-    
-    
-    public PlayingFrame(Socket s) throws HeadlessException {
+
+    public PlayingFrame(Socket s, HumanPlayer player, List<String> listNickName) throws HeadlessException {
         this.socket = s;
         
         Container container = this.getContentPane();
-        container.add(new Game());
+        container.add(new Game(player, listNickName));
         this.pack();
         this.setVisible(true);
 //        
@@ -90,5 +92,5 @@ public class PlayingFrame extends JFrame{
 //        });
 //        receive_thread.start();
     }
-    
+
 }

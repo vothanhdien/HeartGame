@@ -69,11 +69,6 @@ public class ServerHearts {
 
                         if (listSockets.size() == 4) {
                             startGame();
-                            try {
-                                Thread.sleep(10000000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
-                            }
                             break;
                         }
                     }

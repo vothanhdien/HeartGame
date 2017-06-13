@@ -6,8 +6,6 @@
 package Frame;
 
 import Object.HumanPlayer;
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
-import com.sun.xml.internal.ws.api.message.Message;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -17,23 +15,10 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
-import java.io.OutputStreamWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.util.List;
+import javax.swing.*;
 
 /**
  *
@@ -52,7 +37,7 @@ public class LoginFrame extends JFrame{
         constraint.insets = new Insets(2,2,2,2);
         
         //lable
-        JLabel jlName = new JLabel("Name: ");
+        JLabel jlName = new JLabel("NickName: ");
         JLabel jlServer = new JLabel("Server: ");
         JLabel jlPort = new JLabel("Port: ");
     
@@ -81,8 +66,10 @@ public class LoginFrame extends JFrame{
                     //send_string_to_server(socket,name);
                     HumanPlayer hp = new HumanPlayer(name);
                     send_object_to_server(socket, hp);
-                    PlayingFrame cf = new PlayingFrame(socket);
-//                    Game game = new Game();
+                    hp = (HumanPlayer)get_object_from_server(socket);
+                    List<String> listNickName = (List<String>)get_object_from_server(socket);
+                    hp = (HumanPlayer)get_object_from_server(socket);
+                    PlayingFrame cf = new PlayingFrame(socket, hp, listNickName);
                     dispose();
                     
                 } catch (IOException ex) {
@@ -134,33 +121,12 @@ public class LoginFrame extends JFrame{
                 System.exit(0);
             }
         });
+        this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
 
     }
     
-     private String get_string_from_server(Socket s) {
-        try {
-            BufferedReader br = new BufferedReader(new InputStreamReader(s.getInputStream()));
-            return br.readLine();
-            
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Something error");
-        }
-        return "";
-    }
-    
-    private void send_string_to_server(Socket socket, String str) {
-        try {
-            java.io.OutputStream os = socket.getOutputStream();
-            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-            bw.write(str + "\n");
-            bw.flush();
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,"Something error");
-        
-        }
-    }
     private void send_object_to_server(Socket socket, Object obj){
         try {
             java.io.OutputStream os = socket.getOutputStream();
@@ -169,15 +135,13 @@ public class LoginFrame extends JFrame{
             oos.writeObject(obj);
             oos.flush();
             
-            
-            os.close();
-            oos.close();
+//            oos.close();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,"Can't send object");
+            //JOptionPane.showMessageDialog(null,"Can't send object");
         }
     }
     // lấy object từ server
-    private Object get_object_from_server(Socket s) throws ClassNotFoundException {
+    private Object get_object_from_server(Socket s) {
         try {
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
@@ -187,8 +151,8 @@ public class LoginFrame extends JFrame{
             ois.close();
             is.close();
             return obj;
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null, "Can't read object");
+        } catch (Exception ex) {
+            //JOptionPane.showMessageDialog(null, "Can't read object");
         }
         return null;
     }
