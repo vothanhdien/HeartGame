@@ -191,7 +191,12 @@ public class LoginFrame extends JFrame{
             Object obj = ois.readObject();
             
 <<<<<<< HEAD
+<<<<<<< HEAD
             ois.close();
+=======
+//            ois.close();
+//            is.close();
+>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
 =======
 //            ois.close();
 //            is.close();

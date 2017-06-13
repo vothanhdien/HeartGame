@@ -315,16 +315,22 @@ public class ServerHearts {
         try {
             for (int index = 0; index < listSockets.size(); index++) {
 <<<<<<< HEAD
+<<<<<<< HEAD
                 listOos.get(index).writeObject(listPlayers.get(index));
                 listOos.get(index).flush();
                 listOos.get(index).writeObject(listName);
                 listOos.get(index).flush();
 =======
+=======
+>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
 //                listOos.get(index).writeObject(listPlayers.get(index));
 //                listOos.get(index).writeObject(listName);
 //                listOos.get(index).flush();
                     send_object_to_client(listSockets.get(index), listPlayers.get(index));
                     send_object_to_client(listSockets.get(index), listName);
+<<<<<<< HEAD
+>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
+=======
 >>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
             }
 //            System.out.println("send information to all client 23");
