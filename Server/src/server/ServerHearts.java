@@ -18,6 +18,7 @@ import java.net.Socket;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import sun.awt.AWTAutoShutdown;
 
 /**
@@ -163,7 +164,7 @@ public class ServerHearts {
         deal4AllPlayer();
 
         //gui bai cho client
-        send_infor_to_all_player();
+        sendInforToAllPlayer();
 
         Thread playing_thread = new Thread(new Runnable() {
             @Override
@@ -176,6 +177,10 @@ public class ServerHearts {
                         currentRound.addCard(c);
 
                         //Gui thong tin cho client
+                        sendUpdateInforToAllClient();
+                        
+                        
+                        
                         a = (a + 1) % listPlayers.size();
                     }
                     //Tim nguoi choi an het bai
@@ -188,9 +193,9 @@ public class ServerHearts {
                 ArrayList<Integer> winnner = findwinner();
                 //gui ket qua ve toan bo nguoi choi
 
-            }
-
-        });
+            }//run
+        });//playing thread
+        playing_thread.start();
     }
 
     static void createNewAllCards() {
@@ -296,20 +301,71 @@ public class ServerHearts {
         return minScore;
     }
 
-    private static void send_infor_to_all_player() {
+    private static void sendInforToAllPlayer() {
+        ArrayList<String> listName = new ArrayList<>();
+        listPlayers.forEach((hp) -> {
+            listName.add(hp.getName());
+        });
         try {
             for (int index = 0; index < listSockets.size(); index++) {
                 listOos.get(index).writeObject(listPlayers.get(index));
+                listOos.get(index).writeObject(listName);
                 listOos.get(index).flush();
             }
         } catch (IOException ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
-
+    //Người chơi chọn bài
     private static Card player_pick_card(int a) {
         //gui thong bao va nhan object card tu client
-
-        return new Card(Value.ACE, CardType.CLUBS);
+        send_object_to_client(listSockets.get(a), new Card(Value.ACE,CardType.CLUBS));
+        
+        Card c= (Card)get_object_from_client(listSockets.get(a));
+        if(c!=null)
+            return c;
+        
+        return null;
+    }
+    //Gửi thông tin update về cho tất cả người chơi
+    private static void sendUpdateInforToAllClient() {
+        for(Socket s:listSockets){
+            send_object_to_client(s, currentRound);
+        }
+    }
+    
+    
+    //Gửi dữ liệu từ server to client   
+    private static void send_object_to_client(Socket socket, Object obj){
+        try {
+            java.io.OutputStream os = socket.getOutputStream();
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+            
+            oos.writeObject(obj);
+            oos.flush();
+            
+            
+            os.close();
+            oos.close();
+        } catch (IOException ex) {
+            JOptionPane.showMessageDialog(null,"Can't send object");
+        }
+    }
+    // lấy object từ client
+    private static Object get_object_from_client(Socket s) {
+        try {
+            InputStream is = s.getInputStream();
+            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
+            
+            Object obj = ois.readObject();
+            
+            ois.close();
+            is.close();
+            return obj;
+        } catch (Exception ex) {
+//            JOptionPane.showMessageDialog(null, "Can't read object");
+            System.out.println(ex.getMessage());
+        }
+        return null;
     }
 }
