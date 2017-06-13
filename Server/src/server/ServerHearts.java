@@ -12,6 +12,7 @@ import Object.Player;
 import Object.Round;
 import Object.Value;
 import com.sun.corba.se.impl.orbutil.ObjectWriter;
+import com.sun.javafx.scene.traversal.Hueristic2D;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -188,17 +189,22 @@ public class ServerHearts {
                         
                         a = (a + 1) % listPlayers.size();
                     }
+                    
                     //Tim nguoi choi an het bai
                     firstPlayer = findTaker(firstPlayer);
                     //Gan diem cho nguoi choi
                     int score = currentRound.getScore();
                     listPlayers.get(firstPlayer).addScore(score);
+                    
+                    //Gửi thông tin điểm đã thay đổi của người chơi
+                    sendUpdateScoreToAllClient();
                 }
-                //In nguoi chien thang
+                //chuỗi nguoi chien thang
                 ArrayList<Integer> winnner = findwinner();
                 //gui ket qua ve toan bo nguoi choi
 
             }//run
+
         });//playing thread
         playing_thread.start();
     }
@@ -389,5 +395,15 @@ public class ServerHearts {
             System.out.println(ex.getMessage());
         }
         return null;
+    }
+    //Gửi 1 mảng các interger chứa điểm theo thứ tự
+    private static void sendUpdateScoreToAllClient() {
+        ArrayList<Integer> listScores = new ArrayList<>();
+        for(HumanPlayer hp: listPlayers){
+            listScores.add(hp.getScore());
+        }
+        for(Socket s: listSockets){
+            send_object_to_client(s, listScores);   
+        }
     }
 }
