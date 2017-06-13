@@ -81,9 +81,11 @@ public class ServerHearts {
                 public void run() {
                     try {
                         Socket s = ss.accept();
-                        System.out.println("...");
-                        
+                        System.out.println("1");
                         listSockets.add(s);
+                        listPlayers.add((HumanPlayer)get_object_from_client(s));
+                        System.out.println(listSockets.size() +"   aeqwe "+ listPlayers.size());
+                        sendInforToAllPlayer();
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -96,8 +98,10 @@ public class ServerHearts {
                 public void run() {
                     try {
                         Socket s = ss.accept();
-                        System.out.println("...");
+                        System.out.println("2");
                         listSockets.add(s);
+                        listPlayers.add((HumanPlayer)get_object_from_client(s));
+                        sendInforToAllPlayer();
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -110,7 +114,10 @@ public class ServerHearts {
                 public void run() {
                     try {
                         Socket s = ss.accept();
+                        System.out.println("3");
                         listSockets.add(s);
+                        listPlayers.add((HumanPlayer)get_object_from_client(s));
+                        sendInforToAllPlayer();
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -123,8 +130,10 @@ public class ServerHearts {
                 public void run() {
                     try {
                         Socket s = ss.accept();
-                        System.out.println("...");
+                        System.out.println("4");
                         listSockets.add(s);
+                        listPlayers.add((HumanPlayer)get_object_from_client(s));
+                        sendInforToAllPlayer();
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
@@ -298,17 +307,21 @@ public class ServerHearts {
     }
 
     private static void sendInforToAllPlayer() {
+//        System.out.println("send information to all client");
         ArrayList<String> listName = new ArrayList<>();
         listPlayers.forEach((hp) -> {
             listName.add(hp.getName());
         });
         try {
             for (int index = 0; index < listSockets.size(); index++) {
-                listOos.get(index).writeObject(listPlayers.get(index));
-                listOos.get(index).writeObject(listName);
-                listOos.get(index).flush();
+//                listOos.get(index).writeObject(listPlayers.get(index));
+//                listOos.get(index).writeObject(listName);
+//                listOos.get(index).flush();
+                    send_object_to_client(listSockets.get(index), listPlayers.get(index));
+                    send_object_to_client(listSockets.get(index), listName);
             }
-        } catch (IOException ex) {
+//            System.out.println("send information to all client 23");
+        } catch (Exception ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
@@ -341,8 +354,8 @@ public class ServerHearts {
             oos.flush();
             
             
-            os.close();
-            oos.close();
+//            os.close();
+//            oos.close();
         } catch (IOException ex) {
             JOptionPane.showMessageDialog(null,"Can't send object");
         }
@@ -355,8 +368,8 @@ public class ServerHearts {
             
             Object obj = ois.readObject();
             
-            ois.close();
-            is.close();
+//            ois.close();
+//            is.close();
             return obj;
         } catch (Exception ex) {
 //            JOptionPane.showMessageDialog(null, "Can't read object");

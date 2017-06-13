@@ -68,7 +68,6 @@ public class LoginFrame extends JFrame{
                     send_object_to_server(socket, hp);
                     hp = (HumanPlayer)get_object_from_server(socket);
                     List<String> listNickName = (List<String>)get_object_from_server(socket);
-                    hp = (HumanPlayer)get_object_from_server(socket);
                     PlayingFrame cf = new PlayingFrame(socket, hp, listNickName);
                     dispose();
                     
@@ -144,15 +143,16 @@ public class LoginFrame extends JFrame{
     private Object get_object_from_server(Socket s) {
         try {
             InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
+            ObjectInputStream ois = new ObjectInputStream(is);
             
             Object obj = ois.readObject();
             
-            ois.close();
-            is.close();
+//            ois.close();
+//            is.close();
             return obj;
         } catch (Exception ex) {
             //JOptionPane.showMessageDialog(null, "Can't read object");
+            System.out.println(ex.getMessage());
         }
         return null;
     }
