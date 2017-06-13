@@ -11,7 +11,6 @@ import Object.HumanPlayer;
 import Object.Player;
 import Object.Round;
 import Object.Value;
-import com.sun.corba.se.impl.orbutil.ObjectWriter;
 import com.sun.javafx.scene.traversal.Hueristic2D;
 import java.io.*;
 import java.net.ServerSocket;
@@ -20,7 +19,6 @@ import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
-import sun.awt.AWTAutoShutdown;
 
 /**
  *
@@ -75,7 +73,7 @@ public class ServerHearts {
                     }
                 }
             });
-            thread.start();
+            //thread.start();
 
             Thread thread1 = new Thread(new Runnable() {
                 @Override
@@ -83,11 +81,26 @@ public class ServerHearts {
                     try {
                         Socket s = ss.accept();
                         System.out.println("1");
+                        listPlayers.add((HumanPlayer) get_object_from_client(s));
                         listSockets.add(s);
-                        listPlayers.add((HumanPlayer)get_object_from_client(s));
-                        System.out.println(listSockets.size() +"   aeqwe "+ listPlayers.size());
-                        sendInforToAllPlayer();
-                    } catch (IOException ex) {
+                        
+                        s = ss.accept();
+                        System.out.println("2");
+                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listSockets.add(s);
+                        
+                        s = ss.accept();
+                        System.out.println("3");
+                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listSockets.add(s);
+                        
+                        s = ss.accept();
+                        System.out.println("4");
+                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+                        listSockets.add(s);
+                        
+                        startGame();
+                    } catch (Exception ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
@@ -101,14 +114,14 @@ public class ServerHearts {
                         Socket s = ss.accept();
                         System.out.println("2");
                         listSockets.add(s);
-                        listPlayers.add((HumanPlayer)get_object_from_client(s));
-                        sendInforToAllPlayer();
+//                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+//                        System.out.println("Đã có: " + listPlayers.size() + " người chơi chuẩn bị.");
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
-            thread2.start();
+            //thread2.start();
 
             Thread thread3 = new Thread(new Runnable() {
                 @Override
@@ -117,14 +130,14 @@ public class ServerHearts {
                         Socket s = ss.accept();
                         System.out.println("3");
                         listSockets.add(s);
-                        listPlayers.add((HumanPlayer)get_object_from_client(s));
-                        sendInforToAllPlayer();
+//                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+//                        System.out.println("Đã có: " + listPlayers.size() + " người chơi chuẩn bị.");
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
-            thread3.start();
+            //thread3.start();
 
             Thread thread4 = new Thread(new Runnable() {
                 @Override
@@ -133,14 +146,14 @@ public class ServerHearts {
                         Socket s = ss.accept();
                         System.out.println("4");
                         listSockets.add(s);
-                        listPlayers.add((HumanPlayer)get_object_from_client(s));
-                        sendInforToAllPlayer();
+//                        listPlayers.add((HumanPlayer) get_object_from_client(s));
+//                        System.out.println("Đã có: " + listPlayers.size() + " người chơi chuẩn bị.");
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                     }
                 }
             });
-            thread4.start();
+            //thread4.start();
 
         } catch (IOException ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -148,22 +161,22 @@ public class ServerHearts {
     }
 
     static void startGame() {
-        for (int index = 0; index < listSockets.size(); index++) {
-            try {
-                InputStream is = listSockets.get(index).getInputStream();
-                ObjectInputStream ois = new ObjectInputStream(is);
-                listOis.add(ois);
-
-                OutputStream os = listSockets.get(index).getOutputStream();
-                ObjectOutputStream oos = new ObjectOutputStream(os);
-                listOos.add(oos);
-
-                HumanPlayer player = (HumanPlayer) ois.readObject();
-                listPlayers.add(index, player);
-            } catch (Exception ex) {
-                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
+//        for (int index = 0; index < listSockets.size(); index++) {
+//            try {
+//                InputStream is = listSockets.get(index).getInputStream();
+//                ObjectInputStream ois = new ObjectInputStream(is);
+//                listOis.add(ois);
+//
+//                OutputStream os = listSockets.get(index).getOutputStream();
+//                ObjectOutputStream oos = new ObjectOutputStream(os);
+//                listOos.add(oos);
+//
+//                HumanPlayer p = (HumanPlayer) get_object_from_client(listSockets.get(index));
+//                listPlayers.add(p);
+//            } catch (Exception ex) {
+//                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
+//            }
+//        }
 
         createNewAllCards();
         randomAllCards();
@@ -184,9 +197,7 @@ public class ServerHearts {
 
                         //Gui thong tin cho client
                         sendUpdateInforToAllClient();
-                        
-                        
-                        
+
                         a = (a + 1) % listPlayers.size();
                     }
                     
@@ -206,7 +217,7 @@ public class ServerHearts {
             }//run
 
         });//playing thread
-        playing_thread.start();
+        //playing_thread.start();
     }
 
     static void createNewAllCards() {
@@ -314,85 +325,66 @@ public class ServerHearts {
 
     private static void sendInforToAllPlayer() {
 //        System.out.println("send information to all client");
-        ArrayList<String> listName = new ArrayList<>();
+        List<String> listName = new ArrayList<>();
         listPlayers.forEach((hp) -> {
             listName.add(hp.getName());
         });
-        try {
-            for (int index = 0; index < listSockets.size(); index++) {
-//<<<<<<< HEAD
-//<<<<<<< HEAD
+        try {           
+         for (int index = 0; index < listSockets.size(); index++) {
                 listOos.get(index).writeObject(listPlayers.get(index));
                 listOos.get(index).flush();
                 listOos.get(index).writeObject(listName);
                 listOos.get(index).flush();
-//=======
-//=======
-//>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
-//                listOos.get(index).writeObject(listPlayers.get(index));
-//                listOos.get(index).writeObject(listName);
-//                listOos.get(index).flush();
-                    send_object_to_client(listSockets.get(index), listPlayers.get(index));
-                    send_object_to_client(listSockets.get(index), listName);
-//<<<<<<< HEAD
-//>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
-//=======
-//>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
             }
 //            System.out.println("send information to all client 23");
         } catch (Exception ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+
     //Người chơi chọn bài
     private static Card player_pick_card(int a) {
         //gui thong bao va nhan object card tu client
-        send_object_to_client(listSockets.get(a), new Card(Value.ACE,currentRound.getRoundType()));
-        
-        Card c = (Card)get_object_from_client(listSockets.get(a));
-        if(c!=null)
+        send_object_to_client(listSockets.get(a), new Card(Value.ACE, currentRound.getRoundType()));
+
+        Card c = (Card) get_object_from_client(listSockets.get(a));
+        if (c != null) {
             return c;
-        
+        }
+
         return null;
     }
+
     //Gửi thông tin update về cho tất cả người chơi
     private static void sendUpdateInforToAllClient() {
-        for(Socket s:listSockets){
+        for (Socket s : listSockets) {
             send_object_to_client(s, currentRound);
         }
     }
-    
-    
+
     //Gửi dữ liệu từ server to client   
-    private static void send_object_to_client(Socket socket, Object obj){
+    private static void send_object_to_client(Socket s, Object obj) {
         try {
-            java.io.OutputStream os = socket.getOutputStream();
+            OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
             
+            System.out.println(obj.toString());
             oos.writeObject(obj);
-            oos.flush();
-            
-            
-//            os.close();
-//            oos.close();
         } catch (IOException ex) {
-            JOptionPane.showMessageDialog(null,"Can't send object");
+            System.out.println("Can't send object");
         }
     }
+
     // lấy object từ client
     private static Object get_object_from_client(Socket s) {
         try {
             InputStream is = s.getInputStream();
-            ObjectInputStream ois = new ObjectInputStream(s.getInputStream());
-            
-            Object obj = ois.readObject();
-            
-//            ois.close();
-//            is.close();
+            ObjectInputStream ois = new ObjectInputStream(is);
+
+            Object obj = (Object) ois.readObject();
             return obj;
         } catch (Exception ex) {
-//            JOptionPane.showMessageDialog(null, "Can't read object");
-            System.out.println(ex.getMessage());
+            System.out.println("Can't read object");
         }
         return null;
     }

@@ -66,7 +66,6 @@ public class Card implements Serializable{
                 break;
         }
         
-        System.out.println(ti*3 + vi);
         return ti*13 + vi;
     }
 }
