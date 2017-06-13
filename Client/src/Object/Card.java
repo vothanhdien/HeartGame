@@ -52,20 +52,21 @@ public class Card implements Serializable{
     
     //Lay so hieu hinh
     public int getCode(){
-        Value v[] = {Value.ACE,Value.TWO,Value.THREE,Value.FOUR,Value.FIVE,Value.SIX,Value.SEVEN,
+        Value[] v = new Value[]{Value.ACE,Value.TWO,Value.THREE,Value.FOUR,Value.FIVE,Value.SIX,Value.SEVEN,
             Value.EIGHT,Value.NINE,Value.TEN,Value.JACK,Value.QUEEN,Value.KING};
         int vi = 0;
-        CardType t[] = {CardType.SPADES,CardType.CLUBS,CardType.DIAMONDS,CardType.HEARTS};
+        CardType[] t = new CardType[]{CardType.SPADES,CardType.CLUBS,CardType.DIAMONDS,CardType.HEARTS};
         int ti = 0;
-        for(vi = 0; vi< 13 ;vi++){
-            if(v[vi].equals(getType()))
+        for(vi = 0; vi < 13 ; vi++){
+            if(v[vi].equals(getValue()))
                 break;
         }
-        for(ti =0;ti < 4;ti++){
-            if(t[ti].equals(getValue()))
+        for(ti = 0;ti < 4;ti++){
+            if(t[ti].equals(getType()))
                 break;
         }
-    
-        return vi*13 + ti;
+        
+        System.out.println(ti*3 + vi);
+        return ti*13 + vi;
     }
 }

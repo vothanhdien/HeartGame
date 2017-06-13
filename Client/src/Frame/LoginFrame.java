@@ -60,7 +60,35 @@ public class LoginFrame extends JFrame{
                     JOptionPane.showMessageDialog(null, "Fill all blank");
                     return;
                 }
+                
                 try {
+<<<<<<< HEAD
+                    Socket s = new Socket(server, port);
+
+                    OutputStream os = s.getOutputStream();
+                    ObjectOutputStream oos = new ObjectOutputStream(os);
+
+                    InputStream is = s.getInputStream();
+                    ObjectInputStream ois = new ObjectInputStream(is);
+                    HumanPlayer p = new HumanPlayer(name);
+                    oos.flush();
+                    oos.writeObject(p);
+                    oos.flush();
+                    p = (HumanPlayer)ois.readObject();
+                    p.sortHand();
+                    List<String> listNickName = (List<String>)ois.readObject();
+                    int i;
+                    for(i = 0; i < listNickName.size(); i++)
+                    {
+                        if(listNickName.get(i).equals(name))
+                        {
+                            listNickName.remove(i);
+                            
+                            break;
+                        }
+                    }
+                    PlayingFrame cf = new PlayingFrame(s, p, listNickName);
+=======
                     Socket socket = new Socket(server, port);
                     System.out.println(socket.getPort());
                     //send_string_to_server(socket,name);
@@ -69,11 +97,26 @@ public class LoginFrame extends JFrame{
                     hp = (HumanPlayer)get_object_from_server(socket);
                     List<String> listNickName = (List<String>)get_object_from_server(socket);
                     PlayingFrame cf = new PlayingFrame(socket, hp, listNickName);
+>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
                     dispose();
-                    
-                } catch (IOException ex) {
-                    JOptionPane.showMessageDialog(null,"Can't connect to server");
+                } catch (Exception ex) {
+                    //Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
                 }
+                
+//                try {
+//                    Socket socket = new Socket(server, port);
+//                    System.out.println(socket.getPort());
+//                    //send_string_to_server(socket,name);
+//                    HumanPlayer hp = new HumanPlayer(name);
+//                    //send_object_to_server(socket, hp);
+//                    hp = (HumanPlayer)get_object_from_server(socket);
+//                    List<String> listNickName = (List<String>)//get_object_from_server(socket);
+//                    PlayingFrame cf = new PlayingFrame(socket, hp, listNickName);
+//                    dispose();
+//                    
+//                } catch (IOException ex) {
+//                    JOptionPane.showMessageDialog(null,"Can't connect to server");
+//                }
             }
         });
         
@@ -130,13 +173,13 @@ public class LoginFrame extends JFrame{
         try {
             java.io.OutputStream os = socket.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
-            
+            oos.flush();
             oos.writeObject(obj);
             oos.flush();
             
-//            oos.close();
+            oos.close();
         } catch (IOException ex) {
-            //JOptionPane.showMessageDialog(null,"Can't send object");
+            JOptionPane.showMessageDialog(null,"Can't send object");
         }
     }
     // lấy object từ server
@@ -147,8 +190,17 @@ public class LoginFrame extends JFrame{
             
             Object obj = ois.readObject();
             
+<<<<<<< HEAD
+<<<<<<< HEAD
+            ois.close();
+=======
 //            ois.close();
 //            is.close();
+>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
+=======
+//            ois.close();
+//            is.close();
+>>>>>>> 9ed2dd9e17939f72e685fb5b2f4e398f4c16c4a8
             return obj;
         } catch (Exception ex) {
             //JOptionPane.showMessageDialog(null, "Can't read object");
