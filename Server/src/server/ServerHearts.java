@@ -87,6 +87,7 @@ public class ServerHearts {
                     try {
                         Socket s = ss.accept();
                         System.out.println("...");
+                        
                         listSockets.add(s);
                     } catch (IOException ex) {
                         Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
@@ -319,9 +320,9 @@ public class ServerHearts {
     //Người chơi chọn bài
     private static Card player_pick_card(int a) {
         //gui thong bao va nhan object card tu client
-        send_object_to_client(listSockets.get(a), new Card(Value.ACE,CardType.CLUBS));
+        send_object_to_client(listSockets.get(a), new Card(Value.ACE,currentRound.getRoundType()));
         
-        Card c= (Card)get_object_from_client(listSockets.get(a));
+        Card c = (Card)get_object_from_client(listSockets.get(a));
         if(c!=null)
             return c;
         
