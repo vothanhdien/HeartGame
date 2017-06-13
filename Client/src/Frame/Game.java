@@ -44,7 +44,7 @@ public class Game extends JPanel implements ActionListener {
         c.gridx = 1;
         c.gridy = 2;
         pane1.add(leftPerson, c);
-        
+
         JPanel topPerson = getPanelPerson(listNickName.get(1), 0, ii);
         c.insets = new Insets(0, 200, 30, 200);
         c.gridx = 2;
@@ -58,6 +58,12 @@ public class Game extends JPanel implements ActionListener {
         c.gridy = 2;
         c.gridwidth = 1;
         pane1.add(rightPerson, c);
+        
+        JPanel me = getPanelMe(listNickName.get(3), 0);
+        c.gridx = 8;
+        c.gridy = 3;
+        c.gridwidth = 1;
+        pane1.add(me, c);
 
         ii = ImageController.getImageByName("back.png", 30, 30);
         JButton btnBack = new JButton(ii);
@@ -128,7 +134,9 @@ public class Game extends JPanel implements ActionListener {
         c.gridx = 2;
         c.gridy = 3;
         c.gridwidth = 6;
+        c.insets = new Insets(60, 0, 0, 0);
         pane1.add(allCardOfPalyer, c);
+        c.insets = new Insets(0, 0, 0, 0);;
 
         c = new GridBagConstraints();
         c.gridx = 0;
@@ -177,20 +185,37 @@ public class Game extends JPanel implements ActionListener {
     }
 
     private void createAllButtonCards(JPanel allCardOfPalyer, HumanPlayer player) {
-        Dimension d = new Dimension(25, 75);
+        int wFull = 60;
+        int h = 90;
+        Dimension d = new Dimension(wFull / 2, h);
 
         for (int i = 0; i < 12; i++) {
-            ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), 25, 75);
+            ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), wFull / 2, h);
             JButton btnCard = new JButton(ii);
             btnCard.setPreferredSize(d);
             allCardOfPalyer.add(btnCard);
             listButtonCards.add(btnCard);
         }
 
-        ImageIcon ii = ImageController.getFullImageIcon(player.getHand().get(12), 50, 75);
+        ImageIcon ii = ImageController.getFullImageIcon(player.getHand().get(12), wFull, h);
         JButton btnCard13 = new JButton(ii);
-        btnCard13.setPreferredSize(new Dimension(50, 75));
+        btnCard13.setPreferredSize(new Dimension(wFull, h));
         allCardOfPalyer.add(btnCard13);
         listButtonCards.add(btnCard13);
+    }
+
+    private JPanel getPanelMe(String name, int score) {
+        JPanel pane = new JPanel(new GridBagLayout());
+        GridBagConstraints c = new GridBagConstraints();
+        c.gridx = 2;
+        c.gridy = 0;
+        pane.add(new JLabel(String.valueOf(score)), c);
+
+
+        c.gridx = 0;
+        c.gridy = 0;
+        pane.add(new JLabel(name + " :  "), c);
+
+        return pane;
     }
 }

@@ -32,6 +32,7 @@ public class Hearts extends JPanel implements ActionListener {
     private static final int HEIGHT = 300;
     private static final int X = 200;
     private static final int Y = 50;
+    private static JButton btnNewGame;
 
     /**
      * @param args the command line arguments
@@ -62,12 +63,13 @@ public class Hearts extends JPanel implements ActionListener {
 //            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
 //        }
         createAndShowGUI();
+        btnNewGame.doClick();
     }
 
     public Hearts() {
         super(new GridBagLayout());
         GridBagConstraints c = new GridBagConstraints();
-        JButton btnNewGame = new JButton("New game");
+        btnNewGame = new JButton("New game");
         btnNewGame.addActionListener(this);
         btnNewGame.setActionCommand("New game");
 
@@ -104,7 +106,6 @@ public class Hearts extends JPanel implements ActionListener {
         c.fill = GridBagConstraints.HORIZONTAL;
         c.insets = new Insets(5, 0, 0, 0);
         add(btnHelp, c);
-
     }
 
     @Override
