@@ -68,13 +68,8 @@ public class LoginFrame extends JFrame {
 
                     HumanPlayer hp = new HumanPlayer(name);
                     SocketController.send_object_to_socket(socket, hp);
-                    
-//                    hp = (HumanPlayer) get_object_from_server(socket);
-//                    
+   
                     List<String> listNickName = new ArrayList<>();
-//                    send_object_to_server(socket, listNickName);
-//                    listNickName = (List<String>) get_object_from_server(socket);
-//                    listNickName = arrageListNickName(listNickName, name);
                     
                     State state = (State)SocketController.get_object_from_socket(socket);
                     
@@ -84,34 +79,12 @@ public class LoginFrame extends JFrame {
                     
                     
                     PlayingFrame playingFrame = new PlayingFrame(socket, hp, listNickName, state.getPlayerIndex());
+                    playingFrame.GameStart();
                     dispose();
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
             }
-            
-//            private List<String> arrageListNickName(List<String> listNickName, String name) {
-//                List<String> kq = new ArrayList<>();
-//                List<String> temp = new ArrayList<>();
-//
-//                temp.add(listNickName.get(3));
-//                temp.add(listNickName.get(0));
-//                temp.add(listNickName.get(1));
-//                temp.add(listNickName.get(2));
-//                temp.add(listNickName.get(3));
-//                temp.add(listNickName.get(0));
-//                temp.add(listNickName.get(1));
-//
-//                for (int i = 1; i < 5; i++) {
-//                    if (temp.get(i).equals(name)) {
-//                        kq.add(temp.get(i + 1));
-//                        kq.add(temp.get(i + 2));
-//                        kq.add(temp.get(i - 1));
-//                        break;
-//                    }
-//                }
-//                return kq;
-//            }
 
             private List<String> arrageListNickName(List<String> listNickName, int playerIndex) {
                List<String> kq = new ArrayList<>();
@@ -171,30 +144,4 @@ public class LoginFrame extends JFrame {
         this.setVisible(true);
 
     }
-
-//    private void send_object_to_server(Socket s, Object obj) {
-//        try {
-//            OutputStream os = s.getOutputStream();
-//            ObjectOutputStream oos = new ObjectOutputStream(os);
-//
-//            oos.writeObject(obj);
-//            oos.flush();
-//        } catch (IOException ex) {
-//            JOptionPane.showMessageDialog(null, "Can't send object");
-//        }
-//    }
-//
-//    // lấy object từ server
-//    private Object get_object_from_server(Socket s) {
-//        try {         
-//            InputStream is = s.getInputStream();
-//            ObjectInputStream ois = new ObjectInputStream(is);
-//            
-//            Object obj = ois.readObject();
-//            return obj;
-//        } catch (Exception ex) {
-//            JOptionPane.showMessageDialog(null, "Can't read object");
-//        }
-//        return null;
-//    }
 }

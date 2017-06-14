@@ -5,6 +5,7 @@
  */
 package Object;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
@@ -12,71 +13,79 @@ import java.util.ArrayList;
  * @author didim
  */
 //đối tượng quản lý 1 lượt chơi
-public class Round {
-    
+public class Round implements Serializable {
+
     private ArrayList<Card> listCard;
     private int Score;
-    
-    public Round(){
+
+    public Round() {
         Score = 0;
         listCard = new ArrayList<Card>();
-    };
+    }
+
+    ;
     
-    public void addCard(Card card){
+    public void addCard(Card card) {
         listCard.add(card);
     }
-    
+
     public ArrayList<Card> getListCard() {
         return listCard;
     }
 
     public int getScore() {
         listCard.forEach((c) -> {
-            Score +=c.getScore();
+            Score += c.getScore();
         });
         return Score;
     }
-    
-    public CardType getRoundType(){
+
+    public CardType getRoundType() {
         return listCard.get(0).getType();
     }
-    
-    public Card getCardAt(int i){
-        
+
+    public Card getCardAt(int i) {
+
         return listCard.get(i);
-        
+
     }
-    
-    public int getMaxCard(){
-        for(int i= 0; i < listCard.size(); i++){
+
+    public int getMaxCard() {
+        for (int i = 0; i < listCard.size(); i++) {
             Card c = listCard.get(i);
-            if(c.getType().equals(getRoundType()) 
-                    && c.getValue().equals(getMaxValue())){
+            if (c.getType().equals(getRoundType())
+                    && c.getValue().equals(getMaxValue())) {
                 return i;
             }
         }
         return 0;
     }
-    
-    public Value getMaxValue(){
-        Value max= listCard.get(0).getValue();
-        
-        for(Card c: listCard){
-            if(c.getType().equals(getRoundType())){
-                if(max.compareTo(c.getValue()) < 0){
+
+    public Value getMaxValue() {
+        Value max = listCard.get(0).getValue();
+
+        for (Card c : listCard) {
+            if (c.getType().equals(getRoundType())) {
+                if (max.compareTo(c.getValue()) < 0) {
                     max = c.getValue();
                 }
             }
         }
-        
+
         return max;
     }
-    
-    public boolean hasHeart(){
-        for(Card c : listCard){
-            if(c.getType().equals(CardType.HEARTS))
+
+    public boolean hasHeart() {
+        for (Card c : listCard) {
+            if (c.getType().equals(CardType.HEARTS)) {
                 return true;
+            }
         }
         return false;
+    }
+
+    public void renew() {
+        listCard.removeAll(listCard);
+        Score = 0;
     }
 }

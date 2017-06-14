@@ -3,18 +3,11 @@
     <editor-bookmarks xmlns="http://www.netbeans.org/ns/editor-bookmarks/2" lastBookmarkId="0"/>
     <open-files xmlns="http://www.netbeans.org/ns/projectui-open-files/2">
         <group>
-<<<<<<< HEAD
             <file>file:/D:/DaDa%20Wind/ĐH/Github/HeartGame/Server/src/server/Server.java</file>
             <file>file:/D:/DaDa%20Wind/ĐH/Github/HeartGame/Server/src/Frame/StartFrame.java</file>
             <file>file:/D:/DaDa%20Wind/ĐH/Github/HeartGame/Server/src/server/ServerHearts.java</file>
-=======
-            <file>file:/C:/Users/HP/Desktop/HeartGame/Server/src/Frame/StartFrame.java</file>
-            <file>file:/C:/Users/HP/Desktop/HeartGame/Server/src/server/ServerHearts.java</file>
-            <file>file:/C:/Users/HP/Desktop/HeartGame/Server/src/Object/Game.java</file>
-            <file>file:/C:/Users/HP/Desktop/HeartGame/Server/src/Object/Card.java</file>
-            <file>file:/C:/Users/HP/Desktop/HeartGame/Server/src/server/Server.java</file>
-            <file>file:/C:/Users/HP/Desktop/HeartGame/Server/src/Object/Player.java</file>
->>>>>>> 3e02564b92b8708de1f1096e469b48348996e26b
+            <file>file:/D:/DaDa%20Wind/ĐH/Github/HeartGame/Server/src/Object/SocketController.java</file>
+            <file>file:/D:/DaDa%20Wind/ĐH/Github/HeartGame/Server/src/server/ServerHearts.java.orig</file>
         </group>
     </open-files>
 </project-private>

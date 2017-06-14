@@ -10,7 +10,9 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 import java.net.Socket;
+import javafx.scene.effect.Light;
 import javax.swing.JOptionPane;
 
 /**
@@ -39,7 +41,7 @@ public class SocketController {
             Object obj = ois.readObject();
             return obj;
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Can't read object");
+            JOptionPane.showMessageDialog(null, "Can't read object at socket port: " + s.getPort());
         }
         return null;
     }

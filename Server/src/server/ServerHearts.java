@@ -162,23 +162,6 @@ public class ServerHearts {
     }
 
     static void startGame() {
-//        for (int index = 0; index < listSockets.size(); index++) {
-//            try {
-//                InputStream is = listSockets.get(index).getInputStream();
-//                ObjectInputStream ois = new ObjectInputStream(is);
-//                listOis.add(ois);
-//
-//                OutputStream os = listSockets.get(index).getOutputStream();
-//                ObjectOutputStream oos = new ObjectOutputStream(os);
-//                listOos.add(oos);
-//
-//                HumanPlayer p = (HumanPlayer) SocketController.get_object_from_socket(listSockets.get(index));
-//                listPlayers.add(p);
-//            } catch (Exception ex) {
-//                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-//        }
-
         createNewAllCards();
         randomAllCards();
         deal4AllPlayer();
@@ -388,7 +371,7 @@ public class ServerHearts {
 //            a++;
 //        }
         ArrayList<Card> listCards = new ArrayList<Card>();
-        for(int i =0 ; i< 4; i++){
+        for(int i = 0 ; i< 4; i++){
             listCards.add(null);
         }
         int a = firstPlayer;

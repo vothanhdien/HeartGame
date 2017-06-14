@@ -191,7 +191,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         this.pack();
         this.setVisible(true);
         
-        GameStart();
+        //GameStart();
     }
 
     private JPanel getPanelPerson(String name, int score, ImageIcon ii, JLabel jlScore) {
@@ -213,19 +213,21 @@ public class PlayingFrame extends JFrame implements ActionListener{
     }
     
     private void createAllButtonCards(JPanel allCardOfPalyer, HumanPlayer player) {
-        Dimension d = new Dimension(25, 75);
+        int wFull = 60;
+        int h = 90;
+        Dimension d = new Dimension(wFull / 2, h);
 
         for (int i = 0; i < 12; i++) {
-            ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), 25, 75);
+            ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), wFull / 2, h);
             JButton btnCard = new JButton(ii);
             btnCard.setPreferredSize(d);
             allCardOfPalyer.add(btnCard);
             listButtonCards.add(btnCard);
         }
 
-        ImageIcon ii = ImageController.getFullImageIcon(player.getHand().get(12), 50, 75);
+        ImageIcon ii = ImageController.getFullImageIcon(player.getHand().get(12), wFull, h);
         JButton btnCard13 = new JButton(ii);
-        btnCard13.setPreferredSize(new Dimension(50, 75));
+        btnCard13.setPreferredSize(new Dimension(wFull, h));
         allCardOfPalyer.add(btnCard13);
         listButtonCards.add(btnCard13);
     }
@@ -264,7 +266,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
     public void updatePane4Card(ArrayList<Card> listCard){
         int a = playerIndex;
         //con bai cua người chơi
-        if(listCard.get(a)!=null){
+        if(listCard.get(a)!= null){
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlBottomCard.setIcon(ii);
         }
@@ -303,15 +305,14 @@ public class PlayingFrame extends JFrame implements ActionListener{
                 
         invalidate();
         repaint();
-        
     }
 
-    private void GameStart() {
+    public void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
                 State state = (State)SocketController.get_object_from_socket(socket);
-                if(state!= null){
+                if(state != null){
                     System.out.println("da nhan");
                     updatePane4Card(state.getCurrentRound());
                 }

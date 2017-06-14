@@ -80,7 +80,5 @@ public class State implements Serializable{
 
     public void setPlayerIndex(int playerIndex) {
         this.playerIndex = playerIndex;
-    }
-    
-    
+    }    
 }
