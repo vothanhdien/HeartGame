@@ -208,8 +208,12 @@ public class ServerHearts {
 
             
         });//playing thread
-        //playing_thread.start();
-        
+        try {
+            //playing_thread.start();
+            Thread.sleep(1000);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
+        }
         currentRound.addCard(new Card(Value.ACE, CardType.CLUBS));
         currentRound.addCard(new Card(Value.ACE, CardType.DIAMONDS));
         currentRound.addCard(new Card(Value.ACE, CardType.HEARTS));
@@ -382,6 +386,7 @@ public class ServerHearts {
 //        for (Socket s : listSockets) {
 //            SocketController.send_object_to_socket(s, listCard);
 //        }
+        System.out.println("askdhvaskdbhaksdnkasd");
         for (int index = 0; index < listSockets.size(); index++) {
                 State state = new State();
                 state.setPlayerIndex(index);

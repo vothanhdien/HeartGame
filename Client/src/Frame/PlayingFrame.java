@@ -70,7 +70,8 @@ public class PlayingFrame extends JFrame implements ActionListener{
         this.socket = s;
         this.playerIndex = playerIndex;
         Container container = this.getContentPane();
-        
+//        System.out.println(player.getName());
+        this.setTitle(player.getName());
         //container.add(new Game(player, listNickName));
         
         jlTopPlayerScore = new JLabel("0");
@@ -80,12 +81,12 @@ public class PlayingFrame extends JFrame implements ActionListener{
         GridBagConstraints c = new GridBagConstraints();
         JPanel pane1 = new JPanel(new GridBagLayout());
         ImageIcon ii = ImageController.getImageByName("person.png", 100, 100);
-        JPanel leftPerson = getPanelPerson(listNickName.get(0), 0, ii, jlLeftPlayerScore);
+        JPanel leftPerson = getPanelPerson(listNickName.get(1), 0, ii, jlLeftPlayerScore);
         c.gridx = 1;
         c.gridy = 2;
         pane1.add(leftPerson, c);
         
-        JPanel topPerson = getPanelPerson(listNickName.get(1), 0, ii, jlTopPlayerScore);
+        JPanel topPerson = getPanelPerson(listNickName.get(2), 0, ii, jlTopPlayerScore);
         c.insets = new Insets(0, 200, 30, 200);
         c.gridx = 2;
         c.gridy = 1;
@@ -93,7 +94,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         pane1.add(topPerson, c);
         c.insets = new Insets(0, 0, 30, 0);
 
-        JPanel rightPerson = getPanelPerson(listNickName.get(2), 0, ii, jlRightPlayerScore);
+        JPanel rightPerson = getPanelPerson(listNickName.get(3), 0, ii, jlRightPlayerScore);
         c.gridx = 9;
         c.gridy = 2;
         c.gridwidth = 1;
@@ -187,7 +188,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
                 System.exit(0);
             }
         });
-        
+        this.setPreferredSize(new Dimension(1000,600));
         this.pack();
         this.setVisible(true);
         
@@ -284,7 +285,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         }
         a = (a + 1) % 4;
         //con bài của người bên phải người chơi
-        if(listCard.get(3)!=null){
+        if(listCard.get(a)!=null){
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlRightCard.setIcon(ii);
         }
@@ -311,9 +312,20 @@ public class PlayingFrame extends JFrame implements ActionListener{
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
                 State state = (State)SocketController.get_object_from_socket(socket);
                 if(state != null){
                     System.out.println("da nhan");
+                    for(Card c: state.getCurrentRound()){
+                        if(c!= null)
+                            System.out.println(c.getType() + "  " + c.getValue());
+                        else
+                            System.out.println("null");
+                    }
                     updatePane4Card(state.getCurrentRound());
                 }
             }
