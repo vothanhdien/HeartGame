@@ -71,7 +71,8 @@ public class PlayingFrame extends JFrame implements ActionListener{
         this.socket = s;
         this.playerIndex = playerIndex;
         Container container = this.getContentPane();
-        
+//        System.out.println(player.getName());
+        this.setTitle(player.getName());
         //container.add(new Game(player, listNickName));
         
         jlTopPlayerScore = new JLabel("0");
@@ -184,7 +185,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
                 System.exit(0);
             }
         });
-        
+        this.setPreferredSize(new Dimension(1000,600));
         this.pack();
         this.setVisible(true);
         
@@ -278,7 +279,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         }
         a = (a + 1) % 4;
         //con bài của người bên phải người chơi
-        if(listCard.get(3)!=null){
+        if(listCard.get(a)!=null){
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlRightCard.setIcon(ii);
         }
@@ -302,6 +303,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
     }
 
     public void GameStart() {
+<<<<<<< HEAD
         State state = (State)SocketController.get_object_from_socket(socket);
         if(state == null)
         {
@@ -319,5 +321,29 @@ public class PlayingFrame extends JFrame implements ActionListener{
 //            }
 //        });
 //        Listen_Thread.start();
+=======
+        Thread Listen_Thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+//                try {
+//                    Thread.sleep(1000);
+//                } catch (InterruptedException ex) {
+//                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                }
+                State state = (State)SocketController.get_object_from_socket(socket);
+                if(state != null){
+                    System.out.println("da nhan");
+                    for(Card c: state.getCurrentRound()){
+                        if(c!= null)
+                            System.out.println(c.getType() + "  " + c.getValue());
+                        else
+                            System.out.println("null");
+                    }
+                    updatePane4Card(state.getCurrentRound());
+                }
+            }
+        });
+        Listen_Thread.start();
+>>>>>>> a1276a86008badac4d680597f25c6ddc7bbfa637
     }
 }
