@@ -388,6 +388,7 @@ public class ServerHearts {
                 state.setCurrentRound(listCards);
                 state.setHasHeartsBroken(isHeartBreak);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
+                System.out.print("State " + (index + 1) + ": " + state.toString());
         }
     }
     //Gửi thông tin update điểm tới toàn bộ người hơi
@@ -403,34 +404,5 @@ public class ServerHearts {
                 state.setHasHeartsBroken(isHeartBreak);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
         }
-        
-    }
-//    //Gửi dữ liệu từ server to client   
-//    private static void SocketController.send_object_to_socket(Socket s, Object obj) {
-//        try {
-//            OutputStream os = s.getOutputStream();
-//            ObjectOutputStream oos = new ObjectOutputStream(os);
-//
-//            oos.writeObject(obj);
-//            oos.flush();
-//            System.out.println("Sent object");
-//        } catch (IOException ex) {
-//            System.out.println("Can't send object");
-//        }
-//    }
-//
-//    // lấy object từ client
-//    private static Object SocketController.get_object_from_socket(Socket s) {
-//        try {
-//            InputStream is = s.getInputStream();
-//            ObjectInputStream ois = new ObjectInputStream(is);
-//
-//            Object obj = (Object) ois.readObject();
-//            return obj;
-//        } catch (Exception ex) {
-//            System.out.println("Can't read object");
-//        }
-//        return null;
-//    }
-    
+    }    
 }

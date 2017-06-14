@@ -38,6 +38,7 @@ import java.util.*;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 
 /**
@@ -80,12 +81,12 @@ public class PlayingFrame extends JFrame implements ActionListener{
         GridBagConstraints c = new GridBagConstraints();
         JPanel pane1 = new JPanel(new GridBagLayout());
         ImageIcon ii = ImageController.getImageByName("person.png", 100, 100);
-        JPanel leftPerson = getPanelPerson(listNickName.get(0), 0, ii, jlLeftPlayerScore);
+        JPanel leftPerson = getPanelPerson(listNickName.get(1), 0, ii, jlLeftPlayerScore);
         c.gridx = 1;
         c.gridy = 2;
         pane1.add(leftPerson, c);
         
-        JPanel topPerson = getPanelPerson(listNickName.get(1), 0, ii, jlTopPlayerScore);
+        JPanel topPerson = getPanelPerson(listNickName.get(2), 0, ii, jlTopPlayerScore);
         c.insets = new Insets(0, 200, 30, 200);
         c.gridx = 2;
         c.gridy = 1;
@@ -93,7 +94,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         pane1.add(topPerson, c);
         c.insets = new Insets(0, 0, 30, 0);
 
-        JPanel rightPerson = getPanelPerson(listNickName.get(2), 0, ii, jlRightPlayerScore);
+        JPanel rightPerson = getPanelPerson(listNickName.get(3), 0, ii, jlRightPlayerScore);
         c.gridx = 9;
         c.gridy = 2;
         c.gridwidth = 1;
@@ -176,10 +177,6 @@ public class PlayingFrame extends JFrame implements ActionListener{
         c.gridwidth = 6;
         pane1.add(allCardOfPalyer, c);
 
-//        c = new GridBagConstraints();
-//        c.gridx = 0;
-//        c.gridy = 0;
-//        add(pane1, c);
         container.add(pane1);
         
         this.addWindowListener(new WindowAdapter() {
@@ -231,9 +228,6 @@ public class PlayingFrame extends JFrame implements ActionListener{
         allCardOfPalyer.add(btnCard13);
         listButtonCards.add(btnCard13);
     }
-    
-    
-    
     
     @Override
     public void actionPerformed(ActionEvent e) {
@@ -308,16 +302,22 @@ public class PlayingFrame extends JFrame implements ActionListener{
     }
 
     public void GameStart() {
-        Thread Listen_Thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                State state = (State)SocketController.get_object_from_socket(socket);
-                if(state != null){
-                    System.out.println("da nhan");
-                    updatePane4Card(state.getCurrentRound());
-                }
-            }
-        });
-        Listen_Thread.start();
+        State state = (State)SocketController.get_object_from_socket(socket);
+        if(state == null)
+        {
+            JOptionPane.showMessageDialog(null, "Can't read object at socket port: " + socket.getPort());
+            return;
+        }
+        updatePane4Card(state.getCurrentRound());
+//        Thread Listen_Thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                State state = (State)SocketController.get_object_from_socket(socket);
+//                if(state != null){
+//                    updatePane4Card(state.getCurrentRound());
+//                }
+//            }
+//        });
+//        Listen_Thread.start();
     }
 }

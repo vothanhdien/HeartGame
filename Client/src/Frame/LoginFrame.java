@@ -68,16 +68,15 @@ public class LoginFrame extends JFrame {
 
                     HumanPlayer hp = new HumanPlayer(name);
                     SocketController.send_object_to_socket(socket, hp);
-   
+
                     List<String> listNickName = new ArrayList<>();
-                    
-                    State state = (State)SocketController.get_object_from_socket(socket);
-                    
+
+                    State state = (State) SocketController.get_object_from_socket(socket);
+
                     hp = state.getPlayer();
                     listNickName = state.getNickName();
                     listNickName = arrageListNickName(listNickName, state.getPlayerIndex());
-                    
-                    
+
                     PlayingFrame playingFrame = new PlayingFrame(socket, hp, listNickName, state.getPlayerIndex());
                     playingFrame.GameStart();
                     dispose();
@@ -87,13 +86,13 @@ public class LoginFrame extends JFrame {
             }
 
             private List<String> arrageListNickName(List<String> listNickName, int playerIndex) {
-               List<String> kq = new ArrayList<>();
-               int a = playerIndex;
-               for(int i = 0; i< listNickName.size();i++){
-                   kq.add(listNickName.get(a % 4));
-                   a++;
-               }
-               return kq;
+                List<String> kq = new ArrayList<>();
+                int a = playerIndex;
+                for (int i = 0; i < listNickName.size(); i++) {
+                    kq.add(listNickName.get(a % 4));
+                    a++;
+                }
+                return kq;
             }
         });
 
@@ -142,6 +141,5 @@ public class LoginFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
-
     }
 }

@@ -41,7 +41,7 @@ public class SocketController {
             Object obj = ois.readObject();
             return obj;
         } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "Can't read object at socket port: " + s.getPort());
+            JOptionPane.showMessageDialog(null, "Can't read object");
         }
         return null;
     }
