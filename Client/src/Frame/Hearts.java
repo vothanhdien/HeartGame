@@ -28,8 +28,8 @@ public class Hearts extends JPanel implements ActionListener {
     /**
      * @param args the command line arguments
      */
-    private static final int WIDTH = 1000;
-    private static final int HEIGHT = 600;
+    private static final int WIDTH = 500;
+    private static final int HEIGHT = 300;
     private static final int X = 200;
     private static final int Y = 50;
     private static JButton btnNewGame;
