@@ -6,6 +6,7 @@
 package Frame;
 
 import Object.Card;
+import Object.CardType;
 import Object.HumanPlayer;
 import Object.ImageController;
 import Object.Round;
@@ -45,7 +46,7 @@ import javax.swing.JPanel;
  *
  * @author HP
  */
-public class PlayingFrame extends JFrame implements ActionListener{
+public class PlayingFrame extends JFrame implements ActionListener {
 
     Socket socket;
     List<Card> listCards = new ArrayList<>();
@@ -53,32 +54,32 @@ public class PlayingFrame extends JFrame implements ActionListener{
     boolean hasHeartsBroken = false;
     List<JButton> listButtonCards = new ArrayList<>();
     int playerIndex;
+    HumanPlayer player;
     //component
-    
+
     JLabel jlPlayerScore;
     JLabel jlTopPlayerScore;
     JLabel jlLeftPlayerScore;
     JLabel jlRightPlayerScore;
-    
+
     JLabel jlTopCard;
     JLabel jlRightCard;
     JLabel jlBottomCard;
     JLabel jlLeftCard;
-    
-    
-    
+
     public PlayingFrame(Socket s, HumanPlayer player, List<String> listNickName, int playerIndex) throws HeadlessException {
         this.socket = s;
         this.playerIndex = playerIndex;
+        this.player = player;
         Container container = this.getContentPane();
 //        System.out.println(player.getName());
         this.setTitle(player.getName());
         //container.add(new Game(player, listNickName));
-        
+
         jlTopPlayerScore = new JLabel("0");
         jlLeftPlayerScore = new JLabel("0");
         jlRightPlayerScore = new JLabel("0");
-        
+
         GridBagConstraints c = new GridBagConstraints();
         JPanel pane1 = new JPanel(new GridBagLayout());
         ImageIcon ii = ImageController.getImageByName("person.png", 100, 100);
@@ -86,7 +87,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         c.gridx = 1;
         c.gridy = 2;
         pane1.add(leftPerson, c);
-        
+
         JPanel topPerson = getPanelPerson(listNickName.get(2), 0, ii, jlTopPlayerScore);
         c.insets = new Insets(0, 200, 30, 200);
         c.gridx = 2;
@@ -163,32 +164,32 @@ public class PlayingFrame extends JFrame implements ActionListener{
         //So diem cua nguoi choi
         String tmp = String.format("%d", player.getScore());
         jlPlayerScore = new JLabel(tmp);
-        
+
         c.gridx = 1;
         c.gridy = 3;
         c.gridwidth = 1;
         pane1.add(jlPlayerScore, c);
-        
+
         //Cac la bai cua nguoi choi
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
         createAllButtonCards(allCardOfPalyer, player);
-        
+
         c.gridx = 2;
         c.gridy = 3;
         c.gridwidth = 6;
         pane1.add(allCardOfPalyer, c);
 
         container.add(pane1);
-        
+
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
             }
         });
-        this.setPreferredSize(new Dimension(1000,600));
+        this.setPreferredSize(new Dimension(1000, 600));
         this.pack();
         this.setVisible(true);
-        
+
         //GameStart();
     }
 
@@ -209,7 +210,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
 
         return pane;
     }
-    
+
     private void createAllButtonCards(JPanel allCardOfPalyer, HumanPlayer player) {
         int wFull = 60;
         int h = 90;
@@ -229,7 +230,7 @@ public class PlayingFrame extends JFrame implements ActionListener{
         allCardOfPalyer.add(btnCard13);
         listButtonCards.add(btnCard13);
     }
-    
+
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getActionCommand().equals("Back")) {
@@ -251,66 +252,104 @@ public class PlayingFrame extends JFrame implements ActionListener{
             return;
         }
     }
-    
-    
-    public void updateViewPlayerScore(int score){
+
+    public void updateViewPlayerScore(int score) {
         String tmp = String.format("%d", score);
         jlPlayerScore.setText(tmp);
     }
 
-    public void updatePane4Card(ArrayList<Card> listCard){
+    public void updatePane4Card(ArrayList<Card> listCard) {
         int a = playerIndex;
         //con bai cua người chơi
-        if(listCard.get(a)!= null){
+        if (listCard.get(a) != null) {
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlBottomCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người bên trái người chơi
-        if(listCard.get(a)!=null){
+        if (listCard.get(a) != null) {
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlLeftCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người đối diện người chơi
-        if(listCard.get(a)!=null){
+        if (listCard.get(a) != null) {
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlTopCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người bên phải người chơi
-        if(listCard.get(a)!=null){
+        if (listCard.get(a) != null) {
             ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
             jlRightCard.setIcon(ii);
         }
-        
+
         invalidate();
         repaint();
     }
-    
-    public void updateAllPlayerScore(ArrayList<Integer> listScores){
-        
+
+    public void updateAllPlayerScore(ArrayList<Integer> listScores) {
+
         jlPlayerScore.setText(String.valueOf(listScores.get(playerIndex)));
-        
+
         jlLeftPlayerScore.setText(String.valueOf(listScores.get((playerIndex + 1) % 4)));
-        
+
         jlTopPlayerScore.setText(String.valueOf(listScores.get((playerIndex + 2) % 4)));
-        
+
         jlRightPlayerScore.setText(String.valueOf(listScores.get((playerIndex + 3) % 4)));
-                
+
+        invalidate();
+        repaint();
+    }
+
+    public void updateStateOfPaneAllCards(List<Card> cur, int firstPlayerIndex) {
+//        if(cur == null)
+//        {
+//            if (player.hasTwoOfClubs()) {
+//            listButtonCards.forEach((t) -> {
+//                t.setEnabled(false);
+//            });
+//            listButtonCards.get(0).setEnabled(true);
+//            return;
+//        }
+        Card firstCard = cur.get(firstPlayerIndex);
+        List<Card> list = player.getHand();
+        int size = list.size();
+        if (player.hasTwoOfClubs()) {
+            JOptionPane.showConfirmDialog(null, "has 2 clubs");
+            listButtonCards.forEach((t) -> {
+                t.setEnabled(false);
+            });
+            listButtonCards.get(0).setEnabled(true);
+            return;
+        }
+        if (player.checkType(firstCard.getType())) {
+            listButtonCards.forEach((t) -> {
+                t.setEnabled(false);
+            });
+            for (int i = 0; i < size; i++) {
+                if (list.get(i).getType() == firstCard.getType()) {
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                }
+            }
+        } else {
+            if (!hasHeartsBroken) {
+                for (int i = 0; i < size; i++) {
+                    if (list.get(i).getType() != CardType.HEARTS) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
+                }
+            }
+        }
+        
         invalidate();
         repaint();
     }
 
     public void GameStart() {
-<<<<<<< HEAD
-        State state = (State)SocketController.get_object_from_socket(socket);
-        if(state == null)
-        {
-            JOptionPane.showMessageDialog(null, "Can't read object at socket port: " + socket.getPort());
-            return;
-        }
+        State state = (State) SocketController.get_object_from_socket(socket);
         updatePane4Card(state.getCurrentRound());
+        updateStateOfPaneAllCards(state.getCurrentRound(), 1);
 //        Thread Listen_Thread = new Thread(new Runnable() {
 //            @Override
 //            public void run() {
@@ -321,7 +360,6 @@ public class PlayingFrame extends JFrame implements ActionListener{
 //            }
 //        });
 //        Listen_Thread.start();
-=======
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -330,20 +368,20 @@ public class PlayingFrame extends JFrame implements ActionListener{
 //                } catch (InterruptedException ex) {
 //                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
 //                }
-                State state = (State)SocketController.get_object_from_socket(socket);
-                if(state != null){
+                State state = (State) SocketController.get_object_from_socket(socket);
+                if (state != null) {
                     System.out.println("da nhan");
-                    for(Card c: state.getCurrentRound()){
-                        if(c!= null)
+                    for (Card c : state.getCurrentRound()) {
+                        if (c != null) {
                             System.out.println(c.getType() + "  " + c.getValue());
-                        else
+                        } else {
                             System.out.println("null");
+                        }
                     }
                     updatePane4Card(state.getCurrentRound());
                 }
             }
         });
         Listen_Thread.start();
->>>>>>> a1276a86008badac4d680597f25c6ddc7bbfa637
     }
 }

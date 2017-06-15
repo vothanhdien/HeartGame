@@ -24,13 +24,10 @@ public class SocketController {
         try {
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
-
+            
             oos.writeObject(obj);
             oos.flush();
-            
-//            oos.close();
         } catch (IOException ex) {
-//            JOptionPane.showMessageDialog(null, "Can't send object");
             System.out.println(ex.getMessage());
         }
     }
@@ -47,7 +44,6 @@ public class SocketController {
 //            ois.close();
             return obj;
         } catch (Exception ex) {
-//            JOptionPane.showMessageDialog(null, "Can't read object at socket port: " + s.getPort());
             System.out.println(ex.getMessage());
         }
         return null;

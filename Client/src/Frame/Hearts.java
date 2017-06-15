@@ -5,6 +5,7 @@
  */
 package Frame;
 
+import Object.*;
 import Object.HumanPlayer;
 import java.awt.*;
 import java.awt.event.ActionEvent;
@@ -15,8 +16,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -37,31 +36,8 @@ public class Hearts extends JPanel implements ActionListener {
     /**
      * @param args the command line arguments
      */
+    
     public static void main(String[] args) {
-//        createAndShowGUI();
-//        try {
-//            Socket s = new Socket("localhost", 3200);
-//
-//            OutputStream os = s.getOutputStream();
-//            ObjectOutputStream oos = new ObjectOutputStream(os);
-//            
-//            InputStream is = s.getInputStream();
-//            ObjectInputStream ois = new ObjectInputStream(is);
-//            
-//            HumanPlayer p = new HumanPlayer("Client 1");
-//            oos.flush();
-//            
-//            oos.writeObject(p);
-//            oos.flush();
-//            
-//            HumanPlayer p1 = (HumanPlayer) ois.readObject();
-//            p1.sortHand();
-//            for (int i = 0; i < 13; i++) {
-//                System.out.println(p1.getHand().get(i).getValue() + " " + p1.getHand().get(i).getType());
-//            }
-//        } catch (Exception ex) {
-//            Logger.getLogger(Hearts.class.getName()).log(Level.SEVERE, null, ex);
-//        }
         createAndShowGUI();
         btnNewGame.doClick();
     }

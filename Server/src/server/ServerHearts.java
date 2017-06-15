@@ -210,14 +210,14 @@ public class ServerHearts {
         });//playing thread
         try {
             //playing_thread.start();
-            Thread.sleep(1000);
+            Thread.sleep(5000);
         } catch (InterruptedException ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
         currentRound.addCard(new Card(Value.ACE, CardType.CLUBS));
         currentRound.addCard(new Card(Value.ACE, CardType.DIAMONDS));
         currentRound.addCard(new Card(Value.ACE, CardType.HEARTS));
-//        currentRound.addCard(new Card(Value.ACE, CardType.SPADES));
+        currentRound.addCard(new Card(Value.ACE, CardType.SPADES));
         sendUpdateInforToAllClient(firstPlayer);
             
     }
@@ -386,14 +386,12 @@ public class ServerHearts {
 //        for (Socket s : listSockets) {
 //            SocketController.send_object_to_socket(s, listCard);
 //        }
-        System.out.println("askdhvaskdbhaksdnkasd");
         for (int index = 0; index < listSockets.size(); index++) {
                 State state = new State();
                 state.setPlayerIndex(index);
                 state.setCurrentRound(listCards);
                 state.setHasHeartsBroken(isHeartBreak);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
-                System.out.print("State " + (index + 1) + ": " + state.toString());
         }
     }
     //Gửi thông tin update điểm tới toàn bộ người hơi

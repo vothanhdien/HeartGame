@@ -78,8 +78,8 @@ public class LoginFrame extends JFrame {
                     listNickName = arrageListNickName(listNickName, state.getPlayerIndex());
 
                     PlayingFrame playingFrame = new PlayingFrame(socket, hp, listNickName, state.getPlayerIndex());
-                    playingFrame.GameStart();
                     dispose();
+                    playingFrame.GameStart();
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }
