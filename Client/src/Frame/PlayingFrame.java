@@ -12,6 +12,7 @@ import Object.ImageController;
 import Object.Round;
 import Object.SocketController;
 import Object.State;
+import Object.Value;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -315,6 +316,14 @@ public class PlayingFrame extends JFrame implements ActionListener {
         Card firstCard = cur.get(firstPlayerIndex);
         List<Card> list = player.getHand();
         int size = list.size();
+        Card c = new Card(Value.TWO, CardType.CLUBS);
+//        if(player.getHand().get(0).isEqual(c)){
+//         
+//            System.out.println(player.getHand().get(0).toString());
+//            System.out.println(player.getName());   
+//        }
+//        System.out.println(player.getHand().get(0).toString());
+//        System.out.println(player.getName());
         if (player.hasTwoOfClubs()) {
             JOptionPane.showConfirmDialog(null, "has 2 clubs");
             listButtonCards.forEach((t) -> {

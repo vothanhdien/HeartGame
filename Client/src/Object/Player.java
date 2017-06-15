@@ -50,7 +50,7 @@ public abstract class Player implements Serializable {
             return false;
         }
         Card holder = new Card(Value.TWO, CardType.CLUBS);
-        return holder.equals(hand.get(0));
+        return holder.isEqual(hand.get(0));
     }
 
     public void clearPlayer() {
