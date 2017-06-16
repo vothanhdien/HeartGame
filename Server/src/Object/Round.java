@@ -6,7 +6,7 @@
 package Object;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.*;
 
 /**
  *
@@ -15,21 +15,35 @@ import java.util.ArrayList;
 //đối tượng quản lý 1 lượt chơi
 public class Round implements Serializable {
 
-    private ArrayList<Card> listCard;
+    private List<Card> listCard;
     private int Score;
+    private int firstPlayer;
 
     public Round() {
         Score = 0;
+        firstPlayer = -1;
         listCard = new ArrayList<Card>();
     }
-
-    ;
+    
+    public void setFirstPlayer(int firstPlayer) {
+        this.firstPlayer = firstPlayer;
+    }
+    
+    public int getFirstPlayer()
+    {
+        return firstPlayer;
+    }
     
     public void addCard(Card card) {
         listCard.add(card);
     }
+    
+    public void setListCard(List<Card> listCard)
+    {
+        this.listCard = listCard;
+    }
 
-    public ArrayList<Card> getListCard() {
+    public List<Card> getListCard() {
         return listCard;
     }
 
@@ -41,19 +55,20 @@ public class Round implements Serializable {
     }
 
     public CardType getRoundType() {
-        return listCard.get(0).getType();
+        if(firstPlayer == -1)
+            return null;
+        return listCard.get(firstPlayer).getType();
     }
 
     public Card getCardAt(int i) {
 
         return listCard.get(i);
-
     }
 
     public int getMaxCard() {
         for (int i = 0; i < listCard.size(); i++) {
             Card c = listCard.get(i);
-            if (c.getType().equals(getRoundType())
+            if (c != null && c.getType().equals(getRoundType())
                     && c.getValue().equals(getMaxValue())) {
                 return i;
             }
@@ -71,7 +86,6 @@ public class Round implements Serializable {
                 }
             }
         }
-
         return max;
     }
 
@@ -85,7 +99,12 @@ public class Round implements Serializable {
     }
 
     public void renew() {
-        listCard.removeAll(listCard);
+        listCard = new ArrayList<Card>();
+        listCard.add(null);
+        listCard.add(null);
+        listCard.add(null);
+        listCard.add(null);
+        firstPlayer = -1;
         Score = 0;
     }
 }

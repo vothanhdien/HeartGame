@@ -39,8 +39,6 @@ public class SocketController {
             ObjectInputStream ois = new ObjectInputStream(is);
             
             Object obj = ois.readObject();
-            
-//            ois.close();
             return obj;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

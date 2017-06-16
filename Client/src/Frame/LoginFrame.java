@@ -20,6 +20,8 @@ import java.awt.event.WindowEvent;
 import java.io.*;
 import java.net.Socket;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -69,17 +71,18 @@ public class LoginFrame extends JFrame {
                     HumanPlayer hp = new HumanPlayer(name);
                     SocketController.send_object_to_socket(socket, hp);
 
-                    List<String> listNickName = new ArrayList<>();
-
                     State state = (State) SocketController.get_object_from_socket(socket);
 
                     hp = state.getPlayer();
-                    listNickName = state.getNickName();
-                    listNickName = arrageListNickName(listNickName, state.getPlayerIndex());
-
-                    PlayingFrame playingFrame = new PlayingFrame(socket, hp, listNickName, state.getPlayerIndex());
+                    state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
+                    Thread thread = new Thread(new Runnable() {
+                        @Override
+                        public void run() {
+                            PlayingFrame playingFrame = new PlayingFrame(socket, state);
+                        }
+                    });
+                    thread.start();
                     dispose();
-                    playingFrame.GameStart();
                 } catch (Exception ex) {
                     System.out.println(ex.getMessage());
                 }

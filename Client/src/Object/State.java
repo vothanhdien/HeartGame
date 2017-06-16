@@ -16,8 +16,8 @@ import java.util.Random;
  */
 public class State implements Serializable{
     List<String> nickName;
-    ArrayList<Card> currentRound;
-    ArrayList<Integer> playerScores;
+    Round currentRound;
+    List<Integer> playerScores;
     HumanPlayer player;
     boolean hasHeartsBroken; 	// Keep track of whether hears has broken or not
     int playerIndex;		// To help remember which player # this is
@@ -26,7 +26,7 @@ public class State implements Serializable{
         
     }
 
-    public State(List<String> nickName, ArrayList<Card> currentRound, ArrayList<Integer> playerScores, boolean hasHeartsBroken, int playerIndex) {
+    public State(List<String> nickName, Round currentRound, ArrayList<Integer> playerScores, boolean hasHeartsBroken, int playerIndex) {
         this.nickName = nickName;
         this.currentRound = currentRound;
         this.playerScores = playerScores;
@@ -50,19 +50,19 @@ public class State implements Serializable{
         this.nickName = nickName;
     }
     
-    public ArrayList<Card> getCurrentRound() {
+    public Round getCurrentRound() {
         return currentRound;
     }
 
-    public void setCurrentRound(ArrayList<Card> currentRound) {
+    public void setCurrentRound(Round currentRound) {
         this.currentRound = currentRound;
     }
 
-    public ArrayList<Integer> getPlayerScores() {
+    public List<Integer> getPlayerScores() {
         return playerScores;
     }
 
-    public void setPlayerScores(ArrayList<Integer> playerScores) {
+    public void setPlayerScores(List<Integer> playerScores) {
         this.playerScores = playerScores;
     }
 
@@ -80,5 +80,5 @@ public class State implements Serializable{
 
     public void setPlayerIndex(int playerIndex) {
         this.playerIndex = playerIndex;
-    }   
+    }    
 }

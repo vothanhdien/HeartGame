@@ -42,7 +42,7 @@ public class Card implements Serializable{
     public int getScore(){return Score;}
     
     boolean isEqual(Card card){
-        return this.type == card.type && this.value == card.value;
+        return (this.type == card.type && this.value == card.value);
     }
     public int compareTo (Card other) {
         if (type.compareTo(other.type) == 0)
@@ -73,5 +73,4 @@ public class Card implements Serializable{
     public String toString() {
         return this.getValue() + " of " + this.getType();
     }
-    
 }

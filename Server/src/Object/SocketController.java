@@ -34,14 +34,11 @@ public class SocketController {
 
     // lấy object từ server
     public static Object get_object_from_socket(Socket s) {
-        try {         
+        try {
             InputStream is = s.getInputStream();
             ObjectInputStream ois = new ObjectInputStream(is);
             
-            
             Object obj = ois.readObject();
-            
-//            ois.close();
             return obj;
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

@@ -73,5 +73,4 @@ public class Card implements Serializable{
     public String toString() {
         return this.getValue() + " of " + this.getType();
     }
-    
 }

@@ -46,8 +46,7 @@ public abstract class Player implements Serializable {
 
     //Nếu có con 2 chuồn => được đánh trước.
     public boolean hasTwoOfClubs() {
-        if (hand.isEmpty()) 
-        {
+        if (hand.isEmpty()) {
             return false;
         }
         Card holder = new Card(Value.TWO, CardType.CLUBS);
