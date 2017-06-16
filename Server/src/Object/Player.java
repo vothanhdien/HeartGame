@@ -52,7 +52,13 @@ public abstract class Player implements Serializable {
         Card holder = new Card(Value.TWO, CardType.CLUBS);
         return holder.isEqual(hand.get(0));
     }
-
+    public boolean hasAllHeart(){
+        for(Card c: hand){
+            if(c.getType() != CardType.HEARTS)
+                return false;
+        }
+        return true;
+    }
     public void clearPlayer() {
         clearHand();
         score = 0;

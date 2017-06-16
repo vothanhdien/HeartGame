@@ -175,47 +175,59 @@ public class ServerHearts {
             public void run() {
                 while (true) {
                     for (int i = 0; i < 13; i++) {
-                        int a = firstPlayer;
-                        for (int j = 0; j < 4; j++) {
-                            //Cho nguoi chon bai
-                            Card c = player_pick_card(a);
+                        try {
+                            int a = firstPlayer;
+                            // =)))))
+                            sendUpdateInforToAllClient(firstPlayer, firstPlayer);
+                            for (int j = 0; j < 4; j++) {
+                                //Cho nguoi chon bai
+                                Card c = player_pick_card(a);
+                                currentRound.setFirstPlayer(firstPlayer);
+                                currentRound.getListCard().set(a, c);
+                                //Gui thong tin cho client
+                                sendUpdateInforToAllClient(firstPlayer, (a + 1) % 4);
+                                
+                                a = (a + 1) % listPlayers.size();
+                            }
+                            //Tim nguoi choi an het bai
+                            firstPlayer = findTaker(firstPlayer);
+                            //Gan diem cho nguoi choi
+                            int score = currentRound.getScore();
+                            listPlayers.get(firstPlayer).addScore(score);
+                            if (currentRound.hasHeart()) {
+                                isHeartBreak = true;
+                            }
+                            //
+                            currentRound.renew();
                             currentRound.setFirstPlayer(firstPlayer);
-                            currentRound.getListCard().set(a, c);
-                            //Gui thong tin cho client
-                            sendUpdateInforToAllClient(firstPlayer, (a + 1) % 4);
-
-                            a = (a + 1) % listPlayers.size();
+                            
+                            sendUpdateScoreToAllClient();
+                            Thread.sleep(1000);
                         }
-                        //Tim nguoi choi an het bai
-                        firstPlayer = findTaker(firstPlayer);
-                        //Gan diem cho nguoi choi
-                        int score = currentRound.getScore();
-                        listPlayers.get(firstPlayer).addScore(score);
-                        if (currentRound.hasHeart()) {
-                            isHeartBreak = true;
+                        catch (InterruptedException ex) {
+                            Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
                         }
-                        //
-                        currentRound.renew();
-                        currentRound.setFirstPlayer(firstPlayer);
-                        sendUpdateScoreToAllClient();
+                        
                     }
                     //Kiểm tra shot the moon
-
                     //In nguoi chien thang
-                    //ArrayList<Integer> winnner = findwinner();
+                    ArrayList<Integer> winnner = findwinner();
+                    SendEndScoreToAllPlayer();
+                    
+                    
                     //gui ket qua ve toan bo nguoi choi
-                    randomAllCards();
-                    deal4AllPlayer();
-
-                    for(int i = 0; i < listPlayers.size(); i++)
-                    {
-                        SocketController.send_object_to_socket(listSockets.get(i), "New round");
-                    }
-                    //gui bai cho client
-                    sendInforToAllPlayer();
-
-                    currentRound = new Round();
-                    currentRound.renew();
+//                    randomAllCards();
+//                    deal4AllPlayer();
+//
+//                    for(int i = 0; i < listPlayers.size(); i++)
+//                    {
+//                        SocketController.send_object_to_socket(listSockets.get(i), "New round");
+//                    }
+//                    //gui bai cho client
+//                    sendInforToAllPlayer();
+//
+//                    currentRound = new Round();
+//                    currentRound.renew();
                 }
 
             }//run
@@ -368,7 +380,7 @@ public class ServerHearts {
 
     //Gửi thông tin update về cho tất cả người chơi
     private static void sendUpdateInforToAllClient(int firstPlayer, int i) {
-        int a = firstPlayer;
+//        int a = firstPlayer;
         for (int index = 0; index < listSockets.size(); index++) {
             State state = new State();
             state.setIPlayPlaying(i);
@@ -393,6 +405,24 @@ public class ServerHearts {
             state.setHasHeartsBroken(isHeartBreak);
             state.setPlayerIndex(index);
             SocketController.send_object_to_socket(listSockets.get(index), "Update score");
+            SocketController.send_object_to_socket(listSockets.get(index), state);
+        }
+    }
+    
+    
+    //gửi điển tổng kết
+    private static void SendEndScoreToAllPlayer() {
+        List<Integer> listScore = new ArrayList<>();
+        for (HumanPlayer hp : listPlayers) {
+            listScore.add(hp.getScore());
+        }
+        for (int index = 0; index < listSockets.size(); index++) {
+            State state = new State();
+            state.setCurrentRound(currentRound);
+            state.setPlayerScores(listScore);
+            state.setHasHeartsBroken(isHeartBreak);
+            state.setPlayerIndex(index);
+            SocketController.send_object_to_socket(listSockets.get(index), "Show result");
             SocketController.send_object_to_socket(listSockets.get(index), state);
         }
     }
