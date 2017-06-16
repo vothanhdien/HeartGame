@@ -51,7 +51,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     Socket socket;
     int score = 0;
-    boolean hasHeartsBroken = false;
     List<JButton> listButtonCards = new ArrayList<>();
     State state = null;
     //Lượt đánh bài
@@ -71,6 +70,11 @@ public class PlayingFrame extends JFrame implements ActionListener {
     JLabel jlRightCard;
     JLabel jlBottomCard;
     JLabel jlLeftCard;
+
+    JLabel jlTopArrow;
+    JLabel jlRightArrow;
+    JLabel jlBottomArrow;
+    JLabel jlLeftArrow;
 
     public PlayingFrame(Socket s, State state) throws HeadlessException {
         this.socket = s;
@@ -105,6 +109,31 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c.gridy = 4;
         c.gridwidth = 1;
         pane1.add(rightPerson, c);
+
+        jlTopArrow = new JLabel();
+        jlRightArrow = new JLabel();
+        jlBottomArrow = new JLabel();
+        jlLeftArrow = new JLabel();
+
+        c.gridx = 8;
+        c.gridy = 1;
+        c.gridwidth = 1;
+        pane1.add(jlTopArrow, c);
+
+        c.gridx = 10;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        pane1.add(jlRightArrow, c);
+
+        c.gridx = 9;
+        c.gridy = 7;
+        c.gridwidth = 1;
+        pane1.add(jlBottomArrow, c);
+
+        c.gridx = 0;
+        c.gridy = 4;
+        c.gridwidth = 1;
+        pane1.add(jlLeftArrow, c);
 
         ii = ImageController.getImageByName("back.png", 30, 30);
         JButton btnBack = new JButton(ii);
@@ -163,7 +192,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c.gridx = 2;
         c.gridy = 2;
         c.gridwidth = 6;
-        c.gridheight = 3;
+        c.gridheight = 4;
         pane1.add(pane4cards, c);
         c.gridheight = 1;
 
@@ -172,7 +201,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         jlPlayerScore = new JLabel(tmp);
 
         c.gridx = 1;
-        c.gridy = 6;
+        c.gridy = 7;
         c.gridwidth = 1;
         pane1.add(jlPlayerScore, c);
 
@@ -181,7 +210,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         createAllButtonCards(allCardOfPalyer, state.getPlayer());
 
         c.gridx = 2;
-        c.gridy = 6;
+        c.gridy = 7;
         c.gridwidth = 6;
         pane1.add(allCardOfPalyer, c);
 
@@ -214,6 +243,38 @@ public class PlayingFrame extends JFrame implements ActionListener {
         pane.add(new JLabel(name), c);
 
         return pane;
+    }
+
+    private void updateArrow() {
+        jlTopArrow.setVisible(false);
+        jlRightArrow.setVisible(false);
+        jlBottomArrow.setVisible(false);
+        jlLeftArrow.setVisible(false);
+        int x = 50;
+        if (isMyInnings) {
+            jlBottomArrow.setVisible(true);
+            ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
+            jlBottomArrow.setIcon(ii);
+            return;
+        }
+        int iPlayerPlaying = (state.getIPlayPlaying() - state.getPlayerIndex() + 4) % 4;
+        if (iPlayerPlaying == 0) {
+            jlBottomArrow.setVisible(true);
+            ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
+            jlBottomArrow.setIcon(ii);
+        } else if (iPlayerPlaying == 1) {
+            jlLeftArrow.setVisible(true);
+            ImageIcon ii = ImageController.getImageByName("arrowToRight.png", x, x);
+            jlLeftArrow.setIcon(ii);
+        } else if (iPlayerPlaying == 2) {
+            jlTopArrow.setVisible(true);
+            ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
+            jlTopArrow.setIcon(ii);
+        } else if (iPlayerPlaying == 3) {
+            jlRightArrow.setVisible(true);
+            ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
+            jlRightArrow.setIcon(ii);
+        }
     }
 
     private void createAllButtonCards(JPanel allCardOfPalyer, HumanPlayer player) {
@@ -266,11 +327,11 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (isMyInnings) {
             for (int i = 0; i < 13; i++) {
                 if (cm.equals("Button " + (i + 1))) {
-                    playCardAt(i);
                     isMyInnings = false;
                     listButtonCards.forEach((t) -> {
                         t.setEnabled(true);
                     });
+                    playCardAt(i);
                     break;
                 }
             }
@@ -347,42 +408,26 @@ public class PlayingFrame extends JFrame implements ActionListener {
             listButtonCards.get(0).setEnabled(true);
             return;
         }
-        if (currentRound == null) {
-            return;
-        }
         CardType firstCardType = currentRound.getRoundType();
-        System.out.println(currentRound.getFirstPlayer());
-        if (currentRound.getFirstPlayer() == -1) {
-            List<Card> list = state.getPlayer().getHand();
-            int size = list.size();
-            if (!hasHeartsBroken) {
-                for (int i = 0; i < size; i++) {
-                    if (list.get(i).getType() == CardType.HEARTS) {
-                        listButtonCards.get(13 - size + i).setEnabled(false);
-                    }
-                }
-                return;
-            }
-        }
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
-        if (state.getPlayer().checkType(firstCardType)) {
-            listButtonCards.forEach((t) -> {
-                t.setEnabled(false);
-            });
-            for (int i = 0; i < size; i++) {
-                if (list.get(i).getType() == firstCardType) {
-                    listButtonCards.get(13 - size + i).setEnabled(true);
-                }
+        int count = 0;
+        listButtonCards.forEach((t) -> {
+            t.setEnabled(false);
+        });
+        for (int i = 0; i < size; i++) {
+            if (firstCardType == null || list.get(i).getType() == firstCardType) {
+                listButtonCards.get(13 - size + i).setEnabled(true);
+                count++;
             }
-        } else {
-            if (!hasHeartsBroken) {
-                listButtonCards.forEach((t) -> {
-                    t.setEnabled(false);
-                });
-                for (int i = 0; i < size; i++) {
-                    if (list.get(i).getType() != CardType.HEARTS) {
-                        listButtonCards.get(13 - size + i).setEnabled(true);
+        }
+        if (count == 0 || count == size) {
+            for (int i = 0; i < size; i++) {
+                if (state.isHasHeartsBroken() || list.get(i).getType() != CardType.HEARTS) {
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                } else {
+                    if (!state.isHasHeartsBroken() && list.get(i).getType() == CardType.HEARTS) {
+                        listButtonCards.get(13 - size + i).setEnabled(false);
                     }
                 }
             }
@@ -399,9 +444,17 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 State temp = new State();
                 while (true) {
                     Object info = SocketController.get_object_from_socket(socket);
-                    System.out.println(info);
+                    if (info.equals("New round")) {
+                        state = (State) SocketController.get_object_from_socket(socket);
+                        updateAllButtonCards();
+                        updatePane4Card(state.getCurrentRound());
+                        updateAllPlayerScore(state.getPlayerScores());
+                        updateArrow();
+                        continue;
+                    }
                     if (info != null && info.equals("Your innings came")) {
                         updateStateOfPaneAllCards(state.getCurrentRound());
+                        updateArrow();
                     } else {
                         if (info != null) {
                             temp = (State) SocketController.get_object_from_socket(socket);
@@ -409,11 +462,16 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             if (info.equals("Update info")) {
                                 state.setCurrentRound(temp.getCurrentRound());
                                 state.setHasHeartsBroken(temp.isHasHeartsBroken());
+                                state.setIPlayPlaying(temp.getIPlayPlaying());
                                 updatePane4Card(state.getCurrentRound());
+                                updateArrow();
                             } else if (info.equals("Update score")) {
+                                state.setCurrentRound(temp.getCurrentRound());
                                 state.setPlayerScores(temp.getPlayerScores());
+                                state.setIPlayPlaying(temp.getCurrentRound().getFirstPlayer());
                                 state.setHasHeartsBroken(temp.isHasHeartsBroken());
                                 updateAllPlayerScore(state.getPlayerScores());
+                                updateArrow();
                             }
                         }
                     }
@@ -426,11 +484,12 @@ public class PlayingFrame extends JFrame implements ActionListener {
     private void playCardAt(int i) {
         int firstIndexOfListButton = 13 - state.getPlayer().getHand().size();
         Card playedCard = state.getPlayer().getHand().get(i - firstIndexOfListButton);
-        SocketController.send_object_to_socket(socket, playedCard);
         state.getPlayer().getHand().remove(playedCard);
         listButtonCards.get(firstIndexOfListButton).setVisible(false);
         updateAllButtonCards();
         jlBottomCard.setIcon(ImageController.getFullImageIcon(playedCard, wFullCard, hCard));
+        SocketController.send_object_to_socket(socket, playedCard);
+
         repaint();
         validate();
     }

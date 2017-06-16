@@ -55,7 +55,7 @@ public class Round implements Serializable {
     }
 
     public CardType getRoundType() {
-        if(firstPlayer == -1)
+        if(firstPlayer == -1 || listCard.get(firstPlayer) == null)
             return null;
         return listCard.get(firstPlayer).getType();
     }

@@ -19,6 +19,7 @@ public class State implements Serializable{
     Round currentRound;
     List<Integer> playerScores;
     HumanPlayer player;
+    int iPlayerPlaying;
     boolean hasHeartsBroken; 	// Keep track of whether hears has broken or not
     int playerIndex;		// To help remember which player # this is
 
@@ -40,6 +41,14 @@ public class State implements Serializable{
 
     public void setPlayer(HumanPlayer player) {
         this.player = player;
+    }
+    
+    public int getIPlayPlaying() {
+        return iPlayerPlaying;
+    }
+
+    public void setIPlayPlaying(int i) {
+        this.iPlayerPlaying = i;
     }
     
     public List<String> getNickName() {

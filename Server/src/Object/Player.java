@@ -6,7 +6,7 @@
 package Object;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.Collections;
 import java.util.Comparator;
 import javax.swing.JOptionPane;
@@ -18,7 +18,7 @@ import javax.swing.JOptionPane;
 public abstract class Player implements Serializable {
 
     String name;
-    ArrayList<Card> hand = new ArrayList<>();
+    List<Card> hand = new ArrayList<>();
     int score;
 
     public Player(String name) {
@@ -82,11 +82,11 @@ public abstract class Player implements Serializable {
         this.score += score;
     }
 
-    public ArrayList<Card> getHand() {
+    public List<Card> getHand() {
         return hand;
     }
 
-    public void setHand(ArrayList<Card> hand) {
+    public void setHand(List<Card> hand) {
         this.hand = hand;
     }
 }
