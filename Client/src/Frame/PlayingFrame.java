@@ -50,12 +50,17 @@ import javax.swing.JPanel;
 public class PlayingFrame extends JFrame implements ActionListener {
 
     Socket socket;
-    List<Card> listCards = new ArrayList<>();
     int score = 0;
     boolean hasHeartsBroken = false;
     List<JButton> listButtonCards = new ArrayList<>();
     int playerIndex;
     HumanPlayer player;
+    //Lượt đánh bài
+    boolean isMyInnings = false;
+    //chiều rộng bài full
+    int wFullCard = 60;
+    //chiều cao bài
+    int hCard = 90;
     //component
 
     JLabel jlPlayerScore;
@@ -213,28 +218,31 @@ public class PlayingFrame extends JFrame implements ActionListener {
     }
 
     private void createAllButtonCards(JPanel allCardOfPalyer, HumanPlayer player) {
-        int wFull = 60;
-        int h = 90;
-        Dimension d = new Dimension(wFull / 2, h);
+        Dimension d = new Dimension(wFullCard / 2, hCard);
 
         for (int i = 0; i < 12; i++) {
-            ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), wFull / 2, h);
+            ImageIcon ii = ImageController.getHalfImageIcon(player.getHand().get(i), wFullCard / 2, hCard);
             JButton btnCard = new JButton(ii);
             btnCard.setPreferredSize(d);
+            btnCard.addActionListener(this);
+            btnCard.setActionCommand("Button " + (i + 1));
             allCardOfPalyer.add(btnCard);
             listButtonCards.add(btnCard);
         }
 
-        ImageIcon ii = ImageController.getFullImageIcon(player.getHand().get(12), wFull, h);
-        JButton btnCard13 = new JButton(ii);
-        btnCard13.setPreferredSize(new Dimension(wFull, h));
-        allCardOfPalyer.add(btnCard13);
-        listButtonCards.add(btnCard13);
+        ImageIcon ii = ImageController.getFullImageIcon(player.getHand().get(12), wFullCard, hCard);
+        JButton btnCard = new JButton(ii);
+        btnCard.setPreferredSize(new Dimension(wFullCard, hCard));
+        btnCard.addActionListener(this);
+        btnCard.setActionCommand("Button 13");
+        allCardOfPalyer.add(btnCard);
+        listButtonCards.add(btnCard);
     }
 
     @Override
     public void actionPerformed(ActionEvent e) {
-        if (e.getActionCommand().equals("Back")) {
+        String cm = e.getActionCommand();
+        if (cm.equals("Back")) {
             JFrame.setDefaultLookAndFeelDecorated(true);
 
             //Create and set up the window.
@@ -252,6 +260,21 @@ public class PlayingFrame extends JFrame implements ActionListener {
             JFrame.getFrames()[JFrame.getFrames().length - 2].dispose();
             return;
         }
+        if (cm.equals("History")) {
+
+        }
+
+        if (isMyInnings) {
+            for (int i = 0; i < 13; i++) {
+                if (cm.equals("Button " + (i + 1))) {
+                    playCardAt(i);
+                    isMyInnings = false;
+                    listButtonCards.forEach((t) -> {
+                        t.setEnabled(true);
+                    });
+                }
+            }
+        }
     }
 
     public void updateViewPlayerScore(int score) {
@@ -263,25 +286,25 @@ public class PlayingFrame extends JFrame implements ActionListener {
         int a = playerIndex;
         //con bai cua người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
+            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlBottomCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người bên trái người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
+            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlLeftCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người đối diện người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
+            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlTopCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người bên phải người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), 50, 75);
+            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlRightCard.setIcon(ii);
         }
 
@@ -304,34 +327,19 @@ public class PlayingFrame extends JFrame implements ActionListener {
     }
 
     public void updateStateOfPaneAllCards(List<Card> cur, int firstPlayerIndex) {
-//        if(cur == null)
-//        {
-//            if (player.hasTwoOfClubs()) {
-//            listButtonCards.forEach((t) -> {
-//                t.setEnabled(false);
-//            });
-//            listButtonCards.get(0).setEnabled(true);
-//            return;
-//        }
-        Card firstCard = cur.get(firstPlayerIndex);
-        List<Card> list = player.getHand();
-        int size = list.size();
-        Card c = new Card(Value.TWO, CardType.CLUBS);
-//        if(player.getHand().get(0).isEqual(c)){
-//         
-//            System.out.println(player.getHand().get(0).toString());
-//            System.out.println(player.getName());   
-//        }
-//        System.out.println(player.getHand().get(0).toString());
-//        System.out.println(player.getName());
+        isMyInnings = true;
         if (player.hasTwoOfClubs()) {
-            JOptionPane.showConfirmDialog(null, "has 2 clubs");
             listButtonCards.forEach((t) -> {
                 t.setEnabled(false);
             });
             listButtonCards.get(0).setEnabled(true);
             return;
+
         }
+        Card firstCard = cur.get(firstPlayerIndex);
+        List<Card> list = player.getHand();
+        int size = list.size();
+        Card c = new Card(Value.TWO, CardType.CLUBS);
         if (player.checkType(firstCard.getType())) {
             listButtonCards.forEach((t) -> {
                 t.setEnabled(false);
@@ -350,7 +358,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 }
             }
         }
-        
+
         invalidate();
         repaint();
     }
@@ -359,24 +367,9 @@ public class PlayingFrame extends JFrame implements ActionListener {
         State state = (State) SocketController.get_object_from_socket(socket);
         updatePane4Card(state.getCurrentRound());
         updateStateOfPaneAllCards(state.getCurrentRound(), 1);
-//        Thread Listen_Thread = new Thread(new Runnable() {
-//            @Override
-//            public void run() {
-//                State state = (State)SocketController.get_object_from_socket(socket);
-//                if(state != null){
-//                    updatePane4Card(state.getCurrentRound());
-//                }
-//            }
-//        });
-//        Listen_Thread.start();
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
-//                try {
-//                    Thread.sleep(1000);
-//                } catch (InterruptedException ex) {
-//                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
-//                }
                 State state = (State) SocketController.get_object_from_socket(socket);
                 if (state != null) {
                     System.out.println("da nhan");
@@ -392,5 +385,29 @@ public class PlayingFrame extends JFrame implements ActionListener {
             }
         });
         Listen_Thread.start();
+    }
+
+    private void playCardAt(int i) {
+        int firstIndexOfListButton = 13 - player.getHand().size();
+        Card playedCard = player.getHand().get(i - firstIndexOfListButton);
+        player.getHand().remove(playedCard);
+        listButtonCards.get(firstIndexOfListButton).setVisible(false);
+        updateAllButtonCards();
+        jlBottomCard.setIcon(ImageController.getFullImageIcon(playedCard, wFullCard, hCard));
+        repaint();
+        validate();
+    }
+
+    private void updateAllButtonCards() {
+        int firstIndexOfListButton = 13 - player.getHand().size();
+        List<Card> list = player.getHand();
+        for (int i = 0; i < list.size() - 1; i++) {
+            listButtonCards.get(firstIndexOfListButton + i)
+                    .setIcon(ImageController.getHalfImageIcon(list.get(i), wFullCard / 2, hCard));
+        }
+        if (list.size() > 1) {
+            listButtonCards.get(12)
+                    .setIcon(ImageController.getFullImageIcon(list.get(list.size() - 1), wFullCard, hCard));
+        }
     }
 }

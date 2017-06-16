@@ -214,10 +214,10 @@ public class ServerHearts {
         } catch (InterruptedException ex) {
             Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
         }
-        currentRound.addCard(new Card(Value.ACE, CardType.CLUBS));
-        currentRound.addCard(new Card(Value.ACE, CardType.DIAMONDS));
-        currentRound.addCard(new Card(Value.ACE, CardType.HEARTS));
-        currentRound.addCard(new Card(Value.ACE, CardType.SPADES));
+//        currentRound.addCard(new Card(Value.ACE, CardType.CLUBS));
+//        currentRound.addCard(new Card(Value.ACE, CardType.DIAMONDS));
+//        currentRound.addCard(new Card(Value.ACE, CardType.HEARTS));
+//        currentRound.addCard(new Card(Value.ACE, CardType.SPADES));
         sendUpdateInforToAllClient(firstPlayer);
             
     }
@@ -273,7 +273,6 @@ public class ServerHearts {
             listPlayers.get(i).sortHand();
             if (listPlayers.get(i).hasTwoOfClubs()) {
                 firstPlayer = i;
-                break;
             }
         }
 
@@ -334,11 +333,6 @@ public class ServerHearts {
                 });
         try {
             for (int index = 0; index < listSockets.size(); index++) {
-//                List<String> temp = null;
-//                SocketController.send_object_to_socket(listSockets.get(index), listPlayers.get(index));
-//                temp = (List<String>)SocketController.get_object_from_socket(listSockets.get(index));
-//                temp = listName;
-//                SocketController.send_object_to_socket(listSockets.get(index), temp);
                 State state = new State();
                 state.setPlayerIndex(index);
                 state.setNickName(listName);

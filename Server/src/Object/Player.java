@@ -44,7 +44,7 @@ public abstract class Player implements Serializable {
         return hand.stream().anyMatch((c) -> (c.getType() == type));
     }
 
-    //Nếu có con 2 rô => được đánh trước.
+    //Nếu có con 2 chuồn => được đánh trước.
     public boolean hasTwoOfClubs() {
         if (hand.isEmpty()) 
         {
