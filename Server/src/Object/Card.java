@@ -68,4 +68,10 @@ public class Card implements Serializable{
         
         return ti*13 + vi;
     }
+
+    @Override
+    public String toString() {
+        return this.getValue() + " of " + this.getType();
+    }
+    
 }
