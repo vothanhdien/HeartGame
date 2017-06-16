@@ -240,6 +240,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         listButtonCards.add(btnCard);
     }
 
+    //Hàm overrid actionListener
     @Override
     public void actionPerformed(ActionEvent e) {
         String cm = e.getActionCommand();
@@ -268,7 +269,9 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (isMyInnings) {
             for (int i = 0; i < 13; i++) {
                 if (cm.equals("Button " + (i + 1))) {
-                    playCardAt(i);
+                    //Wtff
+                    Card playedCard = playCardAt(i);
+                    SocketController.send_object_to_socket(socket, playedCard);
                     isMyInnings = false;
                     listButtonCards.forEach((t) -> {
                         t.setEnabled(true);
@@ -327,6 +330,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         repaint();
     }
     //cap nhat cai ?????
+    //cur là các lá bài sắp theo thứ tự được đánh ra
     public void updateStateOfPaneAllCards(List<Card> cur, int firstPlayerIndex) {
         isMyInnings = true;
         if (player.hasTwoOfClubs()) {
@@ -399,23 +403,28 @@ public class PlayingFrame extends JFrame implements ActionListener {
                                 updatePane4Card(state.getCurrentRound());
                                 break;
                             case PICK_CARD:
+                                isMyInnings = true;
                                 System.out.println(player.getName() + " is picking card ");
                                 if(state.getCurrentRound().size() == 0)
                                     System.out.println(player.getName() + " can pick any card ");
                                 else
                                     System.out.println(player.getName() + " can pick card of" +
                                             state.getCurrentRound().get(0).getType());
-                        {
-                            try {
-                                //wtff
-//                                updateStateOfPaneAllCards(state.getCurrentRound(), playerIndex);
-                                Thread.sleep(5000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
-                            }
-                        }
-                                Card c = pickCard(state.getCurrentRound());
-                                SocketController.send_object_to_socket(socket, c);
+                        
+//                                try {
+//                                    //wtff
+//    //                                updateStateOfPaneAllCards(state.getCurrentRound(), playerIndex);
+//                                    Thread.sleep(5000);
+//                                } catch (InterruptedException ex) {
+//                                    Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+//                                }   
+                                //Set haveBrokenHeart
+                                hasHeartsBroken = state.isHasHeartsBroken();
+                                
+                                
+//                                Card c = pickCard(state.getCurrentRound());
+                                updateStateOfPaneAllCards(state.getCurrentRound(), 0);
+//                                SocketController.send_object_to_socket(socket, c);
                                 break;
                             
                         }
@@ -423,23 +432,28 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 }
                 
             }
-
+            //cho người chơi chọn card
             private Card pickCard(ArrayList<Card> currentRound) {
                 return new Card(Value.TWO, CardType.CLUBS);
             }
         });
         Listen_Thread.start();
     }
+    
     //Chơi lá bài thứ i
-    private void playCardAt(int i) {
+    private Card playCardAt(int i) {
         int firstIndexOfListButton = 13 - player.getHand().size();
         Card playedCard = player.getHand().get(i - firstIndexOfListButton);
         player.getHand().remove(playedCard);
         listButtonCards.get(firstIndexOfListButton).setVisible(false);
         updateAllButtonCards();
         jlBottomCard.setIcon(ImageController.getFullImageIcon(playedCard, wFullCard, hCard));
+        
+        //cap nhat GUI
         repaint();
         validate();
+        
+        return playedCard;
     }
     //Cập nhật các lá bài
     private void updateAllButtonCards() {
