@@ -28,7 +28,7 @@ public class SocketController {
             oos.writeObject(obj);
             oos.flush();
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+//            System.out.println(ex.getMessage());
         }
     }
 
@@ -43,7 +43,7 @@ public class SocketController {
 //            ois.close();
             return obj;
         } catch (Exception ex) {
-            System.out.println(ex.getMessage());
+//            System.out.println(ex.getMessage());
         }
         return null;
     }

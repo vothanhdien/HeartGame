@@ -7,6 +7,7 @@ package Frame;
 
 import Object.Card;
 import Object.CardType;
+import Object.Command;
 import Object.HumanPlayer;
 import Object.ImageController;
 import Object.Round;
@@ -276,12 +277,12 @@ public class PlayingFrame extends JFrame implements ActionListener {
             }
         }
     }
-
+    
     public void updateViewPlayerScore(int score) {
         String tmp = String.format("%d", score);
         jlPlayerScore.setText(tmp);
     }
-
+    //Cập nhật các lá bài trên bàn
     public void updatePane4Card(ArrayList<Card> listCard) {
         int a = playerIndex;
         //con bai cua người chơi
@@ -311,7 +312,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         invalidate();
         repaint();
     }
-
+    //Cap nhat so diem cua tat ca nguoi choi
     public void updateAllPlayerScore(ArrayList<Integer> listScores) {
 
         jlPlayerScore.setText(String.valueOf(listScores.get(playerIndex)));
@@ -325,7 +326,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         invalidate();
         repaint();
     }
-
+    //cap nhat cai ?????
     public void updateStateOfPaneAllCards(List<Card> cur, int firstPlayerIndex) {
         isMyInnings = true;
         if (player.hasTwoOfClubs()) {
@@ -362,31 +363,74 @@ public class PlayingFrame extends JFrame implements ActionListener {
         invalidate();
         repaint();
     }
-
+    // trò chơi bắt đầu
     public void GameStart() {
-        State state = (State) SocketController.get_object_from_socket(socket);
-        updatePane4Card(state.getCurrentRound());
-        updateStateOfPaneAllCards(state.getCurrentRound(), 1);
+//        State state = (State) SocketController.get_object_from_socket(socket);
+//        updatePane4Card(state.getCurrentRound());
+//        updateStateOfPaneAllCards(state.getCurrentRound(), 1);
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                State state = (State) SocketController.get_object_from_socket(socket);
-                if (state != null) {
-                    System.out.println("da nhan");
-                    for (Card c : state.getCurrentRound()) {
-                        if (c != null) {
-                            System.out.println(c.getType() + "  " + c.getValue());
-                        } else {
-                            System.out.println("null");
+                while(true){
+                    State state = (State) SocketController.get_object_from_socket(socket);
+                    
+                    //Nếu nhận được gói tin khác rỗng    
+                    if (state != null) {
+                        System.out.println("da nhan");
+//                        for (Card c : state.getCurrentRound()) {
+//                            if (c != null) {
+//                                System.out.println(c.getType() + "  " + c.getValue());
+//                            } else {
+//                                System.out.println("null");
+//                            }
+//                        }
+                        //Đọc command để xử lý
+                        switch(state.getCommand()){
+                            case INIT:
+                                System.out.println(player.getName() + " is init game ");
+                                updatePane4Card(state.getCurrentRound());
+                                break;
+                            case UPDATE_SCORE:
+                                System.out.println(player.getName() + " is updating all player score ");
+                                updateAllPlayerScore(state.getPlayerScores());
+                                break;
+                            case UPDATE_VIEW:
+                                System.out.println(player.getName() + " is updating all card ");
+                                updatePane4Card(state.getCurrentRound());
+                                break;
+                            case PICK_CARD:
+                                System.out.println(player.getName() + " is picking card ");
+                                if(state.getCurrentRound().size() == 0)
+                                    System.out.println(player.getName() + " can pick any card ");
+                                else
+                                    System.out.println(player.getName() + " can pick card of" +
+                                            state.getCurrentRound().get(0).getType());
+                        {
+                            try {
+                                //wtff
+//                                updateStateOfPaneAllCards(state.getCurrentRound(), playerIndex);
+                                Thread.sleep(5000);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                                Card c = pickCard(state.getCurrentRound());
+                                SocketController.send_object_to_socket(socket, c);
+                                break;
+                            
                         }
                     }
-                    updatePane4Card(state.getCurrentRound());
                 }
+                
+            }
+
+            private Card pickCard(ArrayList<Card> currentRound) {
+                return new Card(Value.TWO, CardType.CLUBS);
             }
         });
         Listen_Thread.start();
     }
-
+    //Chơi lá bài thứ i
     private void playCardAt(int i) {
         int firstIndexOfListButton = 13 - player.getHand().size();
         Card playedCard = player.getHand().get(i - firstIndexOfListButton);
@@ -397,7 +441,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         repaint();
         validate();
     }
-
+    //Cập nhật các lá bài
     private void updateAllButtonCards() {
         int firstIndexOfListButton = 13 - player.getHand().size();
         List<Card> list = player.getHand();
