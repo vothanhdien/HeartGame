@@ -36,10 +36,12 @@ public class LoginFrame extends JFrame {
     JTextField jtfServer;
     JTextField jtfPort;
     State state = null;
+    int number = 4;
 
-    public LoginFrame() throws HeadlessException {
+    public LoginFrame(int number) throws HeadlessException {
         this.setTitle("login to server");
 
+        this.number = number;
         Container container = this.getContentPane();
 
         container.setLayout(new GridBagLayout());
@@ -143,6 +145,7 @@ public class LoginFrame extends JFrame {
         try {
             Socket socket = new Socket(server, port);
             HumanPlayer hp = new HumanPlayer(name);
+            SocketController.send_object_to_socket(socket, number);
             SocketController.send_object_to_socket(socket, hp);
             Thread thread = new Thread(new Runnable() {
                 @Override
@@ -158,7 +161,7 @@ public class LoginFrame extends JFrame {
             });
             thread.start();
             state = (State) SocketController.get_object_from_socket(socket);
-            hp = state.getPlayer();
+            hp = (HumanPlayer)state.getPlayer();
             state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
 
             PlayingFrame playingFrame = new PlayingFrame(socket, state);

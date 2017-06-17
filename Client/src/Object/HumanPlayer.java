@@ -11,17 +11,19 @@ import java.io.Serializable;
  *
  * @author DaDa Wind
  */
-public class HumanPlayer extends Player implements Serializable{
+public class HumanPlayer extends Player implements Serializable {
 
-    public HumanPlayer (String name)
-    { 
+    public HumanPlayer(String name) {
         super(name);
     }
 
     @Override
-    public Card pickCard() {
+    public Card pickCard(Round cur, boolean isHeartsBroken) {
         throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
-    
-    
+
+    @Override
+    public boolean isHuman() {
+        return true;
+    }
 }

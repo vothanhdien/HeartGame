@@ -210,7 +210,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         //Cac la bai cua nguoi choi
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
-        createAllButtonCards(allCardOfPalyer, state.getPlayer());
+        createAllButtonCards(allCardOfPalyer, (HumanPlayer)state.getPlayer());
 
         c.gridx = 2;
         c.gridy = 7;
