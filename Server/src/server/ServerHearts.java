@@ -407,7 +407,7 @@ public class ServerHearts {
             return c;
         } else {
             try {
-                Thread.sleep(0);
+                Thread.sleep(1500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
             }
