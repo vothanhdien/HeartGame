@@ -213,21 +213,17 @@ public class ServerHearts {
                     //In nguoi chien thang
                     ArrayList<Integer> winnner = findwinner();
                     SendEndScoreToAllPlayer();
-                    
-                    
-                    //gui ket qua ve toan bo nguoi choi
-//                    randomAllCards();
-//                    deal4AllPlayer();
-//
-//                    for(int i = 0; i < listPlayers.size(); i++)
-//                    {
-//                        SocketController.send_object_to_socket(listSockets.get(i), "New round");
-//                    }
-//                    //gui bai cho client
-//                    sendInforToAllPlayer();
-//
-//                    currentRound = new Round();
-//                    currentRound.renew();
+                    currentRound = new Round();
+                    currentRound.renew();
+                    randomAllCards();
+                    deal4AllPlayer();
+                    isHeartBreak = false;
+                    for(int i = 0; i < listPlayers.size(); i++)
+                    {
+                        SocketController.send_object_to_socket(listSockets.get(i), "New round");
+                    }
+                    //gui bai cho client
+                    sendInforToAllPlayer();
                 }
 
             }//run
@@ -356,6 +352,7 @@ public class ServerHearts {
                 listScores.add(0);
                 listScores.add(0);
                 listScores.add(0);
+                state.setHasHeartsBroken(isHeartBreak);
                 state.setIPlayPlaying(firstPlayer);
                 state.setPlayerScores(listScores);
                 state.setNickName(listName);
@@ -410,7 +407,7 @@ public class ServerHearts {
     }
     
     
-    //gửi điển tổng kết
+    //gửi điểm tổng kết
     private static void SendEndScoreToAllPlayer() {
         List<Integer> listScore = new ArrayList<>();
         for (HumanPlayer hp : listPlayers) {

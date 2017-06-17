@@ -31,10 +31,12 @@ import javax.swing.*;
  * @author HP
  */
 public class LoginFrame extends JFrame {
+
     JTextField jtfName;
     JTextField jtfServer;
     JTextField jtfPort;
-    
+    State state = null;
+
     public LoginFrame() throws HeadlessException {
         this.setTitle("login to server");
 
@@ -59,8 +61,9 @@ public class LoginFrame extends JFrame {
 
             @Override
             public void keyPressed(KeyEvent e) {
-                if(e.getKeyCode() == 10)
-                login();
+                if (e.getKeyCode() == 10) {
+                    login();
+                }
             }
 
             @Override
@@ -127,7 +130,8 @@ public class LoginFrame extends JFrame {
         this.pack();
         this.setVisible(true);
     }
-    private void login(){
+
+    private void login() {
         String name = jtfName.getText();
         String server = jtfServer.getText();
         int port = Integer.parseInt(jtfPort.getText());
@@ -138,22 +142,28 @@ public class LoginFrame extends JFrame {
 
         try {
             Socket socket = new Socket(server, port);
-
             HumanPlayer hp = new HumanPlayer(name);
             SocketController.send_object_to_socket(socket, hp);
-
-            State state = (State) SocketController.get_object_from_socket(socket);
-
-            hp = state.getPlayer();
-            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-                    PlayingFrame playingFrame = new PlayingFrame(socket, state);
+                    while (true) {
+                        if (state != null) {
+                            break;
+                        } else {
+                            //Thông báo đang chờ người chơi khác
+                        }
+                    }
                 }
             });
             thread.start();
+            state = (State) SocketController.get_object_from_socket(socket);
+            hp = state.getPlayer();
+            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
+
+            PlayingFrame playingFrame = new PlayingFrame(socket, state);
             dispose();
+            playingFrame.GameStart();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }

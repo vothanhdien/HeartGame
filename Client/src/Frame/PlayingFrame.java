@@ -232,8 +232,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
         for(String str: state.getNickName()){
             result = result.concat(str + " \t\t|");
         };
-        
-        GameStart();
     }
 
     private JPanel getPanelPerson(String name, int score, ImageIcon ii, JLabel jlScore) {
@@ -458,7 +456,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         repaint();
     }
 
-    private void GameStart() {
+    public void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -493,7 +491,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                                 state.setHasHeartsBroken(temp.isHasHeartsBroken());
                                 updateAllPlayerScore(state.getPlayerScores());
                                 updateArrow();
-                                ShowResult(temp.getPlayerScores());
                             }
                             else if (info.equals("Show result")) {
                                 ShowResult(temp.getPlayerScores());
@@ -512,8 +509,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
         //Loại card ra khỏi hand
         state.getPlayer().getHand().remove(playedCard);
         listButtonCards.get(firstIndexOfListButton).setVisible(false);
-        updateAllButtonCards();
         jlBottomCard.setIcon(ImageController.getFullImageIcon(playedCard, wFullCard, hCard));
+        updateAllButtonCards();
         SocketController.send_object_to_socket(socket, playedCard);
 
         repaint();
@@ -522,12 +519,18 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     private void updateAllButtonCards() {
         int firstIndexOfListButton = 13 - state.getPlayer().getHand().size();
+        if(firstIndexOfListButton == 0)
+        {
+            listButtonCards.forEach((t) -> {
+                t.setVisible(true);
+            });
+        }
         List<Card> list = state.getPlayer().getHand();
         for (int i = 0; i < list.size() - 1; i++) {
             listButtonCards.get(firstIndexOfListButton + i)
                     .setIcon(ImageController.getHalfImageIcon(list.get(i), wFullCard / 2, hCard));
         }
-        if (list.size() > 1) {
+        if (list.size() > 0) {
             listButtonCards.get(12)
                     .setIcon(ImageController.getFullImageIcon(list.get(list.size() - 1), wFullCard, hCard));
         }
@@ -535,8 +538,10 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     
     private void ShowResult(List<Integer> playerScores) {
+        int index = state.getPlayerIndex();
         String message= String.format("\n%2d \t\t |%2d \t\t |%2d \t\t |%2d \t\t |",
-                playerScores.get(0), playerScores.get(1), playerScores.get(2), playerScores.get(3));
+                playerScores.get(index), playerScores.get(++index%4),
+                playerScores.get(++index%4), playerScores.get(++index%4));
         result = result.concat(message);
         System.out.println(result);
         JOptionPane.showConfirmDialog(null, new JTextArea(result),"Result",JOptionPane.YES_NO_OPTION);
