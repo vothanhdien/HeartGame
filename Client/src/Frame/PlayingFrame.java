@@ -233,7 +233,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         //Cac la bai cua nguoi choi
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
-        createAllButtonCards(allCardOfPalyer, state.getPlayer());
+        createAllButtonCards(allCardOfPalyer, (HumanPlayer)state.getPlayer());
 
         c.gridx = 2;
         c.gridy = 7;
@@ -251,7 +251,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
         this.pack();
         this.setVisible(true);
 
-        GameStart();
     }
 
     private JPanel getPanelPerson(String name, int score, ImageIcon ii, JLabel jlScore) {
@@ -479,7 +478,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (count == 0 || count == size) {
             for (int i = 0; i < size; i++) {
                 //Nếu chỉ còn những lá heart
-                if (state.getPlayer().hasAllHeart()) {
+                if(state.getPlayer().hasAllHeart())
+                {
                     listButtonCards.get(13 - size + i).setEnabled(true);
                     continue;
                 }
@@ -491,6 +491,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
                         listButtonCards.get(13 - size + i).setEnabled(false);
                     }
                 }
+                
+                
             }
         }
 
@@ -498,7 +500,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         repaint();
     }
 
-    private void GameStart() {
+    public void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -608,8 +610,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
         //Loại card ra khỏi hand
         state.getPlayer().getHand().remove(playedCard);
         listButtonCards.get(firstIndexOfListButton).setVisible(false);
-        updateAllButtonCards();
         jlBottomCard.setIcon(ImageController.getFullImageIcon(playedCard, wFullCard, hCard));
+        updateAllButtonCards();
         SocketController.send_object_to_socket(socket, playedCard);
 
         repaint();
@@ -636,20 +638,29 @@ public class PlayingFrame extends JFrame implements ActionListener {
     //Cập nhật hình ảnh cho toàn bộ các botton
     private void updateAllButtonCards() {
         int firstIndexOfListButton = 13 - state.getPlayer().getHand().size();
+        if(firstIndexOfListButton == 0)
+        {
+            listButtonCards.forEach((t) -> {
+                t.setVisible(true);
+            });
+        }
         List<Card> list = state.getPlayer().getHand();
         for (int i = 0; i < list.size() - 1; i++) {
             listButtonCards.get(firstIndexOfListButton + i)
                     .setIcon(ImageController.getHalfImageIcon(list.get(i), wFullCard / 2, hCard));
         }
-        if (list.size() > 1) {
+        if (list.size() > 0) {
             listButtonCards.get(12)
                     .setIcon(ImageController.getFullImageIcon(list.get(list.size() - 1), wFullCard, hCard));
         }
     }
 
+    
     private void ShowResult(List<Integer> playerScores) {
-        String message = String.format("\n\t%2d\t |\t%2d\t |\t%2d\t |\t%2d\t |",
-                playerScores.get(0), playerScores.get(1), playerScores.get(2), playerScores.get(3));
+        int index = state.getPlayerIndex();
+        String message= String.format("\n%2d \t\t |%2d \t\t |%2d \t\t |%2d \t\t |",
+                playerScores.get(index), playerScores.get(++index%4),
+                playerScores.get(++index%4), playerScores.get(++index%4));
         result = result.concat(message);
         System.out.println(result);
         JOptionPane.showConfirmDialog(null, new JTextArea(result), "Result", JOptionPane.YES_NO_OPTION);

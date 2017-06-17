@@ -73,7 +73,9 @@ public abstract class Player implements Serializable {
     }
 
     //Đánh bài:
-    abstract Card pickCard();
+    public abstract Card pickCard(Round cur, boolean isHeartsBroken);
+    
+    public abstract boolean isHuman();
 
     //----------getter, setter
     public String getName() {
