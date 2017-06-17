@@ -55,7 +55,7 @@ public class ServerHearts {
         listPlayers.add(temp);
     }
 
-    ArrayList<Integer> playerScores = new ArrayList<>();// Lưu số điểm ứng theo playerOrder
+    static ArrayList<Integer> playerScores = new ArrayList<>();// Lưu số điểm ứng theo playerOrder
 
 //    ArrayList<Card> currentRound;// 4 la bai trên bàn
     static Round currentRound; //4 lá bài trên bàn
@@ -210,8 +210,7 @@ public class ServerHearts {
                 while (true) {
                     //Bat dau doi bai
                     ExchangePlayersCard();
-                        continue;
-                    }
+
                     isSentInfo = false;
                     for (int i = 0; i < 13; i++) {
                         try {
@@ -248,6 +247,7 @@ public class ServerHearts {
 
                     }
                     //Kiểm tra shot the moon
+                    shotTheMoon();
                     //In nguoi chien thang
                     ArrayList<Integer> winnner = findwinner();
                     SendEndScoreToAllPlayer();
@@ -267,6 +267,7 @@ public class ServerHearts {
 
             
         });
+        isSentInfo = true;
         if (isSentInfo) {
             playing_thread.start();
         }
@@ -326,7 +327,7 @@ public class ServerHearts {
         }
     }
 
-    void shotTheMoon() {
+    static void shotTheMoon() {
         int index = -1;
         for (int i = 0; i < playerScores.size(); i++) {
             if (playerScores.get(i) == 26) {
@@ -407,28 +408,28 @@ public class ServerHearts {
     private static Card player_pick_card(int a) {
         if (listPlayers.get(a).isHuman()) {
             //gui thong bao va nhan object card tu client
-        State state = new State();
-        state.setCommand(Command.PICK_CARD);
-        //nó trả ra mảng có thứ tự ----> mục đích chỉ là lấy kiểu con bài đầu tiên
-        state.setCurrentRound(currentRound);
-        state.setHasHeartsBroken(isHeartBreak);
-        
-        SocketController.send_object_to_socket(listSockets.get(a), state);
-        
-        while(true){
+            State state = new State();
+            state.setCommand(Command.PICK_CARD);
+            //nó trả ra mảng có thứ tự ----> mục đích chỉ là lấy kiểu con bài đầu tiên
+            state.setCurrentRound(currentRound);
+            state.setHasHeartsBroken(isHeartsBroken);
+
+            SocketController.send_object_to_socket(listSockets.get(a), state);
+
+            
             Card c = (Card) SocketController.get_object_from_socket(listSockets.get(a));
-            if (c != null) {
+            
 //                System.out.println("player has been pick one card");
                 return c;
-        } else {
+            
+        }
+        else {
             try {
                 Thread.sleep(1500);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
             }
             return listPlayers.get(a).pickCard(currentRound, isHeartsBroken);
-        }
-            }
         }
     }
 
@@ -443,7 +444,7 @@ public class ServerHearts {
                 state.setHasHeartsBroken(isHeartsBroken);
                 state.setPlayerIndex(index);
             
-            state.setCommand(Command.UPDATE_VIEW);
+                state.setCommand(Command.UPDATE_VIEW);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
             }
         }

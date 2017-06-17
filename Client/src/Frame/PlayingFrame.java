@@ -251,6 +251,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         this.pack();
         this.setVisible(true);
 
+        GameStart();
     }
 
     private JPanel getPanelPerson(String name, int score, ImageIcon ii, JLabel jlScore) {
@@ -658,7 +659,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     
     private void ShowResult(List<Integer> playerScores) {
         int index = state.getPlayerIndex();
-        String message= String.format("\n%2d \t\t |%2d \t\t |%2d \t\t |%2d \t\t |",
+        String message= String.format("\n\t%2d \t|\t%2d \t|\t%2d \t|\t%2d \t|",
                 playerScores.get(index), playerScores.get(++index%4),
                 playerScores.get(++index%4), playerScores.get(++index%4));
         result = result.concat(message);
