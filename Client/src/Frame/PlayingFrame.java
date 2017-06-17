@@ -13,6 +13,7 @@ import Object.Round;
 import Object.SocketController;
 import Object.State;
 import Object.Value;
+import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -52,9 +53,14 @@ public class PlayingFrame extends JFrame implements ActionListener {
     Socket socket;
     int score = 0;
     List<JButton> listButtonCards = new ArrayList<>();
+    List<Integer> listCardExchange = new ArrayList<>();
     State state = null;
-    //Lượt đánh bài
+    //Lượt đánh bài của người chơi
     boolean isMyInnings = false;
+
+    //có phải là đang chọn bà để đổi
+    boolean isSwitching = false;
+
     //chiều rộng bài full
     int wFullCard = 60;
     //chiều cao bài
@@ -75,13 +81,21 @@ public class PlayingFrame extends JFrame implements ActionListener {
     JLabel jlRightArrow;
     JLabel jlBottomArrow;
     JLabel jlLeftArrow;
-    
+
+    JButton jbExchange;
     //ket qua
     String result;
 
     public PlayingFrame(Socket s, State state) throws HeadlessException {
         this.socket = s;
         this.state = state;
+        result = "";
+        for (String str : state.getNickName()) {
+            result = result.concat("\t" + str + " \t|");
+        };
+
+        state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
+
         Container container = this.getContentPane();
 //        System.out.println(player.getName());
         this.setTitle(state.getPlayer().getName());
@@ -208,6 +222,15 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c.gridwidth = 1;
         pane1.add(jlPlayerScore, c);
 
+        //nut doi bai
+        jbExchange = new JButton("exchange");
+        c.gridx = 2;
+        c.gridy = 5;
+        c.gridwidth = 1;
+        pane1.add(jbExchange, c);
+        jbExchange.setActionCommand("Button exchange");
+        jbExchange.addActionListener(this);
+
         //Cac la bai cua nguoi choi
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
         createAllButtonCards(allCardOfPalyer, state.getPlayer());
@@ -227,12 +250,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         this.setPreferredSize(new Dimension(1000, 600));
         this.pack();
         this.setVisible(true);
-        
-        result = "";
-        for(String str: state.getNickName()){
-            result = result.concat(str + " \t\t|");
-        };
-        
+
         GameStart();
     }
 
@@ -345,6 +363,31 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 }
             }
         }
+        if (isSwitching) {
+            if (cm.equals("Button exchange")) {
+                //do something
+                if (listCardExchange.size() < 3) {
+                    JOptionPane.showMessageDialog(null, "Choose at lease 3 cards");
+                } else {
+                    SocketController.send_object_to_socket(socket, listCardExchange);
+                    jbExchange.setEnabled(false);
+                    isSwitching = false;
+                    listButtonCards.forEach((t) -> {
+                        t.setEnabled(true);
+                    });
+                }
+
+            } else {
+                for (int i = 0; i < 13; i++) {
+                    if (cm.equals("Button " + (i + 1))) {
+
+                        chooseCardToExchange(i);
+
+                        break;
+                    }
+                }
+            }
+        }
     }
 
     public void updateViewPlayerScore(int score) {
@@ -414,13 +457,13 @@ public class PlayingFrame extends JFrame implements ActionListener {
         listButtonCards.forEach((t) -> {
             t.setEnabled(false);
         });
-        
+
         //có 2 rô -> đánh 2 rô
         if (state.getPlayer().hasTwoOfClubs()) {
             listButtonCards.get(0).setEnabled(true);
             return;
         }
-        
+
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
@@ -436,12 +479,11 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (count == 0 || count == size) {
             for (int i = 0; i < size; i++) {
                 //Nếu chỉ còn những lá heart
-                if(state.getPlayer().hasAllHeart())
-                {
+                if (state.getPlayer().hasAllHeart()) {
                     listButtonCards.get(13 - size + i).setEnabled(true);
                     continue;
                 }
-                
+
                 if (state.isHasHeartsBroken() || list.get(i).getType() != CardType.HEARTS) {
                     listButtonCards.get(13 - size + i).setEnabled(true);
                 } else {
@@ -449,8 +491,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                         listButtonCards.get(13 - size + i).setEnabled(false);
                     }
                 }
-                
-                
             }
         }
 
@@ -462,44 +502,100 @@ public class PlayingFrame extends JFrame implements ActionListener {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
-                State temp = new State();
+                State receive_state = new State();
                 while (true) {
-                    Object info = SocketController.get_object_from_socket(socket);
-                    if (info.equals("New round")) {
-                        state = (State) SocketController.get_object_from_socket(socket);
-                        updateAllButtonCards();
-                        updatePane4Card(state.getCurrentRound());
-                        updateAllPlayerScore(state.getPlayerScores());
-                        updateArrow();
-                        continue;
-                    }
-                    if (info != null && info.equals("Your innings came")) {
-                        updateStateOfAllPaneCards(state.getCurrentRound());
-                        updateArrow();
-                    } else {
-                        if (info != null) {
-                            temp = (State) SocketController.get_object_from_socket(socket);
+                    receive_state = (State) SocketController.get_object_from_socket(socket);
 
-                            if (info.equals("Update info")) {
-                                state.setCurrentRound(temp.getCurrentRound());
-                                state.setHasHeartsBroken(temp.isHasHeartsBroken());
-                                state.setIPlayPlaying(temp.getIPlayPlaying());
-                                updatePane4Card(state.getCurrentRound());
-                                updateArrow();
-                            } else if (info.equals("Update score")) {
-                                state.setCurrentRound(temp.getCurrentRound());
-                                state.setPlayerScores(temp.getPlayerScores());
-                                state.setIPlayPlaying(temp.getCurrentRound().getFirstPlayer());
-                                state.setHasHeartsBroken(temp.isHasHeartsBroken());
-                                updateAllPlayerScore(state.getPlayerScores());
-                                updateArrow();
-                                ShowResult(temp.getPlayerScores());
-                            }
-                            else if (info.equals("Show result")) {
-                                ShowResult(temp.getPlayerScores());
-                            }
-                        }
+                    System.out.println(state.getPlayer());
+                    System.out.println(receive_state.getCommand());
+//                    Object info = SocketController.get_object_from_socket(socket);
+                    switch (receive_state.getCommand()) {
+                        case NEW_GAME:
+                            state = receive_state;
+                            updateAllButtonCards();
+                            updatePane4Card(state.getCurrentRound());
+                            updateAllPlayerScore(state.getPlayerScores());
+                            updateArrow();
+                            break;
+                        case INIT:
+                            //do somethings
+                            state = receive_state;
+                            jbExchange.setVisible(false);
+                            updateAllButtonCards();
+                            
+//                            //cap nhat la cac la bai
+//                            listButtonCards.forEach((t) -> {
+//                                t.setEnabled(true);
+//                            });
+                            break;
+                        case SHOW_RESULT:
+                            ShowResult(receive_state.getPlayerScores());
+                            break;
+                        case EXCHANGE_CARD:
+                            //do somethings
+                            isMyInnings = false;
+                            isSwitching = true;
+                            break;
+                        case PICK_CARD:
+                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+                            updateStateOfAllPaneCards(state.getCurrentRound());
+                            updateArrow();
+                            break;
+
+                        case UPDATE_SCORE:
+//                            state.setCurrentRound(receive_state.getCurrentRound());
+                            state.setPlayerScores(receive_state.getPlayerScores());
+                            state.setIPlayPlaying(receive_state.getCurrentRound().getFirstPlayer());
+//                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+                            updateAllPlayerScore(state.getPlayerScores());
+                            updateArrow();
+                            break;
+
+                        case UPDATE_VIEW:
+                            state.setCurrentRound(receive_state.getCurrentRound());
+//                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+                            state.setIPlayPlaying(receive_state.getIPlayPlaying());
+                            updatePane4Card(state.getCurrentRound());
+                            updateArrow();
+                            break;
                     }
+//                    if (info.equals("New round")) {
+//                        state = (State) SocketController.get_object_from_socket(socket);
+//                        updateAllButtonCards();
+//                        updatePane4Card(state.getCurrentRound());
+//                        updateAllPlayerScore(state.getPlayerScores());
+//                        updateArrow();
+//                        continue;
+//                    }
+//                    if (info != null && info.equals("Your innings came")) {
+////                        updateStateOfAllPaneCards(state.getCurrentRound());
+////                        updateArrow();
+//                        isMyInnings = false;
+//                        isSwitching = true;
+//                    } else {
+//                        if (info != null) {
+//                            receive_state = (State) SocketController.get_object_from_socket(socket);
+//
+//                            if (info.equals("Update info")) {
+//                                state.setCurrentRound(receive_state.getCurrentRound());
+//                                state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+//                                state.setIPlayPlaying(receive_state.getIPlayPlaying());
+//                                updatePane4Card(state.getCurrentRound());
+//                                updateArrow();
+//                            } else if (info.equals("Update score")) {
+//                                state.setCurrentRound(receive_state.getCurrentRound());
+//                                state.setPlayerScores(receive_state.getPlayerScores());
+//                                state.setIPlayPlaying(receive_state.getCurrentRound().getFirstPlayer());
+//                                state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+//                                updateAllPlayerScore(state.getPlayerScores());
+//                                updateArrow();
+////                                ShowResult(temp.getPlayerScores());
+//                            }
+//                            else if (info.equals("Show result")) {
+//                                ShowResult(receive_state.getPlayerScores());
+//                            }
+//                        }
+//                    }
                 }
             }
         });
@@ -520,6 +616,24 @@ public class PlayingFrame extends JFrame implements ActionListener {
         validate();
     }
 
+    private void chooseCardToExchange(int index) {
+
+        listCardExchange.add(index);
+        listButtonCards.get(index).setEnabled(false);
+
+        //Trường hợp chọn lá bài thứ 4 -> xóa lá bài đầu tiên
+        if (listCardExchange.size() > 3) {
+            int i = listCardExchange.get(0);
+            listCardExchange.remove(0);
+
+            listButtonCards.get(i).setEnabled(true);
+        }
+        repaint();
+        validate();
+
+    }
+
+    //Cập nhật hình ảnh cho toàn bộ các botton
     private void updateAllButtonCards() {
         int firstIndexOfListButton = 13 - state.getPlayer().getHand().size();
         List<Card> list = state.getPlayer().getHand();
@@ -533,12 +647,22 @@ public class PlayingFrame extends JFrame implements ActionListener {
         }
     }
 
-    
     private void ShowResult(List<Integer> playerScores) {
-        String message= String.format("\n%2d \t\t |%2d \t\t |%2d \t\t |%2d \t\t |",
+        String message = String.format("\n\t%2d\t |\t%2d\t |\t%2d\t |\t%2d\t |",
                 playerScores.get(0), playerScores.get(1), playerScores.get(2), playerScores.get(3));
         result = result.concat(message);
         System.out.println(result);
-        JOptionPane.showConfirmDialog(null, new JTextArea(result),"Result",JOptionPane.YES_NO_OPTION);
+        JOptionPane.showConfirmDialog(null, new JTextArea(result), "Result", JOptionPane.YES_NO_OPTION);
     }
+
+    private List<String> arrageListNickName(List<String> listNickName, int playerIndex) {
+        List<String> kq = new ArrayList<>();
+        int a = playerIndex;
+        for (int i = 0; i < listNickName.size(); i++) {
+            kq.add(listNickName.get(a % 4));
+            a++;
+        }
+        return kq;
+    }
+
 }

@@ -17,6 +17,7 @@ import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,20 +31,28 @@ public class Client {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
+        
+        ArrayList<Integer> a = new ArrayList<>();
+        for(int i =0; i< 10; i ++){
+            a.add(i*2 + 10);
+        }
+        System.out.println(a.toString());
+        System.out.println(a.remove(2));
+        
 //        LoginFrame lg = new LoginFrame();
-        try
-        {
-            Socket s = new Socket("127.0.0.1",3200);
-            System.out.println(s.getPort());
-            OutputStream os = s.getOutputStream();
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-//            testobject to = new testobject(1,"object from client");
-            HumanPlayer to = new HumanPlayer("abd0");
-            oos.writeObject(to);
-//            oos.writeObject(new String("another object from the client"));
-            oos.close();
-            os.close();
-            s.close();
+//        try
+//        {
+//            Socket s = new Socket("127.0.0.1",3200);
+//            System.out.println(s.getPort());
+//            OutputStream os = s.getOutputStream();
+//            ObjectOutputStream oos = new ObjectOutputStream(os);
+////            testobject to = new testobject(1,"object from client");
+//            HumanPlayer to = new HumanPlayer("abd0");
+//            oos.writeObject(to);
+////            oos.writeObject(new String("another object from the client"));
+//            oos.close();
+//            os.close();
+//            s.close();
             
 //            Thread receive_thread = new Thread(new Runnable() {
 //                    @Override
@@ -121,11 +130,11 @@ public class Client {
 //
 //                bw.close();
 //                br.close();
-        }
-        catch(IOException e)
-        {
-                System.out.println(e.getMessage());
-        }
+//        }
+//        catch(IOException e)
+//        {
+//                System.out.println(e.getMessage());
+//        }
     }
     
 }

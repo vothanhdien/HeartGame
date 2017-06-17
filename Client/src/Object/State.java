@@ -15,6 +15,7 @@ import java.util.Random;
  * @author didim
  */
 public class State implements Serializable{
+    Command command;
     List<String> nickName;
     Round currentRound;
     List<Integer> playerScores;
@@ -90,4 +91,13 @@ public class State implements Serializable{
     public void setPlayerIndex(int playerIndex) {
         this.playerIndex = playerIndex;
     }    
+
+    public Command getCommand() {
+        return command;
+    }
+
+    public void setCommand(Command command) {
+        this.command = command;
+    }
+    
 }

@@ -145,7 +145,7 @@ public class LoginFrame extends JFrame {
             State state = (State) SocketController.get_object_from_socket(socket);
 
             hp = state.getPlayer();
-            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
+//            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -157,15 +157,5 @@ public class LoginFrame extends JFrame {
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
-    }
-
-    private List<String> arrageListNickName(List<String> listNickName, int playerIndex) {
-        List<String> kq = new ArrayList<>();
-        int a = playerIndex;
-        for (int i = 0; i < listNickName.size(); i++) {
-            kq.add(listNickName.get(a % 4));
-            a++;
-        }
-        return kq;
     }
 }

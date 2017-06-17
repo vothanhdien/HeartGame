@@ -30,7 +30,11 @@ public abstract class Player implements Serializable {
     public void addCard(Card newCard) {
         hand.add(newCard);
     }
-
+    public void addCard(ArrayList<Card> list){
+        for(Card c: list){
+            hand.add(c);
+        }
+    }
     public void sortHand() {
         hand.sort(new Comparator<Card>() {
             @Override
