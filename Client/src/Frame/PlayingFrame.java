@@ -26,10 +26,19 @@ import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.Action;
@@ -43,6 +52,7 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import sun.awt.image.SunWritableRaster;
 
 /**
  *
@@ -168,6 +178,14 @@ public class PlayingFrame extends JFrame implements ActionListener {
         btnHistory.setContentAreaFilled(false);
         btnHistory.setPreferredSize(new Dimension(30, 30));
 
+        ii = ImageController.getImageByName("question.png", 30, 30);
+        JButton btnHelp = new JButton(ii);
+        btnHelp.addActionListener(this);
+        btnHelp.setActionCommand("Help");
+        btnHelp.setBorderPainted(false);
+        btnHelp.setContentAreaFilled(false);
+        btnHelp.setPreferredSize(new Dimension(30, 30));
+
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
@@ -177,6 +195,11 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c.gridy = 0;
         c.gridwidth = 1;
         pane1.add(btnHistory, c);
+
+        c.gridx = 11;
+        c.gridy = 0;
+        c.gridwidth = 1;
+        pane1.add(btnHelp, c);
 
         GridBagConstraints c1 = new GridBagConstraints();
         //nơi 4 lá bài được đánh ra
@@ -348,9 +371,20 @@ public class PlayingFrame extends JFrame implements ActionListener {
             return;
         }
         if (cm.equals("History")) {
+            ShowResult(state.getPlayerScores());
+        }
+        if (cm.equals("Help")) {
+            try {
+                String text = new String(Files.readAllBytes(Paths.get("help.txt")), StandardCharsets.UTF_8);
+//                System.out.println(text);
+                JScrollPane jsp  = new JScrollPane();
+                
+                JOptionPane.showMessageDialog(null, text, "Help", 1);
+            } catch (IOException ex) {
+                Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
 
         }
-
         if (isMyInnings) {
             for (int i = 0; i < 13; i++) {
                 if (cm.equals("Button " + (i + 1))) {

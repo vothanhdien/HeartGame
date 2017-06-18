@@ -8,6 +8,7 @@ package Frame;
 import Object.HumanPlayer;
 import Object.SocketController;
 import Object.State;
+import java.awt.BorderLayout;
 import java.awt.Container;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
@@ -35,6 +36,8 @@ public class LoginFrame extends JFrame {
     JTextField jtfName;
     JTextField jtfServer;
     JTextField jtfPort;
+    JProgressBar jpbWaiting;
+    JLabel jlmsg;
     State state = null;
     int number = 4;
 
@@ -118,11 +121,31 @@ public class LoginFrame extends JFrame {
         constraint.gridwidth = 2;
         container.add(jtfPort, constraint);
 
-        constraint.gridx = 2;
+        constraint.gridx = 1;
         constraint.gridy = 3;
         constraint.gridwidth = 1;
         container.add(jbConnect, constraint);
+        
+        
+        
+        //Thong bao doi nguoi choi
+        jlmsg = new JLabel("Waiting another player");
+//        jlmsg.setVisible(false);
+        jpbWaiting = new JProgressBar();
+        jpbWaiting.setIndeterminate(true);
 
+        
+        constraint.gridx = 1;
+        constraint.gridy = 4;
+        constraint.gridwidth = 1;
+        container.add(jlmsg, constraint);
+        
+        constraint.gridx = 1;
+        constraint.gridy = 5;
+        constraint.gridwidth = 1;
+        container.add(jpbWaiting, constraint);
+        
+        
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
                 System.exit(0);
@@ -131,6 +154,8 @@ public class LoginFrame extends JFrame {
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
+        jpbWaiting.setVisible(false);
+        jlmsg.setVisible(false);
     }
 
     private void login() {
@@ -141,33 +166,67 @@ public class LoginFrame extends JFrame {
             JOptionPane.showMessageDialog(null, "Fill all blank");
             return;
         }
-
         try {
+            
+            Thread thread = new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    JOptionPane.showMessageDialog(null, "Waiting another player","Waiting another player",1);
+//                    jlmsg.setVisible(true);
+//                    jpbWaiting.setVisible(true);
+//                    invalidate();
+//                    repaint();
+                }
+            });
+            thread.start();
+            
+            
+
             Socket socket = new Socket(server, port);
             HumanPlayer hp = new HumanPlayer(name);
             SocketController.send_object_to_socket(socket, number);
             SocketController.send_object_to_socket(socket, hp);
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    while (true) {
-                        if (state != null) {
-                            break;
-                        } else {
-                            //Thông báo đang chờ người chơi khác
-                        }
-                    }
-                }
-            });
-            thread.start();
+//            Thread thread = new Thread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    while (true) {
+//                        if (state != null) {
+//                            break;
+//                        } else {
+//                            jlmsg.setVisible(true);
+//                            jpbWaiting.setVisible(true);
+//                        }
+//                    }
+//                }
+//            });
+//            thread.start();
             state = (State) SocketController.get_object_from_socket(socket);
             hp = (HumanPlayer)state.getPlayer();
 //            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
-
+            
             PlayingFrame playingFrame = new PlayingFrame(socket, state);
             dispose();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
         }
     }
+
+//    private void ShowProgressDialog() {
+//
+//        final JDialog dlg = new JDialog(new JFrame(), "Waiting another palyer", true);
+//        JProgressBar dpb = new JProgressBar(0);
+//        dlg.add(BorderLayout.CENTER, dpb);
+//        dlg.add(BorderLayout.NORTH, new JLabel("Progress..."));
+////        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+//        dlg.setSize(300, 75);
+//        dpb.setIndeterminate(true);
+//
+//        Thread t = new Thread(new Runnable() {
+//            public void run() {
+//                dlg.setVisible(true);
+//            }
+//        });
+//        t.start();
+//    }
+
 }

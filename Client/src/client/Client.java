@@ -1,140 +1,53 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package client;
 
-import Frame.LoginFrame;
-import Object.HumanPlayer;
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.DataInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.ObjectOutputStream;
-import java.io.OutputStream;
-import java.io.OutputStreamWriter;
-import java.net.Socket;
-import java.util.ArrayList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.awt.BorderLayout;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JProgressBar;
 
-/**
- *
- * @author didim
- */
 public class Client {
+  public static void main(String[] args) {
+    JFrame parentFrame = new JFrame();
+    parentFrame.setSize(500, 150);
+    JLabel jl = new JLabel();
+    jl.setText("Count : 0");
 
-    /**
-     * @param args the command line arguments
-     */
-    public static void main(String[] args) {
+    parentFrame.add(BorderLayout.CENTER, jl);
+    parentFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+    parentFrame.setVisible(true);
+
+    final JDialog dlg = new JDialog(parentFrame, "Progress Dialog", true);
+    JProgressBar dpb = new JProgressBar(0);
+    dlg.add(BorderLayout.CENTER, dpb);
+    dlg.add(BorderLayout.NORTH, new JLabel("Progress..."));
+//    dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+    dlg.setSize(300, 75);
+    dlg.setLocationRelativeTo(parentFrame);
+    dpb.setIndeterminate(true);
+
+    Thread t = new Thread(new Runnable() {
+      public void run() {
+        dlg.setVisible(true);
+      }
+    });
+    t.start();
+    for (int i = 0; i <= 500; i++) {
+      jl.setText("Count : " + i);
+      dpb.setValue(i);
+      if(dpb.getValue() == 500){
+        dlg.setVisible(false);
+        dpb.setIndeterminate(false);
+        dlg.dispose();
         
-        ArrayList<Integer> a = new ArrayList<>();
-        for(int i =0; i< 10; i ++){
-            a.add(i*2 + 10);
-        }
-        System.out.println(a.toString());
-        System.out.println(a.remove(2));
-        
-//        LoginFrame lg = new LoginFrame();
-//        try
-//        {
-//            Socket s = new Socket("127.0.0.1",3200);
-//            System.out.println(s.getPort());
-//            OutputStream os = s.getOutputStream();
-//            ObjectOutputStream oos = new ObjectOutputStream(os);
-////            testobject to = new testobject(1,"object from client");
-//            HumanPlayer to = new HumanPlayer("abd0");
-//            oos.writeObject(to);
-////            oos.writeObject(new String("another object from the client"));
-//            oos.close();
-//            os.close();
-//            s.close();
-            
-//            Thread receive_thread = new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {
-//                        InputStream is;
-//                        try {
-//                            is = s.getInputStream();
-//                            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//                            while(true){
-//                                
-//                                    System.out.println("server: " + br.readLine());
-//                            }
-//                        } catch (IOException ex) {
-//                            Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
-//                        }
-//                        
-//                    }
-//                });
-//                receive_thread.start();
-//                
-//                OutputStream os = s.getOutputStream();
-//                BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-//                
-//                Thread sent_thead = new Thread(new Runnable() {
-//                    @Override
-//                    public void run() {                        
-//                        DataInputStream din =new DataInputStream(System.in);
-//                        BufferedReader reader = new BufferedReader(new InputStreamReader(din));
-//                        while(true){
-//                           
-//                            try {
-////                                if(!reader.readLine().isEmpty()){
-//                                    String k = reader.readLine();
-//                                    bw.write(k);
-//                                    bw.newLine();
-//                                    bw.flush();
-////                                };
-//                            } catch (IOException ex) {
-//                                Logger.getLogger(Socket.class.getName()).log(Level.SEVERE, null, ex);
-//                            }
-//                         
-//                        }
-//                    }
-//                });
-//                sent_thead.start();
-//            InputStream is = s.getInputStream();
-//            BufferedReader br = new BufferedReader(new InputStreamReader(is));
-//
-//            OutputStream os = s.getOutputStream();
-//            BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(os));
-//
-//            String sentMessage="";
-//            String receivedMessage;
-//
-//            System.out.println("Talking to Server");
-//
-//            do
-//            {
-//                DataInputStream din = new DataInputStream(System.in);
-//                sentMessage=din.readLine();
-//                bw.write(sentMessage);
-//                bw.newLine();
-//                bw.flush();
-//
-//                if (sentMessage.equalsIgnoreCase("quit"))
-//                        break;
-//                else
-//                {
-//                        receivedMessage=br.readLine();
-//                        System.out.println("Received : " + receivedMessage);					
-//                }
-//
-//            }
-//            while(true);
-//
-//                bw.close();
-//                br.close();
-//        }
-//        catch(IOException e)
-//        {
-//                System.out.println(e.getMessage());
-//        }
+      }
+      try {
+        Thread.sleep(10);
+      } catch (InterruptedException e) {
+        e.printStackTrace();
+      }
     }
-    
+    dlg.setVisible(true);
+  }
 }
