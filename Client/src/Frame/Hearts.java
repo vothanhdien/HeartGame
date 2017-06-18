@@ -55,6 +55,7 @@ public class Hearts extends JPanel implements ActionListener {
 
         c.gridx = 0;
         c.gridy = 0;
+        c.fill = GridBagConstraints.HORIZONTAL;
         add(btnPlayVsHuman, c);
 
         JButton btnPlayVsAI = new JButton(PLAY_WITH_AIPLAYER);
@@ -99,16 +100,20 @@ public class Hearts extends JPanel implements ActionListener {
         frame.setLocation(X, Y);
         //JComponent comp = null;
         if (e.getActionCommand().equals(PLAY_WITH_HUMAN)) {
-            LoginFrame lg = new LoginFrame(4);
-        } else if (e.getActionCommand().equals(PLAY_WITH_AIPLAYER)) {
-            String temp = JOptionPane.showInputDialog(this, "Number of players", "Input",
+             String temp = JOptionPane.showInputDialog(this, "Number of players", "Input",
                     JOptionPane.QUESTION_MESSAGE);
             int numberOfPlayer = 0;
             numberOfPlayer = Integer.valueOf(temp);
             
-            if (numberOfPlayer > 0 && numberOfPlayer < 4) {
+            if (numberOfPlayer > 1 && numberOfPlayer <= 4) {
                 new LoginFrame(numberOfPlayer);
             }
+            else
+            {
+                createAndShowGUI();
+            }
+        } else if (e.getActionCommand().equals(PLAY_WITH_AIPLAYER)) {
+            LoginFrame lg = new LoginFrame(1);
 
         } else if (e.getActionCommand().equals(STATICTIS)) {
 

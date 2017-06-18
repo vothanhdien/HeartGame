@@ -5,14 +5,7 @@
  */
 package Frame;
 
-import Object.Card;
-import Object.CardType;
-import Object.HumanPlayer;
-import Object.ImageController;
-import Object.Round;
-import Object.SocketController;
-import Object.State;
-import Object.Value;
+import Object.*;
 import java.awt.Color;
 import java.awt.Container;
 import java.awt.Dimension;
@@ -106,25 +99,28 @@ public class PlayingFrame extends JFrame implements ActionListener {
         jlRightPlayerScore = new JLabel("0");
 
         GridBagConstraints c = new GridBagConstraints();
+        c.insets = new Insets(5, 5, 5, 5);
         JPanel pane1 = new JPanel(new GridBagLayout());
         ImageIcon ii = ImageController.getImageByName("person.png", 100, 100);
         JPanel leftPerson = getPanelPerson(state.getNickName().get(1), 0, ii, jlLeftPlayerScore);
         c.gridx = 1;
         c.gridy = 4;
+        c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(leftPerson, c);
 
         JPanel topPerson = getPanelPerson(state.getNickName().get(2), 0, ii, jlTopPlayerScore);
-        c.insets = new Insets(0, 200, 30, 200);
-        c.gridx = 2;
+        c.gridx = 3;
         c.gridy = 1;
-        c.gridwidth = 6;
+        c.gridwidth = 3;
+        c.gridheight = 1;
         pane1.add(topPerson, c);
-        c.insets = new Insets(0, 0, 30, 0);
 
         JPanel rightPerson = getPanelPerson(state.getNickName().get(3), 0, ii, jlRightPlayerScore);
-        c.gridx = 9;
+        c.gridx = 7;
         c.gridy = 4;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(rightPerson, c);
 
         jlTopArrow = new JLabel();
@@ -132,19 +128,22 @@ public class PlayingFrame extends JFrame implements ActionListener {
         jlBottomArrow = new JLabel();
         jlLeftArrow = new JLabel();
 
-        c.gridx = 8;
+        c.gridx = 3;
         c.gridy = 1;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(jlTopArrow, c);
 
-        c.gridx = 10;
+        c.gridx = 8;
         c.gridy = 4;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(jlRightArrow, c);
 
-        c.gridx = 9;
+        c.gridx = 8;
         c.gridy = 7;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(jlBottomArrow, c);
 
         c.gridx = 0;
@@ -171,62 +170,66 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c.gridx = 0;
         c.gridy = 0;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(btnBack, c);
 
-        c.gridx = 10;
+        c.gridx = 8;
         c.gridy = 0;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(btnHistory, c);
 
         GridBagConstraints c1 = new GridBagConstraints();
         //nơi 4 lá bài được đánh ra
         JPanel pane4cards = new JPanel(new GridBagLayout());
 
-        jlLeftCard = new JLabel();
-        jlTopCard = new JLabel();
-        jlRightCard = new JLabel();
-        jlBottomCard = new JLabel();
+        ii = ImageController.getImageByName("53.png", wFullCard, hCard);
+        jlLeftCard = new JLabel(ii);
+        jlTopCard = new JLabel(ii);
+        jlRightCard = new JLabel(ii);
+        jlBottomCard = new JLabel(ii);
         c1.gridx = 0;
         c1.gridy = 1;
+        c.gridwidth = 1;
         c1.gridheight = 2;
         pane4cards.add(jlLeftCard, c1);
 
         c1.gridx = 1;
         c1.gridy = 0;
-        c1.gridheight = 2;
         pane4cards.add(jlTopCard, c1);
 
         c1.gridx = 2;
         c1.gridy = 1;
-        c1.gridheight = 2;
         pane4cards.add(jlRightCard, c1);
 
         c1.gridx = 1;
         c1.gridy = 2;
-        c1.gridheight = 2;
         pane4cards.add(jlBottomCard, c1);
 
-        c.gridx = 2;
-        c.gridy = 2;
-        c.gridwidth = 6;
-        c.gridheight = 4;
+        c.gridx = 3;
+        c.gridy = 3;
+        c.gridwidth = 3;
+        c.gridheight = 3;
+        c.insets = new Insets(20, 100, 20, 100);
         pane1.add(pane4cards, c);
-        c.gridheight = 1;
+        c.insets = new Insets(5, 5, 5, 5);
 
         //So diem cua nguoi choi
         String tmp = String.format("%d", state.getPlayer().getScore());
         jlPlayerScore = new JLabel(tmp);
 
-        c.gridx = 1;
+        c.gridx = 0;
         c.gridy = 7;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(jlPlayerScore, c);
 
         //nut doi bai
         jbExchange = new JButton("exchange");
         c.gridx = 2;
-        c.gridy = 5;
+        c.gridy = 6;
         c.gridwidth = 1;
+        c.gridheight = 1;
         pane1.add(jbExchange, c);
         jbExchange.setActionCommand("Button exchange");
         jbExchange.addActionListener(this);
@@ -235,9 +238,10 @@ public class PlayingFrame extends JFrame implements ActionListener {
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
         createAllButtonCards(allCardOfPalyer, (HumanPlayer) state.getPlayer());
 
-        c.gridx = 2;
+        c.gridx = 1;
         c.gridy = 7;
-        c.gridwidth = 6;
+        c.gridwidth = 7;
+        c.gridheight = 1;
         pane1.add(allCardOfPalyer, c);
 
         container.add(pane1);
@@ -295,7 +299,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
             jlLeftArrow.setIcon(ii);
         } else if (iPlayerPlaying == 2) {
             jlTopArrow.setVisible(true);
-            ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
+            ImageIcon ii = ImageController.getImageByName("arrowToRight.png", x, x);
             jlTopArrow.setIcon(ii);
         } else if (iPlayerPlaying == 3) {
             jlRightArrow.setVisible(true);
@@ -399,37 +403,34 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (currentRound == null) {
             return;
         }
-        jlLeftCard.setVisible(false);
-        jlTopCard.setVisible(false);
-        jlRightCard.setVisible(false);
-        jlBottomCard.setVisible(false);
+        ImageIcon ii = ImageController.getImageByName("53.png", wFullCard, hCard);
+        jlLeftCard.setIcon(ii);
+        jlTopCard.setIcon(ii);
+        jlRightCard.setIcon(ii);
+        jlBottomCard.setIcon(ii);
         int a = state.getPlayerIndex();
         List<Card> listCard = currentRound.getListCard();
         //con bai cua người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
-            jlBottomCard.setVisible(true);
+            ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlBottomCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người bên trái người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
-            jlLeftCard.setVisible(true);
+            ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlLeftCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người đối diện người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
-            jlTopCard.setVisible(true);
+            ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlTopCard.setIcon(ii);
         }
         a = (a + 1) % 4;
         //con bài của người bên phải người chơi
         if (listCard.get(a) != null) {
-            ImageIcon ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
-            jlRightCard.setVisible(true);
+            ii = ImageController.getFullImageIcon(listCard.get(a), wFullCard, hCard);
             jlRightCard.setIcon(ii);
         }
 

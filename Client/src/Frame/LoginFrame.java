@@ -150,11 +150,12 @@ public class LoginFrame extends JFrame {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
+                    LoginFrame temp = null;
                     while (true) {
                         if (state != null) {
                             break;
                         } else {
-                            //Thông báo đang chờ người chơi khác
+                            
                         }
                     }
                 }
@@ -162,7 +163,6 @@ public class LoginFrame extends JFrame {
             thread.start();
             state = (State) SocketController.get_object_from_socket(socket);
             hp = (HumanPlayer)state.getPlayer();
-//            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
 
             PlayingFrame playingFrame = new PlayingFrame(socket, state);
             dispose();

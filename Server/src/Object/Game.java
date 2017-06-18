@@ -10,211 +10,236 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.*;
+import java.util.logging.*;
+import server.ServerHearts;
 
 /**
  *
  * @author didim
  */
 public class Game {
-    
+
 //    ArrayList<Turn> allTurn = new ArrayList<>(); //
-    ArrayList<Card> allCards;
-    
-    ArrayList<Player> playerOrder; // Dan sách người chơi
-    
+    List<Card> allCards;
+    List<Player> listPlayers; // Dan sách người chơi
+    List<Socket> listSockets;
+    List<Integer> playerScores;
+
     int firstPlayer; // vị trí người chơi đầu tiên
-    
-    ArrayList<Integer> playerScores = new ArrayList<>();// Lưu số điểm ứng theo playerOrder
-    ArrayList<Socket> listSockets = new ArrayList<>();
-//    ArrayList<Card> currentRound;// 4 la bai trên bàn
-    Round currentRound; //4 lá bài trên bàn
-    
-    boolean twoClubsPlayer;
-    //Kiểm tra trạng thái heart break;
-    boolean isHeartBreak = false;
+    int numberOfPlayers;
+    boolean isSentInfo;
+    boolean isHeartsBroken;
+    Round currentRound;
 
-    public Game() {
-        initCard();
-        
+    public Game(int numberOfPlayers) {
+        allCards = new ArrayList<Card>();
+        listSockets = new ArrayList<>();
+        create4AIPlayers();
+        firstPlayer = -1;
+        this.numberOfPlayers = numberOfPlayers;
+        isSentInfo = false;
+        isHeartsBroken = false;
+        playerScores = Arrays.asList(0, 0, 0, 0);
     }
-    
-    int findTaker(int firstPlayer){
-        return (firstPlayer + currentRound.getMaxCard())%playerOrder.size();
+
+    //Trả về số lượng người chơi trong game
+    public int addPlayer(Player player, Socket s) {
+        listPlayers.set(listSockets.size(), player);
+        listSockets.add(s);
+        return listSockets.size();
     }
-    
-    void initCard(){
-        Value v[] = {Value.TWO,Value.THREE,Value.FOUR,Value.FIVE,Value.SIX,Value.SEVEN,
-            Value.EIGHT,Value.NINE,Value.TEN,Value.JACK,Value.QUEEN,Value.KING,Value.ACE};
-        int vi = 0;
-        CardType t[] = {CardType.CLUBS,CardType.DIAMONDS,CardType.SPADES,CardType.HEARTS};
-        int ti = 0;
-        for(int i = 0; i < 52; i++){
-            Card c = new Card(v[vi++],t[ti++]);
-            allCards.add(c);
-        }
+
+    public void setNumberOfPlayers(int number) {
+        numberOfPlayers = number;
     }
+
+    public int getNumberOfPlayers() {
+        return numberOfPlayers;
+    }
+
+    public boolean isFull() {
+        return listSockets.size() == numberOfPlayers;
+    }
+
+    private void create4AIPlayers() {
+        listPlayers = new ArrayList<Player>();
+        AIPlayer temp = new AIPlayer("Master Teihk");
+        listPlayers.add(temp);
+        temp = new AIPlayer("Nhat Linh Doan");
+        listPlayers.add(temp);
+        temp = new AIPlayer("Dien Vo Thanh");
+        listPlayers.add(temp);
+        temp = new AIPlayer("DaDa Wind");
+        listPlayers.add(temp);
+    }
+
+    private int findTaker(int firstPlayer) {
+        return currentRound.getMaxCard();
+    }
+
     public void startGame() {
-        for(int index = 0; index < playerOrder.size(); index++)
-        {
-            try {
-               InputStream is = listSockets.get(index).getInputStream();
-               ObjectInputStream ois = new ObjectInputStream(is);
-
-               OutputStream os = listSockets.get(index).getOutputStream();
-               ObjectOutputStream oos = new ObjectOutputStream(os);
-
-//               do {                
-                   HumanPlayer player = (HumanPlayer)ois.readObject();
-                   playerOrder.add(index, player);
-//               } while (true);
-
-           } catch (Exception ex) {
-//               Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
-           }   
-        }
-        
         createNewAllCards();
         randomAllCards();
         deal4AllPlayer();
-        
+
         //gui bai cho client
-        send_infor_to_all_player();
-        
-        Thread play_thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                for(int i = 0; i < 13 ;i++){
+        sendInforToAllPlayer();
+
+        currentRound = new Round();
+        currentRound.renew();
+
+//        Thread playing_thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//Có người chơi đạt > 99 điểm thì dừng
+        while (true) {
+            //Đã gửi bài về cho tất cả người chơi hay chưa, nếu chưa đợi
+            if (!isSentInfo) {
+                isSentInfo = false;
+                continue;
+            }
+            //Bat dau doi bai
+            ExchangePlayersCard();
+            for (int i = 0; i < 13; i++) {
+                try {
                     int a = firstPlayer;
-                    for(int j =0 ; j < 4; j++){
+                    // =)))))
+                    sendUpdateInforToAllClient(firstPlayer);
+                    for (int j = 0; j < 4; j++) {
                         //Cho nguoi chon bai
                         Card c = player_pick_card(a);
-                        currentRound.addCard(c);
-                        
-                        
+                        currentRound.setFirstPlayer(firstPlayer);
+                        currentRound.getListCard().set(a, c);
                         //Gui thong tin cho client
-                         
-                        
-                        a = (a + 1)%playerOrder.size();
+                        sendUpdateInforToAllClient((a + 1) % 4);
+
+                        a = (a + 1) % listPlayers.size();
                     }
                     //Tim nguoi choi an het bai
                     firstPlayer = findTaker(firstPlayer);
                     //Gan diem cho nguoi choi
                     int score = currentRound.getScore();
-                    playerOrder.get(firstPlayer).addScore(score);
-                }
-                //In nguoi chien thang
-                ArrayList<Integer> winnner = findwinner();
-                //gui ket qua ve toan bo nguoi choi
-                
-            }
+                    listPlayers.get(firstPlayer).addScore(score);
+                    if (currentRound.hasHeart()) {
+                        isHeartsBroken = true;
+                    }
+                    //
+                    currentRound.renew();
+                    currentRound.setFirstPlayer(firstPlayer);
 
-        });
+                    sendUpdateScoreToAllClient();
+                    Thread.sleep(1000);
+                } catch (InterruptedException ex) {
+                    Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
+                }
+
+            }
+            //Kiểm tra shot the moon
+            shotTheMoon();
+            //In nguoi chien thang
+            ArrayList<Integer> winnner = findwinner();
+            SendEndScoreToAllPlayer();
+            currentRound = new Round();
+            currentRound.renew();
+            randomAllCards();
+            deal4AllPlayer();
+            isHeartsBroken = false;
+            //gui bai cho client
+            //Ván tiếp theo gửi thông tin bài mới cho người chơi
+            sendInforToAllPlayer();
+        }
+//
+//            }//run
+//
+//        });
+//        playing_thread.start();
     }
-    
-    void createNewAllCards()
-    {
+
+    void createNewAllCards() {
         Value[] a = new Value[]{Value.TWO, Value.THREE, Value.FOUR, Value.FIVE, Value.SIX, Value.SEVEN,
-                    Value.EIGHT, Value.NINE, Value.TEN, Value.JACK, Value.QUEEN, Value.KING, Value.ACE};
+            Value.EIGHT, Value.NINE, Value.TEN, Value.JACK, Value.QUEEN, Value.KING, Value.ACE};
         CardType temp = CardType.SPADES;
-        for(int i = 0; i < 13; i++)
-        {
+        for (int i = 0; i < 13; i++) {
             allCards.add(new Card(a[i], temp));
         }
-        
+
         temp = CardType.CLUBS;
-        for(int i = 0; i < 13; i++)
-        {
+        for (int i = 0; i < 13; i++) {
             allCards.add(new Card(a[i], temp));
         }
-        
+
         temp = CardType.DIAMONDS;
-        for(int i = 0; i < 13; i++)
-        {
+        for (int i = 0; i < 13; i++) {
             allCards.add(new Card(a[i], temp));
         }
-        
+
         temp = CardType.HEARTS;
-        for(int i = 0; i < 13; i++)
-        {
+        for (int i = 0; i < 13; i++) {
             allCards.add(new Card(a[i], temp));
         }
     }
-    
-    void randomAllCards()
-    {
+
+    void randomAllCards() {
         ArrayList<Card> kq = new ArrayList<>();
         Random rd = new Random();
-        for(int i = allCards.size(); i > 0;i--){
+        for (int i = allCards.size(); i > 0; i--) {
             int index = rd.nextInt(i);
             kq.add(allCards.get(index));
             allCards.remove(index);
         }
         allCards = kq;
     }
-    
-    void deal4AllPlayer()
-    {
-//        List<Player> temp = new ArrayList<>();
-        HumanPlayer p1 = (HumanPlayer)playerOrder.get(0);
-        HumanPlayer p2 = (HumanPlayer)playerOrder.get(1);
-        HumanPlayer p3 = (HumanPlayer)playerOrder.get(2);
-        HumanPlayer p4 = (HumanPlayer)playerOrder.get(3);
-        for(int i = 0; i < 13; i++)
-        {
-            p1.addCard(allCards.get(i*4));
-            p2.addCard(allCards.get(i*4 + 1));
-            p3.addCard(allCards.get(i*4 + 2));
-            p4.addCard(allCards.get(i*4 + 3));
+
+    void deal4AllPlayer() {
+        for (int i = 0; i < listPlayers.size(); i++) {
+            List<Card> list = new ArrayList<Card>();
+            listPlayers.get(i).setHand(list);
         }
-//        playerOrder.add(p1);
-//        temp.add(p2);
-//        temp.add(p3);
-//        temp.add(p4);
-//        playerOrder = temp;
-        for(int i = 0; i < playerOrder.size(); i++){
-            if(playerOrder.get(i).hasTwoOfClubs()){
-                firstPlayer = i;
-                break;
-            }
+
+        for (int i = 0; i < 13; i++) {
+            listPlayers.get(0).addCard(allCards.get(i * 4));
+            listPlayers.get(1).addCard(allCards.get(i * 4 + 1));
+            listPlayers.get(2).addCard(allCards.get(i * 4 + 2));
+            listPlayers.get(3).addCard(allCards.get(i * 4 + 3));
         }
-            
+
+        for (int i = 0; i < listPlayers.size(); i++) {
+            listPlayers.get(i).sortHand();
+        }
     }
-    void shotTheMoon () {
+
+    private void shotTheMoon() {
         int index = -1;
         for (int i = 0; i < playerScores.size(); i++) {
             if (playerScores.get(i) == 26) {
-                System.out.println(playerOrder.get(i).getName() + " shot the moon!");
+                System.out.println(listPlayers.get(i).getName() + " shot the moon!");
                 index = i;
             }
         }
         // Old Moon: Player does not gain points this round, all others gain 26 points
         if (index > -1) {
-            for (int i = 0; i < playerOrder.size(); i++) {
-                    if (i != index) {
-                            playerOrder.get(i).addScore(26);
-                            playerScores.set(i, 26);
-                    }
-                    // Remove the 26 points that this player received this round
-                    else {
-                            playerOrder.get(i).addScore(-26);
-                            playerScores.set(i,0);
-                    }
+            for (int i = 0; i < listPlayers.size(); i++) {
+                if (i != index) {
+                    listPlayers.get(i).addScore(26);
+                    playerScores.set(i, 26);
+                } // Remove the 26 points that this player received this round
+                else {
+                    listPlayers.get(i).addScore(-26);
+                    playerScores.set(i, 0);
+                }
             }
-            if (playerOrder.get(index).getScore()< 0)
-                    playerOrder.get(index).clearPlayer();
+            if (listPlayers.get(index).getScore() < 0) {
+                listPlayers.get(index).clearPlayer();
+            }
         }
     }
-    ArrayList<Integer> findwinner(){
+
+    private ArrayList<Integer> findwinner() {
         ArrayList<Integer> winner = new ArrayList<>();
         int minScore = findMinScore();
-        for(int i = 0; i< playerOrder.size();i++)
-        {
-            if(playerOrder.get(i).getScore() == minScore){
+        for (int i = 0; i < listPlayers.size(); i++) {
+            if (listPlayers.get(i).getScore() == minScore) {
                 winner.add(i);
             }
         }
@@ -222,28 +247,267 @@ public class Game {
     }
 
     private int findMinScore() {
-        int minScore = playerOrder.get(0).getScore();
-        for(int i = 0; i< playerOrder.size(); i++){
-            if(minScore < playerOrder.get(i).getScore()){
-                minScore = playerOrder.get(i).getScore();
+        int minScore = listPlayers.get(0).getScore();
+        for (int i = 0; i < listPlayers.size(); i++) {
+            if (minScore < listPlayers.get(i).getScore()) {
+                minScore = listPlayers.get(i).getScore();
             }
         }
         return minScore;
     }
-    private void send_infor_to_all_player() {
-//        try {
-//            for(int index = 0; index < listSockets.size(); index++)
-//            {
-//                listOos.get(index).writeObject(playerOrder.get(index));
-//                listOos.get(index).flush();
-//            }
-//        } catch (IOException ex) {
-//            Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
-//        }
+
+    private void sendInforToAllPlayer() {
+        List<String> listName = new ArrayList<>();
+        listPlayers.forEach((hp) -> {
+            listName.add(hp.getName());
+        });
+        try {
+            for (int index = 0; index < listSockets.size(); index++) {
+                State state = new State();
+                List<Integer> listScores = new ArrayList<>();
+                listScores.add(0);
+                listScores.add(0);
+                listScores.add(0);
+                listScores.add(0);
+                state.setHasHeartsBroken(isHeartsBroken);
+                state.setIPlayPlaying(firstPlayer);
+                state.setPlayerScores(listScores);
+                state.setNickName(listName);
+                state.setPlayerIndex(index);
+                state.setPlayer(listPlayers.get(index));
+
+                state.setCommand(Command.INIT);
+                SocketController.send_object_to_socket(listSockets.get(index), state);
+            }
+            isSentInfo = true;
+        } catch (Exception ex) {
+            Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
+        }
+
     }
+
+    //Người chơi chọn bài
     private Card player_pick_card(int a) {
-        //gui thong bao va nhan object card tu client
-        
-        return new Card(Value.ACE, CardType.CLUBS);
+        if (listPlayers.get(a).isHuman()) {
+            //gui thong bao va nhan object card tu client
+            State state = new State();
+            state.setCommand(Command.PICK_CARD);
+            //nó trả ra mảng có thứ tự ----> mục đích chỉ là lấy kiểu con bài đầu tiên
+            state.setCurrentRound(currentRound);
+            state.setHasHeartsBroken(isHeartsBroken);
+
+            SocketController.send_object_to_socket(listSockets.get(a), state);
+
+            Card c = (Card) SocketController.get_object_from_socket(listSockets.get(a));
+
+            return c;
+
+        } else {
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            return listPlayers.get(a).pickCard(currentRound, isHeartsBroken);
+        }
     }
+
+    //Gửi thông tin update về cho tất cả người chơi
+    private void sendUpdateInforToAllClient(int i) {
+//        int a = firstPlayer;
+        for (int index = 0; index < listPlayers.size(); index++) {
+            if (listPlayers.get(index).isHuman()) {
+                State state = new State();
+                state.setIPlayPlaying(i);
+                state.setCurrentRound(currentRound);
+                state.setHasHeartsBroken(isHeartsBroken);
+                state.setPlayerIndex(index);
+
+                state.setCommand(Command.UPDATE_VIEW);
+                SocketController.send_object_to_socket(listSockets.get(index), state);
+            }
+        }
+    }
+
+    //Gửi thông tin update điểm tới toàn bộ người hơi
+    private void sendUpdateScoreToAllClient() {
+        List<Integer> listScore = new ArrayList<>();
+        for (Player hp : listPlayers) {
+            listScore.add(hp.getScore());
+        }
+        for (int index = 0; index < listPlayers.size(); index++) {
+            if (listPlayers.get(index).isHuman()) {
+                State state = new State();
+                state.setCurrentRound(currentRound);
+                state.setPlayerScores(listScore);
+                state.setPlayerIndex(index);
+
+                state.setCommand(Command.UPDATE_SCORE);
+                SocketController.send_object_to_socket(listSockets.get(index), state);
+            } else {
+
+            }
+        }
+    }
+
+    //gửi điển tổng kết
+    private void SendEndScoreToAllPlayer() {
+        List<Integer> listScore = new ArrayList<>();
+        for (Player hp : listPlayers) {
+            listScore.add(hp.getScore());
+        }
+        for (int index = 0; index < listSockets.size(); index++) {
+            State state = new State();
+            state.setPlayerScores(listScore);
+            state.setPlayerIndex(index);
+
+            state.setCommand(Command.SHOW_RESULT);
+            SocketController.send_object_to_socket(listSockets.get(index), state);
+        }
+    }
+
+    private void ExchangePlayersCard() {
+        ArrayList<Card> exchangeCards_player0 = new ArrayList<Card>();
+        ArrayList<Card> exchangeCards_player1 = new ArrayList<Card>();
+        ArrayList<Card> exchangeCards_player2 = new ArrayList<Card>();
+        ArrayList<Card> exchangeCards_player3 = new ArrayList<Card>();
+
+        for (int index = 0; index < listSockets.size(); index++) {
+            State state = new State();
+            state.setCommand(Command.EXCHANGE_CARD);
+            SocketController.send_object_to_socket(listSockets.get(index), state);
+        }
+
+        //Nhận những lá bài gửi về
+        Thread thread1 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if (listPlayers.get(0).isHuman()) {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(0));
+                } else //Nếu người chơi là máy
+                {
+                    exchangeCards = listPlayers.get(0).getExchangeCards();
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x = exchangeCards.get(i);
+                    exchangeCards_player0.add(listPlayers.get(0).getHand().get(x));
+                }
+                exchangeCards_player0.forEach((c) -> {
+                    listPlayers.get(0).getHand().remove(c);
+                });
+            }
+        });
+        thread1.start();
+        Thread thread3 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                //Loai bo bai da doi
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if (listPlayers.get(1).isHuman()) {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(1));
+                } else //Nếu người chơi là máy
+                {
+                    exchangeCards = listPlayers.get(1).getExchangeCards();
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x = exchangeCards.get(i);
+                    exchangeCards_player1.add(listPlayers.get(1).getHand().get(x));
+                }
+                exchangeCards_player1.forEach((c) -> {
+                    listPlayers.get(1).getHand().remove(c);
+                });
+//            listPlayers.get(1).setHand(newHand);
+            }
+        });
+        thread3.start();
+        Thread thread4 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                //Loai bo bai da doi
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if (listPlayers.get(2).isHuman()) {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(2));
+                } else //Nếu người chơi là máy
+                {
+                    exchangeCards = listPlayers.get(2).getExchangeCards();
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x = exchangeCards.get(i);
+                    exchangeCards_player2.add(listPlayers.get(2).getHand().get(x));
+                }
+                exchangeCards_player2.forEach((c) -> {
+                    listPlayers.get(2).getHand().remove(c);
+                });
+//            listPlayers.get(2).setHand(newHand);
+            }
+        });
+        thread4.start();
+
+        Thread thread2 = new Thread(new Runnable() {
+            @Override
+            public void run() {
+
+                //Loai bo bai da doi
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if (listPlayers.get(3).isHuman()) {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(3));
+                } else //Nếu người chơi là máy
+                {
+                    exchangeCards = listPlayers.get(3).getExchangeCards();
+                }
+                for (int i = 0; i < 3; i++) {
+                    int x = exchangeCards.get(i);
+                    exchangeCards_player3.add(listPlayers.get(3).getHand().get(x));
+                }
+                exchangeCards_player3.forEach((c) -> {
+                    listPlayers.get(3).getHand().remove(c);
+                });
+//            listPlayers.get(3).setHand(newHand);
+            }
+        });
+        thread2.start();
+
+        while (true) {
+            int total = exchangeCards_player0.size() + exchangeCards_player1.size()
+                    + exchangeCards_player2.size() + exchangeCards_player3.size();
+            System.out.println(total);
+            if (total == 12) {
+                break;
+            }
+            //Cho toan bo nguoi cho doi card
+        }
+        // Bat dau doi card theo kieu true sau nay se them vao
+        if (true) {
+            listPlayers.get(3).addCard(exchangeCards_player0);
+            listPlayers.get(2).addCard(exchangeCards_player1);
+            listPlayers.get(1).addCard(exchangeCards_player2);
+            listPlayers.get(0).addCard(exchangeCards_player3);
+        }
+
+        for (int i = 0; i < listPlayers.size(); i++) {
+            listPlayers.get(i).sortHand();
+            if (listPlayers.get(i).hasTwoOfClubs()) {
+                firstPlayer = i;
+            }
+        }
+        //Gui bai moi cho all client
+        sendInforToAllPlayer();
+    }
+
+//    private boolean isHaveNull(ArrayList<Card> allExchangeCards) {
+//        for (Card c : allExchangeCards) {
+//            if (c == null) {
+//                return false;
+//            }
+//        }
+//        return true;
+//    }
 }
