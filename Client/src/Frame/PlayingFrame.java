@@ -233,7 +233,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         //Cac la bai cua nguoi choi
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
-        createAllButtonCards(allCardOfPalyer, (HumanPlayer)state.getPlayer());
+        createAllButtonCards(allCardOfPalyer, (HumanPlayer) state.getPlayer());
 
         c.gridx = 2;
         c.gridy = 7;
@@ -479,8 +479,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (count == 0 || count == size) {
             for (int i = 0; i < size; i++) {
                 //Nếu chỉ còn những lá heart
-                if(state.getPlayer().hasAllHeart())
-                {
+                if (state.getPlayer().hasAllHeart()) {
                     listButtonCards.get(13 - size + i).setEnabled(true);
                     continue;
                 }
@@ -488,12 +487,9 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 if (state.isHasHeartsBroken() || list.get(i).getType() != CardType.HEARTS) {
                     listButtonCards.get(13 - size + i).setEnabled(true);
                 } else {
-                    if (!state.isHasHeartsBroken() && list.get(i).getType() == CardType.HEARTS) {
-                        listButtonCards.get(13 - size + i).setEnabled(false);
-                    }
+                    listButtonCards.get(13 - size + i).setEnabled(false);
                 }
-                
-                
+
             }
         }
 
@@ -525,17 +521,16 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             state = receive_state;
                             jbExchange.setVisible(false);
                             updateAllButtonCards();
-                            
-//                            //cap nhat la cac la bai
-//                            listButtonCards.forEach((t) -> {
-//                                t.setEnabled(true);
-//                            });
                             break;
                         case SHOW_RESULT:
                             ShowResult(receive_state.getPlayerScores());
+                            updatePane4Card(state.getCurrentRound());
                             break;
                         case EXCHANGE_CARD:
                             //do somethings
+                            listCardExchange.removeAll(listCardExchange);
+                            jbExchange.setVisible(true);
+                            jbExchange.setEnabled(true);
                             isMyInnings = false;
                             isSwitching = true;
                             break;
@@ -562,43 +557,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             updateArrow();
                             break;
                     }
-//                    if (info.equals("New round")) {
-//                        state = (State) SocketController.get_object_from_socket(socket);
-//                        updateAllButtonCards();
-//                        updatePane4Card(state.getCurrentRound());
-//                        updateAllPlayerScore(state.getPlayerScores());
-//                        updateArrow();
-//                        continue;
-//                    }
-//                    if (info != null && info.equals("Your innings came")) {
-////                        updateStateOfAllPaneCards(state.getCurrentRound());
-////                        updateArrow();
-//                        isMyInnings = false;
-//                        isSwitching = true;
-//                    } else {
-//                        if (info != null) {
-//                            receive_state = (State) SocketController.get_object_from_socket(socket);
-//
-//                            if (info.equals("Update info")) {
-//                                state.setCurrentRound(receive_state.getCurrentRound());
-//                                state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
-//                                state.setIPlayPlaying(receive_state.getIPlayPlaying());
-//                                updatePane4Card(state.getCurrentRound());
-//                                updateArrow();
-//                            } else if (info.equals("Update score")) {
-//                                state.setCurrentRound(receive_state.getCurrentRound());
-//                                state.setPlayerScores(receive_state.getPlayerScores());
-//                                state.setIPlayPlaying(receive_state.getCurrentRound().getFirstPlayer());
-//                                state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
-//                                updateAllPlayerScore(state.getPlayerScores());
-//                                updateArrow();
-////                                ShowResult(temp.getPlayerScores());
-//                            }
-//                            else if (info.equals("Show result")) {
-//                                ShowResult(receive_state.getPlayerScores());
-//                            }
-//                        }
-//                    }
                 }
             }
         });
@@ -639,8 +597,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     //Cập nhật hình ảnh cho toàn bộ các botton
     private void updateAllButtonCards() {
         int firstIndexOfListButton = 13 - state.getPlayer().getHand().size();
-        if(firstIndexOfListButton == 0)
-        {
+        if (firstIndexOfListButton == 0) {
             listButtonCards.forEach((t) -> {
                 t.setVisible(true);
             });
@@ -656,12 +613,11 @@ public class PlayingFrame extends JFrame implements ActionListener {
         }
     }
 
-    
     private void ShowResult(List<Integer> playerScores) {
         int index = state.getPlayerIndex();
-        String message= String.format("\n\t%2d \t|\t%2d \t|\t%2d \t|\t%2d \t|",
-                playerScores.get(index), playerScores.get(++index%4),
-                playerScores.get(++index%4), playerScores.get(++index%4));
+        String message = String.format("\n\t%2d \t|\t%2d \t|\t%2d \t|\t%2d \t|",
+                playerScores.get(index), playerScores.get(++index % 4),
+                playerScores.get(++index % 4), playerScores.get(++index % 4));
         result = result.concat(message);
         System.out.println(result);
         JOptionPane.showConfirmDialog(null, new JTextArea(result), "Result", JOptionPane.YES_NO_OPTION);

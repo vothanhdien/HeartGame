@@ -6,6 +6,7 @@
 package Object;
 
 import java.io.Serializable;
+import java.util.*;
 
 /**
  *
@@ -25,5 +26,10 @@ public class HumanPlayer extends Player implements Serializable {
     @Override
     public boolean isHuman() {
         return true;
+    }
+
+    @Override
+    public List<Integer> getExchangeCards() {
+        return null;
     }
 }

@@ -63,4 +63,41 @@ public class AIPlayer extends Player implements Serializable {
     public boolean isHuman() {
         return false;
     }
+    
+    @Override
+    public List<Integer> getExchangeCards() {
+        List<Card> temp = new ArrayList<Card>();
+        for(int i = 0; i < hand.size(); i++)
+        {
+            if(hand.get(i).getType() != CardType.HEARTS)
+            {
+                temp.add(hand.get(i));
+            }
+        }
+        List<Integer> list = new ArrayList<>();
+        int max = findMaxValueCardOfList(temp);
+        list.add(max);
+        temp.remove(max);
+        max = findMaxValueCardOfList(temp);
+        list.add(max);
+        temp.remove(max);
+        max = findMaxValueCardOfList(temp);
+        list.add(max);
+        return list;
+    }
+    
+    int findMaxValueCardOfList(List<Card> list)
+    {
+        if(list.isEmpty())
+            return -1;
+        int max = 0;
+        for(int i = 1; i < list.size(); i++)
+        {
+            if(list.get(i).getValue().compareTo(list.get(max).getValue()) > 0)
+            {
+                max = i;
+            }
+        }
+        return max;
+    }
 }

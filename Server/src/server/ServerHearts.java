@@ -42,7 +42,6 @@ public class ServerHearts {
     static int numberOfPlayers = 4;
     static int firstPlayer; // vị trí người chơi đầu tiên
 
-
     private static void create4AIPlayers() {
         listPlayers = new ArrayList<Player>();
         AIPlayer temp = new AIPlayer("Master Teihk");
@@ -208,10 +207,13 @@ public class ServerHearts {
             @Override
             public void run() {
                 while (true) {
+                    //Đã gửi bài về cho tất cả người chơi hay chưa, nếu chưa đợi
+                    if (!isSentInfo) {
+                        isSentInfo = false;
+                        continue;
+                    }
                     //Bat dau doi bai
                     ExchangePlayersCard();
-
-                    isSentInfo = false;
                     for (int i = 0; i < 13; i++) {
                         try {
                             int a = firstPlayer;
@@ -256,21 +258,15 @@ public class ServerHearts {
                     randomAllCards();
                     deal4AllPlayer();
                     isHeartsBroken = false;
-                    for (int i = 0; i < listSockets.size(); i++) {
-                        SocketController.send_object_to_socket(listSockets.get(i), "New round");
-                    }
                     //gui bai cho client
+                    //Ván tiếp theo gửi thông tin bài mới cho người chơi
                     sendInforToAllPlayer();
                 }
 
             }//run
 
-            
         });
-        isSentInfo = true;
-        if (isSentInfo) {
-            playing_thread.start();
-        }
+        playing_thread.start();
     }
 
     static void createNewAllCards() {
@@ -310,7 +306,6 @@ public class ServerHearts {
 
     static void deal4AllPlayer() {
         for (int i = 0; i < listPlayers.size(); i++) {
-            System.out.println(listPlayers.size());
             List<Card> list = new ArrayList<Card>();
             listPlayers.get(i).setHand(list);
         }
@@ -321,7 +316,7 @@ public class ServerHearts {
             listPlayers.get(2).addCard(allCards.get(i * 4 + 2));
             listPlayers.get(3).addCard(allCards.get(i * 4 + 3));
         }
-        
+
         for (int i = 0; i < listPlayers.size(); i++) {
             listPlayers.get(i).sortHand();
         }
@@ -393,7 +388,7 @@ public class ServerHearts {
                 state.setNickName(listName);
                 state.setPlayerIndex(index);
                 state.setPlayer(listPlayers.get(index));
-                
+
                 state.setCommand(Command.INIT);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
             }
@@ -416,16 +411,14 @@ public class ServerHearts {
 
             SocketController.send_object_to_socket(listSockets.get(a), state);
 
-            
             Card c = (Card) SocketController.get_object_from_socket(listSockets.get(a));
-            
+
 //                System.out.println("player has been pick one card");
-                return c;
-            
-        }
-        else {
+            return c;
+
+        } else {
             try {
-                Thread.sleep(1500);
+                Thread.sleep(1000);
             } catch (InterruptedException ex) {
                 Logger.getLogger(ServerHearts.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -443,7 +436,7 @@ public class ServerHearts {
                 state.setCurrentRound(currentRound);
                 state.setHasHeartsBroken(isHeartsBroken);
                 state.setPlayerIndex(index);
-            
+
                 state.setCommand(Command.UPDATE_VIEW);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
             }
@@ -462,16 +455,15 @@ public class ServerHearts {
                 state.setCurrentRound(currentRound);
                 state.setPlayerScores(listScore);
                 state.setPlayerIndex(index);
-            
-            state.setCommand(Command.UPDATE_SCORE);
+
+                state.setCommand(Command.UPDATE_SCORE);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
             } else {
 
             }
         }
     }
-    
-    
+
     //gửi điển tổng kết
     private static void SendEndScoreToAllPlayer() {
         List<Integer> listScore = new ArrayList<>();
@@ -482,32 +474,37 @@ public class ServerHearts {
             State state = new State();
             state.setPlayerScores(listScore);
             state.setPlayerIndex(index);
-            
+
             state.setCommand(Command.SHOW_RESULT);
             SocketController.send_object_to_socket(listSockets.get(index), state);
         }
     }
+
     private static void ExchangePlayersCard() {
         ArrayList<Card> exchangeCards_player0 = new ArrayList<Card>();
         ArrayList<Card> exchangeCards_player1 = new ArrayList<Card>();
         ArrayList<Card> exchangeCards_player2 = new ArrayList<Card>();
         ArrayList<Card> exchangeCards_player3 = new ArrayList<Card>();
-        
-        
+
         for (int index = 0; index < listSockets.size(); index++) {
             State state = new State();
             state.setCommand(Command.EXCHANGE_CARD);
             SocketController.send_object_to_socket(listSockets.get(index), state);
         }
-        
+
         //Nhận những lá bài gửi về
         Thread thread1 = new Thread(new Runnable() {
             @Override
             public void run() {
-                
-            //Loai bo bai da doi
-                List<Integer> exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(0));
-//            System.out.println("receive 0");
+
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if(listPlayers.get(0).isHuman())
+                {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(0));
+                }
+                else //Nếu người chơi là máy
+                    exchangeCards= listPlayers.get(0).getExchangeCards();
                 for (int i = 0; i < 3; i++) {
                     int x = exchangeCards.get(i);
                     exchangeCards_player0.add(listPlayers.get(0).getHand().get(x));
@@ -523,8 +520,14 @@ public class ServerHearts {
             public void run() {
 
                 //Loai bo bai da doi
-                List<Integer> exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(1));
-//            System.out.println("receive 1");
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if(listPlayers.get(1).isHuman())
+                {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(1));
+                }
+                else //Nếu người chơi là máy
+                    exchangeCards= listPlayers.get(1).getExchangeCards();
                 for (int i = 0; i < 3; i++) {
                     int x = exchangeCards.get(i);
                     exchangeCards_player1.add(listPlayers.get(1).getHand().get(x));
@@ -541,9 +544,14 @@ public class ServerHearts {
             public void run() {
 
                 //Loai bo bai da doi
-                List<Integer> exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(2));
-//            System.out.println("receive 2");
-//            List<Card> newHand = listPlayers.get(2).getHand();
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if(listPlayers.get(2).isHuman())
+                {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(2));
+                }
+                else //Nếu người chơi là máy
+                    exchangeCards= listPlayers.get(2).getExchangeCards();
                 for (int i = 0; i < 3; i++) {
                     int x = exchangeCards.get(i);
                     exchangeCards_player2.add(listPlayers.get(2).getHand().get(x));
@@ -555,15 +563,20 @@ public class ServerHearts {
             }
         });
         thread4.start();
-        
+
         Thread thread2 = new Thread(new Runnable() {
             @Override
             public void run() {
-                
+
                 //Loai bo bai da doi
-                List<Integer> exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(3));
-                System.out.println("get object 3333");
-//            System.out.println("receive 3");
+                List<Integer> exchangeCards = null;
+                //Loai bo bai da doi
+                if(listPlayers.get(3).isHuman())
+                {
+                    exchangeCards = (List) SocketController.get_object_from_socket(listSockets.get(3));
+                }
+                else //Nếu người chơi là máy
+                    exchangeCards= listPlayers.get(3).getExchangeCards();
                 for (int i = 0; i < 3; i++) {
                     int x = exchangeCards.get(i);
                     exchangeCards_player3.add(listPlayers.get(3).getHand().get(x));
@@ -575,40 +588,39 @@ public class ServerHearts {
             }
         });
         thread2.start();
-        
-        while(true)
-        {
-            int total = exchangeCards_player0.size() + exchangeCards_player1.size() +
-                    exchangeCards_player2.size() + exchangeCards_player3.size();
+
+        while (true) {
+            int total = exchangeCards_player0.size() + exchangeCards_player1.size()
+                    + exchangeCards_player2.size() + exchangeCards_player3.size();
             System.out.println(total);
-            if(total == 12)
+            if (total == 12) {
                 break;
+            }
             //Cho toan bo nguoi cho doi card
         }
         // Bat dau doi card theo kieu true sau nay se them vao
-        if(true){
+        if (true) {
             listPlayers.get(3).addCard(exchangeCards_player0);
             listPlayers.get(2).addCard(exchangeCards_player1);
             listPlayers.get(1).addCard(exchangeCards_player2);
             listPlayers.get(0).addCard(exchangeCards_player3);
         }
-        
-//        System.out.println("65189116516461321659321");
+
         for (int i = 0; i < listPlayers.size(); i++) {
             listPlayers.get(i).sortHand();
             if (listPlayers.get(i).hasTwoOfClubs()) {
                 firstPlayer = i;
             }
         }
-//        System.out.println("sadjhavsdjhhhhhhhhhhhhasjhdyizxycbqiwjne");
         //Gui bai moi cho all client
         sendInforToAllPlayer();
     }
-    
+
     private static boolean isHaveNull(ArrayList<Card> allExchangeCards) {
-        for(Card c:allExchangeCards){
-            if(c == null)
+        for (Card c : allExchangeCards) {
+            if (c == null) {
                 return false;
+            }
         }
         return true;
     }

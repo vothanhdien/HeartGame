@@ -76,6 +76,8 @@ public abstract class Player implements Serializable {
     public abstract Card pickCard(Round cur, boolean isHeartsBroken);
     
     public abstract boolean isHuman();
+    
+    public abstract List<Integer> getExchangeCards();
 
     //----------getter, setter
     public String getName() {

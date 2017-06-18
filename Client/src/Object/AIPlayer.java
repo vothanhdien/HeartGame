@@ -63,4 +63,13 @@ public class AIPlayer extends Player implements Serializable {
     public boolean isHuman() {
         return false;
     }
+    
+    @Override
+    public List<Integer> getExchangeCards() {
+        List<Integer> list = new ArrayList<>();
+        list.add(hand.size() - 1);
+        list.add(hand.size() - 2);
+        list.add(hand.size() - 3);
+        return list;
+    }
 }
