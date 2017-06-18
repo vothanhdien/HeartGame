@@ -171,7 +171,6 @@ public class LoginFrame extends JFrame {
             Thread thread = new Thread(new Runnable() {
                 @Override
                 public void run() {
-<<<<<<< HEAD
                     LoginFrame temp = null;
                     while (true) {
                         if (state != null) {
@@ -180,13 +179,11 @@ public class LoginFrame extends JFrame {
                             
                         }
                     }
-=======
                     JOptionPane.showMessageDialog(null, "Waiting another player","Waiting another player",1);
 //                    jlmsg.setVisible(true);
 //                    jpbWaiting.setVisible(true);
 //                    invalidate();
 //                    repaint();
->>>>>>> b1f55bedd28afe9e9212c9f9fa8f92384d8d11ea
                 }
             });
             thread.start();
@@ -213,12 +210,9 @@ public class LoginFrame extends JFrame {
 //            thread.start();
             state = (State) SocketController.get_object_from_socket(socket);
             hp = (HumanPlayer)state.getPlayer();
-<<<<<<< HEAD
 
-=======
 //            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
             
->>>>>>> b1f55bedd28afe9e9212c9f9fa8f92384d8d11ea
             PlayingFrame playingFrame = new PlayingFrame(socket, state);
             dispose();
         } catch (Exception ex) {

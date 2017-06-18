@@ -20,7 +20,7 @@ import javax.swing.JOptionPane;
  * @author HP
  */
 public class SocketController {
-    public static void send_object_to_socket(Socket s, Object obj) {
+    public static boolean send_object_to_socket(Socket s, Object obj) {
         try {
             OutputStream os = s.getOutputStream();
             ObjectOutputStream oos = new ObjectOutputStream(os);
@@ -28,8 +28,9 @@ public class SocketController {
             oos.writeObject(obj);
             oos.flush();
         } catch (IOException ex) {
-            System.out.println(ex.getMessage());
+            return false;
         }
+        return true;
     }
 
     // lấy object từ server

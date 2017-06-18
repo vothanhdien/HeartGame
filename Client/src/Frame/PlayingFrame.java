@@ -13,6 +13,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.HeadlessException;
+import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -70,6 +71,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     int hCard = 90;
     //component
 
+    JLabel jlHeart;
     JLabel jlPlayerScore;
     JLabel jlTopPlayerScore;
     JLabel jlLeftPlayerScore;
@@ -110,56 +112,73 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         GridBagConstraints c = new GridBagConstraints();
         c.insets = new Insets(5, 5, 5, 5);
-        JPanel pane1 = new JPanel(new GridBagLayout());
+        JPanel panel = new JPanel(new GridBagLayout());
         ImageIcon ii = ImageController.getImageByName("person.png", 100, 100);
         JPanel leftPerson = getPanelPerson(state.getNickName().get(1), 0, ii, jlLeftPlayerScore);
         c.gridx = 1;
         c.gridy = 4;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(leftPerson, c);
+        panel.add(leftPerson, c);
 
         JPanel topPerson = getPanelPerson(state.getNickName().get(2), 0, ii, jlTopPlayerScore);
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy = 1;
         c.gridwidth = 3;
         c.gridheight = 1;
-        pane1.add(topPerson, c);
+        panel.add(topPerson, c);
 
         JPanel rightPerson = getPanelPerson(state.getNickName().get(3), 0, ii, jlRightPlayerScore);
-        c.gridx = 7;
+        c.gridx = 5;
         c.gridy = 4;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(rightPerson, c);
+        panel.add(rightPerson, c);
+        
+        ii = ImageController.getImageByName("brokeHeart.png", 50, 50);
+        jlHeart = new JLabel(ii);
+        jlHeart.setEnabled(false);
+        c.gridx = 6;
+        c.gridy = 6;
+        c.gridwidth = 1;
+        c.gridheight = 1;
+        panel.add(jlHeart, c);
 
-        jlTopArrow = new JLabel();
-        jlRightArrow = new JLabel();
-        jlBottomArrow = new JLabel();
-        jlLeftArrow = new JLabel();
+        ii = ImageController.getImageByName("arrowToRight.png", 30, 30);
+        jlTopArrow = new JLabel(ii);
+        jlTopArrow.setEnabled(false);
+        ii = ImageController.getImageByName("arrowToLeft.png", 30, 30);
+        jlRightArrow = new JLabel(ii);
+        jlRightArrow.setEnabled(false);
+        ii = ImageController.getImageByName("arrowToLeft.png", 30, 30);
+        jlBottomArrow = new JLabel(ii);
+        jlBottomArrow.setEnabled(false);
+        ii = ImageController.getImageByName("arrowToRight.png", 30, 30);
+        jlLeftArrow = new JLabel(ii);
+        jlLeftArrow.setEnabled(false);
 
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy = 1;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(jlTopArrow, c);
+        panel.add(jlTopArrow, c);
 
-        c.gridx = 8;
+        c.gridx = 6;
         c.gridy = 4;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(jlRightArrow, c);
+        panel.add(jlRightArrow, c);
 
-        c.gridx = 8;
+        c.gridx = 5;
         c.gridy = 7;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(jlBottomArrow, c);
+        panel.add(jlBottomArrow, c);
 
         c.gridx = 0;
         c.gridy = 4;
         c.gridwidth = 1;
-        pane1.add(jlLeftArrow, c);
+        panel.add(jlLeftArrow, c);
 
         ii = ImageController.getImageByName("back.png", 30, 30);
         JButton btnBack = new JButton(ii);
@@ -189,18 +208,18 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(btnBack, c);
+        panel.add(btnBack, c);
 
-        c.gridx = 8;
+        c.gridx = 6;
         c.gridy = 0;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(btnHistory, c);
+        panel.add(btnHistory, c);
 
-        c.gridx = 11;
+        c.gridx = 7;
         c.gridy = 0;
         c.gridwidth = 1;
-        pane1.add(btnHelp, c);
+        panel.add(btnHelp, c);
 
         GridBagConstraints c1 = new GridBagConstraints();
         //nơi 4 lá bài được đánh ra
@@ -229,31 +248,31 @@ public class PlayingFrame extends JFrame implements ActionListener {
         c1.gridy = 2;
         pane4cards.add(jlBottomCard, c1);
 
-        c.gridx = 3;
+        c.gridx = 2;
         c.gridy = 3;
         c.gridwidth = 3;
         c.gridheight = 3;
-        c.insets = new Insets(20, 100, 20, 100);
-        pane1.add(pane4cards, c);
+        c.insets = new Insets(20, 150, 20, 150);
+        panel.add(pane4cards, c);
         c.insets = new Insets(5, 5, 5, 5);
 
         //So diem cua nguoi choi
         String tmp = String.format("%d", state.getPlayer().getScore());
         jlPlayerScore = new JLabel(tmp);
 
-        c.gridx = 0;
+        c.gridx = 1;
         c.gridy = 7;
         c.gridwidth = 1;
         c.gridheight = 1;
-        pane1.add(jlPlayerScore, c);
+        panel.add(jlPlayerScore, c);
 
         //nut doi bai
         jbExchange = new JButton("exchange");
         c.gridx = 2;
         c.gridy = 6;
-        c.gridwidth = 1;
+        c.gridwidth = 3;
         c.gridheight = 1;
-        pane1.add(jbExchange, c);
+        panel.add(jbExchange, c);
         jbExchange.setActionCommand("Button exchange");
         jbExchange.addActionListener(this);
 
@@ -261,13 +280,13 @@ public class PlayingFrame extends JFrame implements ActionListener {
         JPanel allCardOfPalyer = new JPanel(new GridBagLayout());
         createAllButtonCards(allCardOfPalyer, (HumanPlayer) state.getPlayer());
 
-        c.gridx = 1;
+        c.gridx = 2;
         c.gridy = 7;
-        c.gridwidth = 7;
+        c.gridwidth = 3;
         c.gridheight = 1;
-        pane1.add(allCardOfPalyer, c);
+        panel.add(allCardOfPalyer, c);
 
-        container.add(pane1);
+        container.add(panel);
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
@@ -300,32 +319,35 @@ public class PlayingFrame extends JFrame implements ActionListener {
     }
 
     private void updateArrow() {
-        jlTopArrow.setVisible(false);
-        jlRightArrow.setVisible(false);
-        jlBottomArrow.setVisible(false);
-        jlLeftArrow.setVisible(false);
-        int x = 50;
+        jlTopArrow.setEnabled(false);
+        jlRightArrow.setEnabled(false);
+        jlBottomArrow.setEnabled(false);
+        jlLeftArrow.setEnabled(false);
+        int x = 30;
         if (isMyInnings) {
-            jlBottomArrow.setVisible(true);
+            jlBottomArrow.setEnabled(true);
             ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
             jlBottomArrow.setIcon(ii);
             return;
         }
+        if (state == null) {
+            return;
+        }
         int iPlayerPlaying = (state.getIPlayPlaying() - state.getPlayerIndex() + 4) % 4;
         if (iPlayerPlaying == 0) {
-            jlBottomArrow.setVisible(true);
+            jlBottomArrow.setEnabled(true);
             ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
             jlBottomArrow.setIcon(ii);
         } else if (iPlayerPlaying == 1) {
-            jlLeftArrow.setVisible(true);
+            jlLeftArrow.setEnabled(true);
             ImageIcon ii = ImageController.getImageByName("arrowToRight.png", x, x);
             jlLeftArrow.setIcon(ii);
         } else if (iPlayerPlaying == 2) {
-            jlTopArrow.setVisible(true);
+            jlTopArrow.setEnabled(true);
             ImageIcon ii = ImageController.getImageByName("arrowToRight.png", x, x);
             jlTopArrow.setIcon(ii);
         } else if (iPlayerPlaying == 3) {
-            jlRightArrow.setVisible(true);
+            jlRightArrow.setEnabled(true);
             ImageIcon ii = ImageController.getImageByName("arrowToLeft.png", x, x);
             jlRightArrow.setIcon(ii);
         }
@@ -381,8 +403,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
             try {
                 String text = new String(Files.readAllBytes(Paths.get("help.txt")), StandardCharsets.UTF_8);
 //                System.out.println(text);
-                JScrollPane jsp  = new JScrollPane();
-                
+                JScrollPane jsp = new JScrollPane();
+
                 JOptionPane.showMessageDialog(null, text, "Help", 1);
             } catch (IOException ex) {
                 Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
@@ -540,7 +562,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 while (true) {
                     receive_state = (State) SocketController.get_object_from_socket(socket);
 
-                    System.out.println(state.getPlayer());
                     System.out.println(receive_state.getCommand());
 //                    Object info = SocketController.get_object_from_socket(socket);
                     switch (receive_state.getCommand()) {
@@ -553,8 +574,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             break;
                         case INIT:
                             //do somethings
+                            jlHeart.setEnabled(false);
                             state = receive_state;
-                            jbExchange.setVisible(false);
                             updateAllButtonCards();
                             break;
                         case SHOW_RESULT:
@@ -564,7 +585,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                         case EXCHANGE_CARD:
                             //do somethings
                             listCardExchange.removeAll(listCardExchange);
-                            jbExchange.setVisible(true);
                             jbExchange.setEnabled(true);
                             isMyInnings = false;
                             isSwitching = true;
@@ -588,9 +608,15 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             state.setCurrentRound(receive_state.getCurrentRound());
 //                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
                             state.setIPlayPlaying(receive_state.getIPlayPlaying());
+                            if(state.isHasHeartsBroken())
+                                jlHeart.setEnabled(true);
                             updatePane4Card(state.getCurrentRound());
                             updateArrow();
                             break;
+                        case SOCKET_CLOSED:
+                            JOptionPane.showMessageDialog(null, "Sory, " + state.getNickName().get(state.getIPlayPlaying())
+                                    + " disconected. Game is stopped.");
+                            return;
                     }
                 }
             }
