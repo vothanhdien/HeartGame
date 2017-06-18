@@ -563,7 +563,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                     receive_state = (State) SocketController.get_object_from_socket(socket);
 
                     System.out.println(receive_state.getCommand());
-//                    Object info = SocketController.get_object_from_socket(socket);
                     switch (receive_state.getCommand()) {
                         case NEW_GAME:
                             state = receive_state;

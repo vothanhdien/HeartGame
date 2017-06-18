@@ -49,7 +49,6 @@ public class ServerHearts {
                     try {
                         while (true) {
                             Socket s = ss.accept();
-                            System.out.println("Số lượng người chơi: " + listGames.size());
                             Thread thread = new Thread(new Runnable() {
                                 @Override
                                 public void run() {
