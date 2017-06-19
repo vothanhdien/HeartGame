@@ -34,7 +34,6 @@ public class Game {
     Round currentRound;
     int indexRound = 0;
 
-
     public Game(int numberOfPlayers) {
         allCards = new ArrayList<Card>();
         listSockets = new ArrayList<>();
@@ -109,6 +108,8 @@ public class Game {
             for (int i = 0; i < 13; i++) {
                 try {
                     int a = firstPlayer;
+                    currentRound.setFirstPlayer(firstPlayer);
+
                     
                     currentRound.setFirstPlayer(firstPlayer);
                     sendUpdateInforToAllClient(firstPlayer);
@@ -132,7 +133,7 @@ public class Game {
                         } else {
                             c = player_pick_card(a);
                         }
-                        
+
                         //gán lá bài vào currentRound
                         currentRound.getListCard().set(a, c);
                         if (c.getType() == CardType.HEARTS) {
@@ -140,7 +141,7 @@ public class Game {
                         }
                         //Gui thong tin cho client
                         sendUpdateInforToAllClient((a + 1) % 4);
-                        
+
                         a = (a + 1) % listPlayers.size();
                     }
                     //Tim nguoi choi an het bai
@@ -150,8 +151,8 @@ public class Game {
 
 //                    listPlayers.get(firstPlayer).addScore(score);
                     int newScore = playerScores.get(firstPlayer) + score;
-                    playerScores.set(firstPlayer,newScore);
-                    
+                    playerScores.set(firstPlayer, newScore);
+
                     if (currentRound.hasHeart()) {
                         isHeartsBroken = true;
                     }
@@ -268,7 +269,7 @@ public class Game {
         List<Integer> winner = new ArrayList<>();
         int minScore = findMinScore();
         for (int i = 0; i < listPlayers.size(); i++) {
-            if (playerScores.get(i) == minScore) {
+            if (listPlayers.get(i).getScore() == minScore) {
                 winner.add(i);
             }
         }
@@ -277,15 +278,15 @@ public class Game {
 
     private int findMinScore() {
 
-        int minScore = playerScores.get(0);
-        for (int i = 0; i < playerScores.size(); i++) {
-            if (minScore > playerScores.get(i)) {
-                minScore = playerScores.get(i);
+        int minScore = listPlayers.get(0).getScore();
+        for (int i = 0; i < listPlayers.size(); i++) {
+            if (minScore > listPlayers.get(i).getScore()) {
+                minScore = listPlayers.get(i).getScore();
             }
         }
         return minScore;
     }
-
+    
     private void sendInforToAllPlayer() {
         List<String> listName = new ArrayList<>();
         listPlayers.forEach((hp) -> {
@@ -556,7 +557,7 @@ public class Game {
         }
     }
     private void SaveAndResetScore() {
-        for(int i =0; i< listPlayers.size(); i++){
+        for (int i = 0; i < listPlayers.size(); i++) {
             listPlayers.get(i).addScore(playerScores.get(i));
             playerScores.set(i, 0);
         }
