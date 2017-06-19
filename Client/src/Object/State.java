@@ -14,11 +14,12 @@ import java.util.Random;
  *
  * @author didim
  */
-public class State implements Serializable{
+public class State implements Serializable {
     Command command;
     List<String> nickName;
     Round currentRound;
     List<Integer> playerScores;
+    List<Integer> winners;
     Player player;
     int iPlayerPlaying;
     boolean hasHeartsBroken; 	// Keep track of whether hears has broken or not
@@ -74,6 +75,14 @@ public class State implements Serializable{
 
     public void setPlayerScores(List<Integer> playerScores) {
         this.playerScores = playerScores;
+    }
+    
+    public List<Integer> getWinnners() {
+        return winners;
+    }
+
+    public void setWinners(List<Integer> winners) {
+        this.winners = winners;
     }
 
     public boolean isHasHeartsBroken() {

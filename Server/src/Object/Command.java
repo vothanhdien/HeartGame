@@ -11,6 +11,6 @@ import java.io.Serializable;
  *
  * @author HP
  */
-public enum Command implements Serializable{NEW_GAME,SHOW_RESULT,EXCHANGE_CARD,
+public enum Command implements Serializable{GAME_OVER,SHOW_RESULT,EXCHANGE_CARD,
 PICK_CARD,UPDATE_SCORE,UPDATE_VIEW,INIT,SOCKET_CLOSED};
 

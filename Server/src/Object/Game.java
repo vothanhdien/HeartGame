@@ -32,6 +32,7 @@ public class Game {
     boolean isSentInfo;
     boolean isHeartsBroken;
     Round currentRound;
+    int indexRound = 0;
 
     public Game(int numberOfPlayers) {
         allCards = new ArrayList<Card>();
@@ -101,17 +102,19 @@ public class Game {
                 continue;
             }
             //Bat dau doi bai
-            ExchangePlayersCard();
+            if (++indexRound % 4 != 0) {
+                ExchangePlayersCard();
+            }
             for (int i = 0; i < 13; i++) {
                 try {
                     int a = firstPlayer;
-
                     sendUpdateInforToAllClient(firstPlayer);
                     Card c = null;
                     for (int j = 0; j < 4; j++) {
                         //Cho nguoi chon bai
                         if (listPlayers.get(a).isHuman()) {
                             c = player_pick_card(a);
+                            //Nếu client thoát, gửi thông báo về cho người chơi khác
                             if (c == null) {
                                 State state = new State();
                                 state.setCommand(Command.SOCKET_CLOSED);
@@ -128,6 +131,9 @@ public class Game {
                         }
                         currentRound.setFirstPlayer(firstPlayer);
                         currentRound.getListCard().set(a, c);
+                        if (c.getType() == CardType.HEARTS) {
+                            isHeartsBroken = true;
+                        }
                         //Gui thong tin cho client
                         sendUpdateInforToAllClient((a + 1) % 4);
 
@@ -138,9 +144,6 @@ public class Game {
                     //Gan diem cho nguoi choi
                     int score = currentRound.getScore();
                     listPlayers.get(firstPlayer).addScore(score);
-                    if (currentRound.hasHeart()) {
-                        isHeartsBroken = true;
-                    }
                     //
                     currentRound.renew();
                     currentRound.setFirstPlayer(firstPlayer);
@@ -154,8 +157,6 @@ public class Game {
             }
             //Kiểm tra shot the moon
             shotTheMoon();
-            //In nguoi chien thang
-            ArrayList<Integer> winnner = findwinner();
             SendEndScoreToAllPlayer();
             currentRound = new Round();
             currentRound.renew();
@@ -164,13 +165,12 @@ public class Game {
             isHeartsBroken = false;
             //gui bai cho client
             //Ván tiếp theo gửi thông tin bài mới cho người chơi
+            if (isGameOver()) {
+                sendWinnerToAllClient();
+                break;
+            }
             sendInforToAllPlayer();
         }
-//
-//            }//run
-//
-//        });
-//        playing_thread.start();
     }
 
     void createNewAllCards() {
@@ -252,8 +252,8 @@ public class Game {
         }
     }
 
-    private ArrayList<Integer> findwinner() {
-        ArrayList<Integer> winner = new ArrayList<>();
+    private List<Integer> findwinner() {
+        List<Integer> winner = new ArrayList<>();
         int minScore = findMinScore();
         for (int i = 0; i < listPlayers.size(); i++) {
             if (listPlayers.get(i).getScore() == minScore) {
@@ -266,7 +266,7 @@ public class Game {
     private int findMinScore() {
         int minScore = listPlayers.get(0).getScore();
         for (int i = 0; i < listPlayers.size(); i++) {
-            if (minScore < listPlayers.get(i).getScore()) {
+            if (minScore > listPlayers.get(i).getScore()) {
                 minScore = listPlayers.get(i).getScore();
             }
         }
@@ -342,7 +342,6 @@ public class Game {
                 state.setCurrentRound(currentRound);
                 state.setHasHeartsBroken(isHeartsBroken);
                 state.setPlayerIndex(index);
-
                 state.setCommand(Command.UPDATE_VIEW);
                 SocketController.send_object_to_socket(listSockets.get(index), state);
             }
@@ -392,6 +391,11 @@ public class Game {
         ArrayList<Card> exchangeCards_player2 = new ArrayList<Card>();
         ArrayList<Card> exchangeCards_player3 = new ArrayList<Card>();
 
+        for (int index = 0; index < listSockets.size(); index++) {
+            State state = new State();
+            state.setCommand(Command.EXCHANGE_CARD);
+            SocketController.send_object_to_socket(listSockets.get(index), state);
+        }
         //Nhận những lá bài gửi về
         Thread thread1 = new Thread(new Runnable() {
             @Override
@@ -434,7 +438,6 @@ public class Game {
                 exchangeCards_player1.forEach((c) -> {
                     listPlayers.get(1).getHand().remove(c);
                 });
-//            listPlayers.get(1).setHand(newHand);
             }
         });
         Thread thread3 = new Thread(new Runnable() {
@@ -457,7 +460,6 @@ public class Game {
                 exchangeCards_player2.forEach((c) -> {
                     listPlayers.get(2).getHand().remove(c);
                 });
-//            listPlayers.get(2).setHand(newHand);
             }
         });
         Thread thread4 = new Thread(new Runnable() {
@@ -480,39 +482,32 @@ public class Game {
                 exchangeCards_player3.forEach((c) -> {
                     listPlayers.get(3).getHand().remove(c);
                 });
-//            listPlayers.get(3).setHand(newHand);
             }
         });
         thread4.start();
         thread3.start();
         thread2.start();
         thread1.start();
-        
-        for (int index = 0; index < listSockets.size(); index++) {
-            State state = new State();
-            state.setCommand(Command.EXCHANGE_CARD);
-            SocketController.send_object_to_socket(listSockets.get(index), state);
-        }
 
         int total = 0;
         while (total < 12) {
             total = exchangeCards_player0.size() + exchangeCards_player1.size()
                     + exchangeCards_player2.size() + exchangeCards_player3.size();
-            // không được xóa dòng này, vì phải cập nhật biến total liên tục
-            System.out.println(total);
+            // không được xóa đoạn này, vì phải cập nhật biến total liên tục
             try {
-                Thread.sleep(0);
+                Thread.sleep(1);
             } catch (InterruptedException ex) {
                 Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
+        List<List<Integer>> howToExchangeCard = Arrays.asList(Arrays.asList(1, 2, 3, 0), Arrays.asList(3, 0, 1, 2),
+                Arrays.asList(2, 3, 0, 1));
         if (total == 12) {
-            if (true) {
-                listPlayers.get(3).addCard(exchangeCards_player0);
-                listPlayers.get(2).addCard(exchangeCards_player1);
-                listPlayers.get(1).addCard(exchangeCards_player2);
-                listPlayers.get(0).addCard(exchangeCards_player3);
-            }
+            int temp = indexRound - 1;
+            listPlayers.get(howToExchangeCard.get(temp % 4).get(0)).addCard(exchangeCards_player0);
+            listPlayers.get(howToExchangeCard.get(temp % 4).get(1)).addCard(exchangeCards_player1);
+            listPlayers.get(howToExchangeCard.get(temp % 4).get(2)).addCard(exchangeCards_player2);
+            listPlayers.get(howToExchangeCard.get(temp % 4).get(3)).addCard(exchangeCards_player3);
 
             for (int i = 0; i < listPlayers.size(); i++) {
                 listPlayers.get(i).sortHand();
@@ -523,6 +518,26 @@ public class Game {
             //Gui bai moi cho all client
             sendInforToAllPlayer();
             //Cho toan bo nguoi cho doi card
+        }
+    }
+
+    private boolean isGameOver() {
+        for (int i = 0; i < 4; i++) {
+            if (listPlayers.get(i).getScore() > 10) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void sendWinnerToAllClient() {
+        List<Integer> kq = findwinner();
+        for (int index = 0; index < listSockets.size(); index++) {
+            State state = new State();
+            state.setPlayerIndex(index);
+            state.setWinners(kq);
+            state.setCommand(Command.GAME_OVER);
+            SocketController.send_object_to_socket(listSockets.get(index), state);
         }
     }
 }
