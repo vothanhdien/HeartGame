@@ -73,11 +73,11 @@ public class Round implements Serializable {
                 return i;
             }
         }
-        return 0;
+        return firstPlayer;
     }
 
     public Value getMaxValue() {
-        Value max = listCard.get(0).getValue();
+        Value max = listCard.get(firstPlayer).getValue();
 
         for (Card c : listCard) {
             if (c.getType().equals(getRoundType())) {

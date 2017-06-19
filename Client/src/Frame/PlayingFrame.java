@@ -41,6 +41,7 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import java.util.*;
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -63,7 +64,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     //Lượt đánh bài của người chơi
     boolean isMyInnings = false;
 
-    //có phải là đang chọn bà để đổi
+    //có phải là đang chọn bài để đổi
     boolean isSwitching = false;
 
     //chiều rộng bài full
@@ -90,14 +91,25 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     JButton jbExchange;
     //ket qua
+<<<<<<< HEAD
     String result;
     int indexRound = 0;
+=======
+    JPanel jpResult;
+
+>>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
     public PlayingFrame(Socket s, State state) throws HeadlessException {
         this.socket = s;
         this.state = state;
-        result = "";
+        jpResult = new JPanel(new GridLayout(0, 4));
         for (String str : state.getNickName()) {
-            result = result.concat("\t" + str + " \t|");
+//            result = result.concat("\t" + str + " \t|");
+            JLabel tmp = new JLabel("<html>"
+                    + "<div style=\"text-align: center;\">"
+                    +    str
+                    + "</div></html>");
+            tmp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
+            jpResult.add(tmp);
         };
 
         state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
@@ -398,7 +410,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
             return;
         }
         if (cm.equals("History")) {
-            ShowResult(state.getPlayerScores());
+            JOptionPane.showConfirmDialog(null, jpResult, "Result", JOptionPane.YES_NO_OPTION);
         }
         if (cm.equals("Help")) {
             try {
@@ -526,6 +538,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
+<<<<<<< HEAD
         int count = 0;
         //mở những con được đánh
         for (int i = 0; i < size; i++) {
@@ -546,6 +559,35 @@ public class PlayingFrame extends JFrame implements ActionListener {
                     if(list.get(i).getType() == CardType.HEARTS)
                         listButtonCards.get(13 - size + i).setEnabled(false);
                 }
+=======
+
+        if (firstCardType == null) {
+            for (int i = 0; i < size; i++) {
+                //xét con cơ
+                if (list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken()) {
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                }
+            }
+        } else { // trường hợp đánh theo
+            if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
+                for (int i = 0; i < size; i++) {
+                    if (list.get(i).getType() == firstCardType) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
+                }
+            } else// nếu không có con để dánh
+            {
+                for (int i = 0; i < size; i++) {
+                    //quân cơ không được chơi khi người chơi còn 13 lá
+                    if (list.get(i).getType() == CardType.HEARTS && size < 13) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
+                }
+>>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
             }
         }
 
@@ -607,10 +649,15 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             state.setCurrentRound(receive_state.getCurrentRound());
                             state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
                             state.setIPlayPlaying(receive_state.getIPlayPlaying());
+<<<<<<< HEAD
+=======
+                            state.setPlayerScores(receive_state.getPlayerScores());
+>>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
                             if (state.isHasHeartsBroken()) {
                                 jlHeart.setEnabled(true);
                             }
                             updatePane4Card(state.getCurrentRound());
+                            updateAllPlayerScore(state.getPlayerScores());
                             updateArrow();
                             break;
                         case SOCKET_CLOSED:
@@ -677,12 +724,21 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     private void ShowResult(List<Integer> playerScores) {
         int index = state.getPlayerIndex();
-        String message = String.format("\n\t%2d \t|\t%2d \t|\t%2d \t|\t%2d \t|",
-                playerScores.get(index), playerScores.get(++index % 4),
-                playerScores.get(++index % 4), playerScores.get(++index % 4));
-        result = result.concat(message);
-        System.out.println(result);
-        JOptionPane.showConfirmDialog(null, new JTextArea(result), "Result", JOptionPane.YES_NO_OPTION);
+        for(int i =0 ; i< playerScores.size(); i++){
+            JLabel tmp = new JLabel("<html>"
+                    + "<div style='text-align: center;'>"
+                    +    playerScores.get(i).toString()
+                    + "</div></html>");
+            jpResult.add(tmp);
+        }
+//        String message = String.format("\n\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|",
+//                playerScores.get(index), playerScores.get(++index % 4),
+//                playerScores.get(++index % 4), playerScores.get(++index % 4));
+//        result = result.concat(message);
+//        System.out.println(result);
+//        JPanel jp = new JPanel();
+        
+        JOptionPane.showConfirmDialog(null, jpResult, "Result", JOptionPane.YES_NO_OPTION);
     }
 
     private List<String> arrageListNickName(List<String> listNickName, int playerIndex) {
