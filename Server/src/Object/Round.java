@@ -68,16 +68,16 @@ public class Round implements Serializable {
     public int getMaxCard() {
         for (int i = 0; i < listCard.size(); i++) {
             Card c = listCard.get(i);
-            if (c != null && c.getType().equals(getRoundType())
+            if (c.getType().equals(getRoundType())
                     && c.getValue().equals(getMaxValue())) {
                 return i;
             }
         }
-        return 0;
+        return firstPlayer;
     }
 
     public Value getMaxValue() {
-        Value max = listCard.get(0).getValue();
+        Value max = listCard.get(firstPlayer).getValue();
 
         for (Card c : listCard) {
             if (c.getType().equals(getRoundType())) {

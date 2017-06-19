@@ -31,7 +31,7 @@ public class Game {
     int numberOfPlayers;
     boolean isSentInfo;
     boolean isHeartsBroken;
-    Round currentRound;
+    Round currentRound; 
 
     public Game(int numberOfPlayers) {
         allCards = new ArrayList<Card>();
@@ -105,7 +105,8 @@ public class Game {
             for (int i = 0; i < 13; i++) {
                 try {
                     int a = firstPlayer;
-
+                    currentRound.setFirstPlayer(firstPlayer);
+                    
                     sendUpdateInforToAllClient(firstPlayer);
                     Card c = null;
                     for (int j = 0; j < 4; j++) {
@@ -126,11 +127,12 @@ public class Game {
                         } else {
                             c = player_pick_card(a);
                         }
-                        currentRound.setFirstPlayer(firstPlayer);
+                        
+                        //gán lá bài vào currentRound
                         currentRound.getListCard().set(a, c);
                         //Gui thong tin cho client
                         sendUpdateInforToAllClient((a + 1) % 4);
-
+                        
                         a = (a + 1) % listPlayers.size();
                     }
                     //Tim nguoi choi an het bai
@@ -143,7 +145,7 @@ public class Game {
                     }
                     //
                     currentRound.renew();
-                    currentRound.setFirstPlayer(firstPlayer);
+//                    currentRound.setFirstPlayer(firstPlayer);
 
                     sendUpdateScoreToAllClient();
                     Thread.sleep(1000);

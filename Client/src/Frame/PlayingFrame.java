@@ -62,7 +62,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     //Lượt đánh bài của người chơi
     boolean isMyInnings = false;
 
-    //có phải là đang chọn bà để đổi
+    //có phải là đang chọn bài để đổi
     boolean isSwitching = false;
 
     //chiều rộng bài full
@@ -397,7 +397,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
             return;
         }
         if (cm.equals("History")) {
-            ShowResult(state.getPlayerScores());
+            JOptionPane.showConfirmDialog(null, new JTextArea(result), "Result", JOptionPane.YES_NO_OPTION);
         }
         if (cm.equals("Help")) {
             try {
@@ -524,29 +524,37 @@ public class PlayingFrame extends JFrame implements ActionListener {
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
-        int count = 0;
-        //mở những con được đánh
-        for (int i = 0; i < size; i++) {
-            if (firstCardType == null || list.get(i).getType() == firstCardType) {
-                listButtonCards.get(13 - size + i).setEnabled(true);
-                count++;
+        
+        if(firstCardType == null){
+            for (int i = 0; i < size; i++) {
+                //xét con cơ
+                if(list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken() ){
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                }
+                else if(list.get(i).getType() != CardType.HEARTS){// những con bài khác
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                }
             }
         }
-        //Không đánh được con nào hay đánh được hết(thằng đánh đầu tiên)
-        if (count == 0 || count == size) {
-            for (int i = 0; i < size; i++) {
-                //Nếu chỉ còn những lá heart
-                if (state.getPlayer().hasAllHeart()) {
-                    listButtonCards.get(13 - size + i).setEnabled(true);
-                    continue;
+        else{ // trường hợp đánh theo
+            if(state.getPlayer().checkType(firstCardType)){// nếu có con để đánh
+                for (int i = 0; i < size; i++) {
+                    if (list.get(i).getType() == firstCardType) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
                 }
-
-                if (state.isHasHeartsBroken() || list.get(i).getType() != CardType.HEARTS) {
-                    listButtonCards.get(13 - size + i).setEnabled(true);
-                } else {
-                    listButtonCards.get(13 - size + i).setEnabled(false);
+            }
+            else// nếu không có con để dánh
+            {
+                for (int i = 0; i < size; i++) {
+                    //quân cơ không được chơi khi người chơi còn 13 lá
+                    if (list.get(i).getType() == CardType.HEARTS && size < 13) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
+                    else if(list.get(i).getType() != CardType.HEARTS){//Quân khác
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
                 }
-
             }
         }
 
@@ -675,7 +683,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     private void ShowResult(List<Integer> playerScores) {
         int index = state.getPlayerIndex();
-        String message = String.format("\n\t%2d \t|\t%2d \t|\t%2d \t|\t%2d \t|",
+        String message = String.format("\n\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|",
                 playerScores.get(index), playerScores.get(++index % 4),
                 playerScores.get(++index % 4), playerScores.get(++index % 4));
         result = result.concat(message);
