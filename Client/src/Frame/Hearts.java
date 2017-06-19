@@ -17,6 +17,11 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -103,10 +108,13 @@ public class Hearts extends JPanel implements ActionListener {
              String temp = JOptionPane.showInputDialog(this, "Number of players", "Input",
                     JOptionPane.QUESTION_MESSAGE);
             int numberOfPlayer = 0;
-            numberOfPlayer = Integer.valueOf(temp);
-            
-            if (numberOfPlayer > 1 && numberOfPlayer <= 4) {
-                new LoginFrame(numberOfPlayer);
+            if(temp != null){
+                numberOfPlayer = Integer.valueOf(temp);
+                if (numberOfPlayer > 1 && numberOfPlayer <= 4) {
+                    new LoginFrame(numberOfPlayer);
+                }
+                else
+                    new LoginFrame(4);
             }
             else
             {
@@ -114,11 +122,21 @@ public class Hearts extends JPanel implements ActionListener {
             }
         } else if (e.getActionCommand().equals(PLAY_WITH_AIPLAYER)) {
             LoginFrame lg = new LoginFrame(1);
-
+           
         } else if (e.getActionCommand().equals(STATICTIS)) {
 
         } else if (e.getActionCommand().equals(HELP)) {
+            try {
+                String text = new String(Files.readAllBytes(Paths.get("help.txt")), StandardCharsets.UTF_8);
+//                System.out.println(text);
 
+                JOptionPane.showMessageDialog(null, text, "Help", 1);
+            } catch (IOException ex) {
+                Logger.getLogger(PlayingFrame.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            finally{
+                createAndShowGUI();
+            }
         }
 
 //        

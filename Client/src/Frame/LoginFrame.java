@@ -10,6 +10,7 @@ import Object.SocketController;
 import Object.State;
 import java.awt.BorderLayout;
 import java.awt.Container;
+import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.HeadlessException;
@@ -88,6 +89,28 @@ public class LoginFrame extends JFrame {
                 login();
             }
         });
+        JButton jbExit = new JButton("Cancel");
+        jbExit.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame.setDefaultLookAndFeelDecorated(true);
+
+                //Create and set up the window.
+                JFrame frame = new JFrame("Heart");
+                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+                frame.setLocation(getLocationOnScreen().x, getLocationOnScreen().y);
+                JComponent comp = null;
+                comp = new Hearts();
+                comp.setOpaque(true);
+                frame.setContentPane(comp);
+                frame.setPreferredSize(new Dimension(getWidth(), getHeight()));
+                //Display the window.
+                frame.pack();
+                frame.setVisible(true);
+                dispose();
+                return;
+            }
+        });
 
         //add to container
         //thêm vào JPanel
@@ -125,6 +148,11 @@ public class LoginFrame extends JFrame {
         constraint.gridy = 3;
         constraint.gridwidth = 1;
         container.add(jbConnect, constraint);
+        
+        constraint.gridx = 2;
+        constraint.gridy = 3;
+        constraint.gridwidth = 1;
+        container.add(jbExit, constraint);
         
         
         

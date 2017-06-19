@@ -31,12 +31,9 @@ public class Game {
     int numberOfPlayers;
     boolean isSentInfo;
     boolean isHeartsBroken;
-<<<<<<< HEAD
     Round currentRound;
     int indexRound = 0;
-=======
-    Round currentRound; 
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
+
 
     public Game(int numberOfPlayers) {
         allCards = new ArrayList<Card>();
@@ -112,11 +109,8 @@ public class Game {
             for (int i = 0; i < 13; i++) {
                 try {
                     int a = firstPlayer;
-<<<<<<< HEAD
-=======
-                    currentRound.setFirstPlayer(firstPlayer);
                     
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
+                    currentRound.setFirstPlayer(firstPlayer);
                     sendUpdateInforToAllClient(firstPlayer);
                     Card c = null;
                     for (int j = 0; j < 4; j++) {
@@ -153,9 +147,7 @@ public class Game {
                     firstPlayer = findTaker(firstPlayer);
                     //Gan diem cho nguoi choi
                     int score = currentRound.getScore();
-<<<<<<< HEAD
-                    listPlayers.get(firstPlayer).addScore(score);
-=======
+
 //                    listPlayers.get(firstPlayer).addScore(score);
                     int newScore = playerScores.get(firstPlayer) + score;
                     playerScores.set(firstPlayer,newScore);
@@ -163,7 +155,6 @@ public class Game {
                     if (currentRound.hasHeart()) {
                         isHeartsBroken = true;
                     }
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
                     //
                     currentRound.renew();
 //                    currentRound.setFirstPlayer(firstPlayer);
@@ -285,17 +276,11 @@ public class Game {
     }
 
     private int findMinScore() {
-<<<<<<< HEAD
-        int minScore = listPlayers.get(0).getScore();
-        for (int i = 0; i < listPlayers.size(); i++) {
-            if (minScore > listPlayers.get(i).getScore()) {
-                minScore = listPlayers.get(i).getScore();
-=======
+
         int minScore = playerScores.get(0);
         for (int i = 0; i < playerScores.size(); i++) {
-            if (minScore < playerScores.get(i)) {
+            if (minScore > playerScores.get(i)) {
                 minScore = playerScores.get(i);
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
             }
         }
         return minScore;
@@ -550,10 +535,10 @@ public class Game {
         }
     }
 
-<<<<<<< HEAD
+
     private boolean isGameOver() {
         for (int i = 0; i < 4; i++) {
-            if (listPlayers.get(i).getScore() > 10) {
+            if (listPlayers.get(i).getScore() > 100) {
                 return true;
             }
         }
@@ -570,8 +555,6 @@ public class Game {
             SocketController.send_object_to_socket(listSockets.get(index), state);
         }
     }
-}
-=======
     private void SaveAndResetScore() {
         for(int i =0; i< listPlayers.size(); i++){
             listPlayers.get(i).addScore(playerScores.get(i));
@@ -579,4 +562,3 @@ public class Game {
         }
     }
 }
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1

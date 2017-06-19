@@ -91,13 +91,12 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     JButton jbExchange;
     //ket qua
-<<<<<<< HEAD
-    String result;
+
     int indexRound = 0;
-=======
+
+    String winners = "";
     JPanel jpResult;
 
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
     public PlayingFrame(Socket s, State state) throws HeadlessException {
         this.socket = s;
         this.state = state;
@@ -538,7 +537,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
-<<<<<<< HEAD
+
         int count = 0;
         //mở những con được đánh
         for (int i = 0; i < size; i++) {
@@ -559,8 +558,8 @@ public class PlayingFrame extends JFrame implements ActionListener {
                     if(list.get(i).getType() == CardType.HEARTS)
                         listButtonCards.get(13 - size + i).setEnabled(false);
                 }
-=======
-
+            }
+        }
         if (firstCardType == null) {
             for (int i = 0; i < size; i++) {
                 //xét con cơ
@@ -587,14 +586,12 @@ public class PlayingFrame extends JFrame implements ActionListener {
                         listButtonCards.get(13 - size + i).setEnabled(true);
                     }
                 }
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
             }
         }
 
         invalidate();
         repaint();
     }
-    String winners = "";
     public void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
@@ -649,10 +646,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             state.setCurrentRound(receive_state.getCurrentRound());
                             state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
                             state.setIPlayPlaying(receive_state.getIPlayPlaying());
-<<<<<<< HEAD
-=======
                             state.setPlayerScores(receive_state.getPlayerScores());
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
                             if (state.isHasHeartsBroken()) {
                                 jlHeart.setEnabled(true);
                             }
