@@ -139,7 +139,10 @@ public class Game {
                     firstPlayer = findTaker(firstPlayer);
                     //Gan diem cho nguoi choi
                     int score = currentRound.getScore();
-                    listPlayers.get(firstPlayer).addScore(score);
+//                    listPlayers.get(firstPlayer).addScore(score);
+                    int newScore = playerScores.get(firstPlayer) + score;
+                    playerScores.set(firstPlayer,newScore);
+                    
                     if (currentRound.hasHeart()) {
                         isHeartsBroken = true;
                     }
@@ -159,10 +162,11 @@ public class Game {
             //In nguoi chien thang
             ArrayList<Integer> winnner = findwinner();
             SendEndScoreToAllPlayer();
-            currentRound = new Round();
+//            currentRound = new Round();
             currentRound.renew();
             randomAllCards();
             deal4AllPlayer();
+            SaveAndResetScore();
             isHeartsBroken = false;
             //gui bai cho client
             //Ván tiếp theo gửi thông tin bài mới cho người chơi
@@ -240,11 +244,11 @@ public class Game {
         if (index > -1) {
             for (int i = 0; i < listPlayers.size(); i++) {
                 if (i != index) {
-                    listPlayers.get(i).addScore(26);
+//                    listPlayers.get(i).addScore(26);
                     playerScores.set(i, 26);
                 } // Remove the 26 points that this player received this round
                 else {
-                    listPlayers.get(i).addScore(-26);
+//                    listPlayers.get(i).addScore(-26);
                     playerScores.set(i, 0);
                 }
             }
@@ -258,7 +262,7 @@ public class Game {
         ArrayList<Integer> winner = new ArrayList<>();
         int minScore = findMinScore();
         for (int i = 0; i < listPlayers.size(); i++) {
-            if (listPlayers.get(i).getScore() == minScore) {
+            if (playerScores.get(i) == minScore) {
                 winner.add(i);
             }
         }
@@ -266,10 +270,10 @@ public class Game {
     }
 
     private int findMinScore() {
-        int minScore = listPlayers.get(0).getScore();
-        for (int i = 0; i < listPlayers.size(); i++) {
-            if (minScore < listPlayers.get(i).getScore()) {
-                minScore = listPlayers.get(i).getScore();
+        int minScore = playerScores.get(0);
+        for (int i = 0; i < playerScores.size(); i++) {
+            if (minScore < playerScores.get(i)) {
+                minScore = playerScores.get(i);
             }
         }
         return minScore;
@@ -342,6 +346,7 @@ public class Game {
                 State state = new State();
                 state.setIPlayPlaying(i);
                 state.setCurrentRound(currentRound);
+                state.setPlayerScores(playerScores);
                 state.setHasHeartsBroken(isHeartsBroken);
                 state.setPlayerIndex(index);
 
@@ -353,15 +358,15 @@ public class Game {
 
     //Gửi thông tin update điểm tới toàn bộ người hơi
     private void sendUpdateScoreToAllClient() {
-        List<Integer> listScore = new ArrayList<>();
-        for (Player hp : listPlayers) {
-            listScore.add(hp.getScore());
-        }
+//        List<Integer> listScore = new ArrayList<>();
+//        for (Player hp : listPlayers) {
+//            listScore.add(hp.getScore());
+//        }
         for (int index = 0; index < listPlayers.size(); index++) {
             if (listPlayers.get(index).isHuman()) {
                 State state = new State();
                 state.setCurrentRound(currentRound);
-                state.setPlayerScores(listScore);
+                state.setPlayerScores(playerScores);
                 state.setPlayerIndex(index);
 
                 state.setCommand(Command.UPDATE_SCORE);
@@ -374,13 +379,13 @@ public class Game {
 
     //gửi điển tổng kết
     private void SendEndScoreToAllPlayer() {
-        List<Integer> listScore = new ArrayList<>();
-        for (Player hp : listPlayers) {
-            listScore.add(hp.getScore());
-        }
+//        List<Integer> listScore = new ArrayList<>();
+//        for (Player hp : listPlayers) {
+//            listScore.add(hp.getScore());
+//        }
         for (int index = 0; index < listSockets.size(); index++) {
             State state = new State();
-            state.setPlayerScores(listScore);
+            state.setPlayerScores(playerScores);
             state.setPlayerIndex(index);
 
             state.setCommand(Command.SHOW_RESULT);
@@ -525,6 +530,13 @@ public class Game {
             //Gui bai moi cho all client
             sendInforToAllPlayer();
             //Cho toan bo nguoi cho doi card
+        }
+    }
+
+    private void SaveAndResetScore() {
+        for(int i =0; i< listPlayers.size(); i++){
+            listPlayers.get(i).addScore(playerScores.get(i));
+            playerScores.set(i, 0);
         }
     }
 }
