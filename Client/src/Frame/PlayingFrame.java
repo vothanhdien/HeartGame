@@ -91,13 +91,10 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     JButton jbExchange;
     //ket qua
-<<<<<<< HEAD
     String result;
     int indexRound = 0;
-=======
     JPanel jpResult;
 
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
     public PlayingFrame(Socket s, State state) throws HeadlessException {
         this.socket = s;
         this.state = state;
@@ -106,7 +103,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 //            result = result.concat("\t" + str + " \t|");
             JLabel tmp = new JLabel("<html>"
                     + "<div style=\"text-align: center;\">"
-                    +    str
+                    + str
                     + "</div></html>");
             tmp.setBorder(BorderFactory.createLineBorder(Color.BLACK));
             jpResult.add(tmp);
@@ -450,8 +447,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 //                    });
                 }
 
-            } else
-            {
+            } else {
                 for (int i = 0; i < 13; i++) {
                     if (cm.equals("Button " + (i + 1))) {
 
@@ -538,7 +534,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
-<<<<<<< HEAD
         int count = 0;
         //mở những con được đánh
         for (int i = 0; i < size; i++) {
@@ -556,46 +551,48 @@ public class PlayingFrame extends JFrame implements ActionListener {
         else if (count == size) {
             if (!state.getPlayer().hasAllHeart() && !state.isHasHeartsBroken()) {
                 for (int i = 0; i < size; i++) {
-                    if(list.get(i).getType() == CardType.HEARTS)
+                    if (list.get(i).getType() == CardType.HEARTS) {
                         listButtonCards.get(13 - size + i).setEnabled(false);
+                    }
                 }
-=======
 
-        if (firstCardType == null) {
-            for (int i = 0; i < size; i++) {
-                //xét con cơ
-                if (list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken()) {
-                    listButtonCards.get(13 - size + i).setEnabled(true);
-                } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
-                    listButtonCards.get(13 - size + i).setEnabled(true);
-                }
-            }
-        } else { // trường hợp đánh theo
-            if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
-                for (int i = 0; i < size; i++) {
-                    if (list.get(i).getType() == firstCardType) {
-                        listButtonCards.get(13 - size + i).setEnabled(true);
+                if (firstCardType == null) {
+                    for (int i = 0; i < size; i++) {
+                        //xét con cơ
+                        if (list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken()) {
+                            listButtonCards.get(13 - size + i).setEnabled(true);
+                        } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
+                            listButtonCards.get(13 - size + i).setEnabled(true);
+                        }
+                    }
+                } else { // trường hợp đánh theo
+                    if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
+                        for (int i = 0; i < size; i++) {
+                            if (list.get(i).getType() == firstCardType) {
+                                listButtonCards.get(13 - size + i).setEnabled(true);
+                            }
+                        }
+                    } else// nếu không có con để dánh
+                    {
+                        for (int i = 0; i < size; i++) {
+                            //quân cơ không được chơi khi người chơi còn 13 lá
+                            if (list.get(i).getType() == CardType.HEARTS && size < 13) {
+                                listButtonCards.get(13 - size + i).setEnabled(true);
+                            } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
+                                listButtonCards.get(13 - size + i).setEnabled(true);
+                            }
+                        }
                     }
                 }
-            } else// nếu không có con để dánh
-            {
-                for (int i = 0; i < size; i++) {
-                    //quân cơ không được chơi khi người chơi còn 13 lá
-                    if (list.get(i).getType() == CardType.HEARTS && size < 13) {
-                        listButtonCards.get(13 - size + i).setEnabled(true);
-                    } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
-                        listButtonCards.get(13 - size + i).setEnabled(true);
-                    }
-                }
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
+
+                invalidate();
+                repaint();
             }
         }
-
-        invalidate();
-        repaint();
     }
+    
     String winners = "";
-    public void GameStart() {
+    private void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -649,10 +646,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             state.setCurrentRound(receive_state.getCurrentRound());
                             state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
                             state.setIPlayPlaying(receive_state.getIPlayPlaying());
-<<<<<<< HEAD
-=======
                             state.setPlayerScores(receive_state.getPlayerScores());
->>>>>>> 8b42fdeafc3a255928dabca5bc1207b0fbeff2a1
                             if (state.isHasHeartsBroken()) {
                                 jlHeart.setEnabled(true);
                             }
@@ -724,10 +718,10 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
     private void ShowResult(List<Integer> playerScores) {
         int index = state.getPlayerIndex();
-        for(int i =0 ; i< playerScores.size(); i++){
+        for (int i = 0; i < playerScores.size(); i++) {
             JLabel tmp = new JLabel("<html>"
                     + "<div style='text-align: center;'>"
-                    +    playerScores.get(i).toString()
+                    + playerScores.get(i).toString()
                     + "</div></html>");
             jpResult.add(tmp);
         }
@@ -737,7 +731,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
 //        result = result.concat(message);
 //        System.out.println(result);
 //        JPanel jp = new JPanel();
-        
+
         JOptionPane.showConfirmDialog(null, jpResult, "Result", JOptionPane.YES_NO_OPTION);
     }
 
