@@ -499,12 +499,12 @@ public class Game {
             total = exchangeCards_player0.size() + exchangeCards_player1.size()
                     + exchangeCards_player2.size() + exchangeCards_player3.size();
             // không được xóa dòng này, vì phải cập nhật biến total liên tục
-            //System.out.println(total);
-//            try {
-//                Thread.sleep(0);
-//            } catch (InterruptedException ex) {
-//                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
-//            }
+            System.out.println(total);
+            try {
+                Thread.sleep(0);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
         if (total == 12) {
             if (true) {
