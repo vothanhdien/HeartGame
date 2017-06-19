@@ -267,7 +267,7 @@ public class Game {
         List<Integer> winner = new ArrayList<>();
         int minScore = findMinScore();
         for (int i = 0; i < listPlayers.size(); i++) {
-            if (playerScores.get(i) == minScore) {
+            if (listPlayers.get(i).getScore() == minScore) {
                 winner.add(i);
             }
         }
@@ -279,7 +279,6 @@ public class Game {
         for (int i = 0; i < listPlayers.size(); i++) {
             if (minScore > listPlayers.get(i).getScore()) {
                 minScore = listPlayers.get(i).getScore();
-                return minScore;
             }
         }
         return minScore;
