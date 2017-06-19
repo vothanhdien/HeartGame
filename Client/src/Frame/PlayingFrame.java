@@ -557,43 +557,42 @@ public class PlayingFrame extends JFrame implements ActionListener {
                     if (list.get(i).getType() == CardType.HEARTS) {
                         listButtonCards.get(13 - size + i).setEnabled(false);
                     }
+                }
             }
-        }
-                if (firstCardType == null) {
+            if (firstCardType == null) {
+                for (int i = 0; i < size; i++) {
+                    //xét con cơ
+                    if (list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken()) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
+                }
+            } else { // trường hợp đánh theo
+                if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
                     for (int i = 0; i < size; i++) {
-                        //xét con cơ
-                        if (list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken()) {
-                            listButtonCards.get(13 - size + i).setEnabled(true);
-                        } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
+                        if (list.get(i).getType() == firstCardType) {
                             listButtonCards.get(13 - size + i).setEnabled(true);
                         }
                     }
-                } else { // trường hợp đánh theo
-                    if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
-                        for (int i = 0; i < size; i++) {
-                            if (list.get(i).getType() == firstCardType) {
-                                listButtonCards.get(13 - size + i).setEnabled(true);
-                            }
-                        }
-                    } else// nếu không có con để dánh
-                    {
-                        for (int i = 0; i < size; i++) {
-                            //quân cơ không được chơi khi người chơi còn 13 lá
-                            if (list.get(i).getType() == CardType.HEARTS && size < 13) {
-                                listButtonCards.get(13 - size + i).setEnabled(true);
-                            } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
-                                listButtonCards.get(13 - size + i).setEnabled(true);
-                            }
+                } else// nếu không có con để dánh
+                {
+                    for (int i = 0; i < size; i++) {
+                        //quân cơ không được chơi khi người chơi còn 13 lá
+                        if (list.get(i).getType() == CardType.HEARTS && size < 13) {
+                            listButtonCards.get(13 - size + i).setEnabled(true);
+                        } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
+                            listButtonCards.get(13 - size + i).setEnabled(true);
                         }
                     }
                 }
-
-                invalidate();
-                repaint();
             }
+
+            invalidate();
+            repaint();
         }
     }
-    
+
     private void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override
@@ -727,12 +726,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                     + "</div></html>");
             jpResult.add(tmp);
         }
-//        String message = String.format("\n\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|",
-//                playerScores.get(index), playerScores.get(++index % 4),
-//                playerScores.get(++index % 4), playerScores.get(++index % 4));
-//        result = result.concat(message);
-//        System.out.println(result);
-//        JPanel jp = new JPanel();
 
         JOptionPane.showConfirmDialog(null, jpResult, "Result", JOptionPane.YES_NO_OPTION);
     }
