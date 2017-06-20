@@ -131,7 +131,7 @@
 		<copy file="help.txt" todir="build/jar"/>
         <jar destfile="build/jar/Hearts.jar" basedir="build/classes">
             <manifest>
-                <attribute name="Main-Class" value="Frame.Hearts"/>
+                <attribute name="Main-Class" value="client.Client"/>
 			<attribute name="Class-Path" value="images/full-images/0.png"/>	
 			<attribute name="Class-Path" value="images/full-images/1.png"/>
 			<attribute name="Class-Path" value="images/full-images/2.png"/>	

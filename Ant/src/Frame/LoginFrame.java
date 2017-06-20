@@ -41,7 +41,7 @@ public class LoginFrame extends JFrame {
     JLabel jlmsg;
     State state = null;
     int number = 4;
-
+//    JDialog waitingdlg;
     public LoginFrame(int number) throws HeadlessException {
         this.setTitle("login to server");
 
@@ -93,10 +93,8 @@ public class LoginFrame extends JFrame {
                     JOptionPane.showMessageDialog(null, "Fill all blank");
                     return;
                 }
-                jlmsg.setVisible(true);
-                jpbWaiting.setVisible(true);
-                invalidate();
-                repaint();
+                ShowProgressDialog();
+                
                 new Thread(new Runnable() {
                     @Override
                     public void run() {
@@ -110,20 +108,9 @@ public class LoginFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame.setDefaultLookAndFeelDecorated(true);
-                //Create and set up the window.
-                JFrame frame = new JFrame("Heart");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setLocation(getLocationOnScreen().x, getLocationOnScreen().y);
-                JComponent comp = null;
-                comp = new Hearts();
-                comp.setOpaque(true);
-                frame.setContentPane(comp);
-                frame.setPreferredSize(new Dimension(getWidth(), getHeight()));
-                //Display the window.
-                frame.pack();
-                frame.setVisible(true);
+                MainFrame mf = new MainFrame();
                 dispose();
-                return;
+                
             }
         });
 
@@ -185,11 +172,7 @@ public class LoginFrame extends JFrame {
         constraint.gridwidth = 1;
         container.add(jpbWaiting, constraint);
 
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
@@ -219,21 +202,22 @@ public class LoginFrame extends JFrame {
         }
     }
 
-//    private void ShowProgressDialog() {
-//
-//        final JDialog dlg = new JDialog(new JFrame(), "Waiting another palyer", true);
-//        JProgressBar dpb = new JProgressBar(0);
-//        dlg.add(BorderLayout.CENTER, dpb);
-//        dlg.add(BorderLayout.NORTH, new JLabel("Progress..."));
-////        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-//        dlg.setSize(300, 75);
-//        dpb.setIndeterminate(true);
-//
-//        Thread t = new Thread(new Runnable() {
-//            public void run() {
-//                dlg.setVisible(true);
-//            }
-//        });
-//        t.start();
-//    }
+    private void ShowProgressDialog() {
+
+        final JDialog waitingdlg = new JDialog(this, "Waiting another player", true);
+        JProgressBar dpb = new JProgressBar(0);
+        waitingdlg.add(BorderLayout.CENTER, dpb);
+        waitingdlg.add(BorderLayout.NORTH, new JLabel("Waiting another player..."));
+//        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        waitingdlg.setLocationRelativeTo(null);
+        waitingdlg.setSize(300, 75);
+        dpb.setIndeterminate(true);
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                waitingdlg.setVisible(true);
+            }
+        });
+        t.start();
+    }
 }

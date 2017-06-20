@@ -236,6 +236,10 @@ public class Game {
 
         for (int i = 0; i < listPlayers.size(); i++) {
             listPlayers.get(i).sortHand();
+            if(listPlayers.get(i).hasTwoOfClubs())
+            {
+                firstPlayer = i;
+            }
         }
     }
 
@@ -539,7 +543,7 @@ public class Game {
 
     private boolean isGameOver() {
         for (int i = 0; i < 4; i++) {
-            if (listPlayers.get(i).getScore() > 100) {
+            if (listPlayers.get(i).getScore() > 99) {
                 return true;
             }
         }
