@@ -391,20 +391,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     public void actionPerformed(ActionEvent e) {
         String cm = e.getActionCommand();
         if (cm.equals("Back")) {
-            JFrame.setDefaultLookAndFeelDecorated(true);
-
-            //Create and set up the window.
-            JFrame frame = new JFrame("Heart");
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setLocation(getLocationOnScreen().x, getLocationOnScreen().y);
-            JComponent comp = null;
-            comp = new Hearts();
-            comp.setOpaque(true);
-            frame.setContentPane(comp);
-            frame.setPreferredSize(new Dimension(getWidth(), getHeight()));
-            //Display the window.
-            frame.pack();
-            frame.setVisible(true);
+            MainFrame mf = new MainFrame();
             dispose();
             return;
         }
@@ -536,64 +523,40 @@ public class PlayingFrame extends JFrame implements ActionListener {
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
-
-        int count = 0;
-        //mở những con được đánh
-        for (int i = 0; i < size; i++) {
-            if (firstCardType == null || list.get(i).getType() == firstCardType) {
-                listButtonCards.get(13 - size + i).setEnabled(true);
-                count++;
-            }
-        }
-        //Nếu không có bài theo, mở tất cả các quân bài
-        if (count == 0) {
+        
+        if (firstCardType == null) {
             for (int i = 0; i < size; i++) {
+            //xét con cơ
+            if ((list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken())
+                    || state.getPlayer().hasAllHeart()) {
+                listButtonCards.get(13 - size + i).setEnabled(true);
+            } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
                 listButtonCards.get(13 - size + i).setEnabled(true);
             }
-        } //là người đánh đầu tiên
-        else if (count == size) {
-            if (!state.getPlayer().hasAllHeart() && !state.isHasHeartsBroken()) {
-                for (int i = 0; i < size; i++) {
-                    if (list.get(i).getType() == CardType.HEARTS) {
-                        listButtonCards.get(13 - size + i).setEnabled(false);
-                    }
-            }
         }
-                if (firstCardType == null) {
-                    for (int i = 0; i < size; i++) {
-                        //xét con cơ
-                        if (list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken()) {
-                            listButtonCards.get(13 - size + i).setEnabled(true);
-                        } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
-                            listButtonCards.get(13 - size + i).setEnabled(true);
-                        }
-                    }
-                } else { // trường hợp đánh theo
-                    if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
-                        for (int i = 0; i < size; i++) {
-                            if (list.get(i).getType() == firstCardType) {
-                                listButtonCards.get(13 - size + i).setEnabled(true);
-                            }
-                        }
-                    } else// nếu không có con để dánh
-                    {
-                        for (int i = 0; i < size; i++) {
-                            //quân cơ không được chơi khi người chơi còn 13 lá
-                            if (list.get(i).getType() == CardType.HEARTS && size < 13) {
-                                listButtonCards.get(13 - size + i).setEnabled(true);
-                            } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
-                                listButtonCards.get(13 - size + i).setEnabled(true);
-                            }
-                        }
+        } else { // trường hợp đánh theo
+            if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
+                for (int i = 0; i < size; i++) {
+                    if (list.get(i).getType() == firstCardType) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
                     }
                 }
-
-                invalidate();
-                repaint();
+            } else// nếu không có con để dánh
+            {
+                for (int i = 0; i < size; i++) {
+                    //quân cơ không được chơi khi người chơi còn 13 lá
+                    if (list.get(i).getType() == CardType.HEARTS && size < 13) {
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    } else if (list.get(i).getType() != CardType.HEARTS) {//Quân khác
+                        listButtonCards.get(13 - size + i).setEnabled(true);
+                    }
+                }
             }
         }
+
+        invalidate();
+        repaint();
     }
-    
     private void GameStart() {
         Thread Listen_Thread = new Thread(new Runnable() {
             @Override

@@ -95,20 +95,9 @@ public class LoginFrame extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 JFrame.setDefaultLookAndFeelDecorated(true);
 
-                //Create and set up the window.
-                JFrame frame = new JFrame("Heart");
-                frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                frame.setLocation(getLocationOnScreen().x, getLocationOnScreen().y);
-                JComponent comp = null;
-                comp = new Hearts();
-                comp.setOpaque(true);
-                frame.setContentPane(comp);
-                frame.setPreferredSize(new Dimension(getWidth(), getHeight()));
-                //Display the window.
-                frame.pack();
-                frame.setVisible(true);
+                MainFrame mf = new MainFrame();
                 dispose();
-                return;
+                
             }
         });
 
