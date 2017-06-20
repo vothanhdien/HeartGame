@@ -116,7 +116,8 @@ public class StartServer extends JFrame {
 
         addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                stopServer();
+                if(btnStop.isEnabled())
+                	stopServer();
             }
         });
 
@@ -144,7 +145,8 @@ public class StartServer extends JFrame {
             t.stopGame();
         });
         try {
-            ss.close();
+        	if(ss != null)
+        		ss.close();
         } catch (IOException ex) {
             Logger.getLogger(StartServer.class.getName()).log(Level.SEVERE, null, ex);
         }
