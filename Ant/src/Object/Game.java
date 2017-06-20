@@ -5,6 +5,7 @@
  */
 package Object;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -31,6 +32,7 @@ public class Game {
     int numberOfPlayers;
     boolean isSentInfo;
     boolean isHeartsBroken;
+    boolean isPlaying = true;
     Round currentRound;
     int indexRound = 0;
 
@@ -95,7 +97,7 @@ public class Game {
 //            @Override
 //            public void run() {
 //Có người chơi đạt > 99 điểm thì dừng
-        while (true) {
+        while (isPlaying) {
             //Đã gửi bài về cho tất cả người chơi hay chưa, nếu chưa đợi
             if (!isSentInfo) {
                 isSentInfo = false;
@@ -255,7 +257,6 @@ public class Game {
         if (index > -1) {
             for (int i = 0; i < listPlayers.size(); i++) {
                 if (i != index) {
-//                    listPlayers.get(i).addScore(26);
                     playerScores.set(i, 26);
                 } // Remove the 26 points that this player received this round
                 else {
@@ -369,10 +370,6 @@ public class Game {
 
     //Gửi thông tin update điểm tới toàn bộ người hơi
     private void sendUpdateScoreToAllClient() {
-//        List<Integer> listScore = new ArrayList<>();
-//        for (Player hp : listPlayers) {
-//            listScore.add(hp.getScore());
-//        }
         for (int index = 0; index < listPlayers.size(); index++) {
             if (listPlayers.get(index).isHuman()) {
                 State state = new State();
@@ -390,10 +387,6 @@ public class Game {
 
     //gửi điển tổng kết
     private void SendEndScoreToAllPlayer() {
-//        List<Integer> listScore = new ArrayList<>();
-//        for (Player hp : listPlayers) {
-//            listScore.add(hp.getScore());
-//        }
         for (int index = 0; index < listSockets.size(); index++) {
             State state = new State();
             state.setPlayerScores(playerScores);
@@ -539,7 +532,21 @@ public class Game {
             //Cho toan bo nguoi cho doi card
         }
     }
-
+    
+    public void stopGame()
+    {
+        isPlaying = false;
+        listSockets.forEach((t) -> {
+            State temp = new State();
+            temp.setCommand(Command.SERVER_STOPPED);
+            try {
+                SocketController.send_object_to_socket(t, temp);
+                t.close();
+            } catch (IOException ex) {
+                Logger.getLogger(Game.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        });
+    }
 
     private boolean isGameOver() {
         for (int i = 0; i < 4; i++) {

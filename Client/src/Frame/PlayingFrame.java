@@ -115,7 +115,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         Container container = this.getContentPane();
         this.setTitle(state.getPlayer().getName());
-        //container.add(new Game(player, listNickName));
 
         jlTopPlayerScore = new JLabel("0");
         jlLeftPlayerScore = new JLabel("0");
@@ -521,17 +520,17 @@ public class PlayingFrame extends JFrame implements ActionListener {
         CardType firstCardType = currentRound.getRoundType();
         List<Card> list = state.getPlayer().getHand();
         int size = list.size();
-        
+
         if (firstCardType == null) {
             for (int i = 0; i < size; i++) {
-            //xét con cơ
-            if ((list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken())
-                    || state.getPlayer().hasAllHeart()) {
-                listButtonCards.get(13 - size + i).setEnabled(true);
-            } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
-                listButtonCards.get(13 - size + i).setEnabled(true);
+                //xét con cơ
+                if ((list.get(i).getType() == CardType.HEARTS && state.isHasHeartsBroken())
+                        || state.getPlayer().hasAllHeart()) {
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                } else if (list.get(i).getType() != CardType.HEARTS) {// những con bài khác
+                    listButtonCards.get(13 - size + i).setEnabled(true);
+                }
             }
-        }
         } else { // trường hợp đánh theo
             if (state.getPlayer().checkType(firstCardType)) {// nếu có con để đánh
                 for (int i = 0; i < size; i++) {
@@ -554,77 +553,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         invalidate();
         repaint();
-    }
-    private void GameStart() {
-        Thread Listen_Thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                State receive_state = new State();
-                while (true) {
-                    receive_state = (State) SocketController.get_object_from_socket(socket);
-                    switch (receive_state.getCommand()) {
-                        case GAME_OVER:
-                            state.setWinners(receive_state.getWinnners());
-                            state.getWinnners().forEach((t) -> {
-                                winners += state.getNickName().get(t) + "\n";
-                            });
-                            JOptionPane.showMessageDialog(null, "Game over, winners:\n" + winners);
-                            return;
-                        case INIT:
-                            //do somethings
-                            jbExchange.setText(howToExchangeCard.get(indexRound % 4));
-                            jlHeart.setEnabled(false);
-                            state = receive_state;
-                            updateAllButtonCards();
-                            break;
-                        case SHOW_RESULT:
-                            indexRound++;
-                            ShowResult(receive_state.getPlayerScores());
-                            updatePane4Card(state.getCurrentRound());
-                            break;
-                        case EXCHANGE_CARD:
-                            //do somethings
-                            listCardExchange.removeAll(listCardExchange);
-                            jbExchange.setEnabled(true);
-                            isMyInnings = false;
-                            isSwitching = true;
-                            break;
-                        case PICK_CARD:
-                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
-                            updateStateOfAllPaneCards(state.getCurrentRound());
-                            updateArrow();
-                            break;
-
-                        case UPDATE_SCORE:
-//                            state.setCurrentRound(receive_state.getCurrentRound());
-                            state.setPlayerScores(receive_state.getPlayerScores());
-                            state.setIPlayPlaying(receive_state.getCurrentRound().getFirstPlayer());
-//                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
-                            updateAllPlayerScore(state.getPlayerScores());
-                            updateArrow();
-                            break;
-
-                        case UPDATE_VIEW:
-                            state.setCurrentRound(receive_state.getCurrentRound());
-                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
-                            state.setIPlayPlaying(receive_state.getIPlayPlaying());
-                            state.setPlayerScores(receive_state.getPlayerScores());
-                            if (state.isHasHeartsBroken()) {
-                                jlHeart.setEnabled(true);
-                            }
-                            updatePane4Card(state.getCurrentRound());
-                            updateAllPlayerScore(state.getPlayerScores());
-                            updateArrow();
-                            break;
-                        case SOCKET_CLOSED:
-                            JOptionPane.showMessageDialog(null, "Sory, " + state.getNickName().get(state.getIPlayPlaying())
-                                    + " disconected. Game is stopped.");
-                            return;
-                    }
-                }
-            }
-        });
-        Listen_Thread.start();
     }
 
     private void playCardAt(int i) {
@@ -701,4 +629,78 @@ public class PlayingFrame extends JFrame implements ActionListener {
         return kq;
     }
 
+    private void GameStart() {
+        Thread Listen_Thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                State receive_state = new State();
+                while (true) {
+                    receive_state = (State) SocketController.get_object_from_socket(socket);
+                    switch (receive_state.getCommand()) {
+                        case GAME_OVER:
+                            state.setWinners(receive_state.getWinnners());
+                            state.getWinnners().forEach((t) -> {
+                                winners += state.getNickName().get(t) + "\n";
+                            });
+                            JOptionPane.showMessageDialog(null, "Game over, winners:\n" + winners);
+                            return;
+                        case INIT:
+                            //do somethings
+                            jbExchange.setText(howToExchangeCard.get(indexRound % 4));
+                            jlHeart.setEnabled(false);
+                            state = receive_state;
+                            updateAllButtonCards();
+                            break;
+                        case SHOW_RESULT:
+                            indexRound++;
+                            ShowResult(receive_state.getPlayerScores());
+                            updatePane4Card(state.getCurrentRound());
+                            break;
+                        case EXCHANGE_CARD:
+                            //do somethings
+                            listCardExchange.removeAll(listCardExchange);
+                            jbExchange.setEnabled(true);
+                            isMyInnings = false;
+                            isSwitching = true;
+                            break;
+                        case PICK_CARD:
+                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+                            updateStateOfAllPaneCards(state.getCurrentRound());
+                            updateArrow();
+                            break;
+
+                        case UPDATE_SCORE:
+//                            state.setCurrentRound(receive_state.getCurrentRound());
+                            state.setPlayerScores(receive_state.getPlayerScores());
+                            state.setIPlayPlaying(receive_state.getCurrentRound().getFirstPlayer());
+//                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+                            updateAllPlayerScore(state.getPlayerScores());
+                            updateArrow();
+                            break;
+
+                        case UPDATE_VIEW:
+                            state.setCurrentRound(receive_state.getCurrentRound());
+                            state.setHasHeartsBroken(receive_state.isHasHeartsBroken());
+                            state.setIPlayPlaying(receive_state.getIPlayPlaying());
+                            state.setPlayerScores(receive_state.getPlayerScores());
+                            if (state.isHasHeartsBroken()) {
+                                jlHeart.setEnabled(true);
+                            }
+                            updatePane4Card(state.getCurrentRound());
+                            updateAllPlayerScore(state.getPlayerScores());
+                            updateArrow();
+                            break;
+                        case SOCKET_CLOSED:
+                            JOptionPane.showMessageDialog(null, "Sory, " + state.getNickName().get(state.getIPlayPlaying())
+                                    + " disconected. Game is stopped.");
+                            return;
+                        case SERVER_STOPPED:
+                            JOptionPane.showMessageDialog(null, "Sorry, server is stopped!");
+                            return;
+                    }
+                }
+            }
+        });
+        Listen_Thread.start();
+    }
 }
