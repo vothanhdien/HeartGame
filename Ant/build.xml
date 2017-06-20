@@ -264,7 +264,7 @@
         <java jar="build/jar/ServerHearts.jar" fork="true"/>
     </target>
 
-    <target name="run" depends="jar">
+    <target name="run" depends="jar,jarServer">
         <java jar="build/jar/Hearts.jar" fork="true"/>
     </target>
 
