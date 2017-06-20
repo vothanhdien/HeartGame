@@ -1,0 +1,271 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<project>
+    <target name="clean">
+        <delete dir="build"/>
+    </target>
+
+    <target name="compile">
+        <mkdir dir="build/classes"/>
+        <javac encoding="utf-8" srcdir="src" destdir="build/classes">
+	</javac>
+    </target>
+
+    <target name="jar" depends="compile">
+        <mkdir dir="build/jar"/>
+		<mkdir dir="build/jar/images/full-images"/>
+		<mkdir dir="build/jar/images/half-images"/>
+		<copy file="images/full-images/0.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/1.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/2.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/3.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/4.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/5.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/6.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/7.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/8.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/9.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/10.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/11.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/12.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/13.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/14.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/15.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/16.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/17.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/18.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/19.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/20.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/21.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/22.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/23.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/24.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/25.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/26.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/27.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/28.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/29.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/30.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/31.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/32.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/33.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/34.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/35.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/36.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/37.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/38.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/39.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/40.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/41.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/42.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/43.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/44.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/45.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/46.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/47.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/48.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/49.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/50.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/51.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/52.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/53.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/arrowToLeft.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/arrowToRight.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/question.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/brokeHeart.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/back.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/history.png" todir="build/jar/images/full-images"/>
+		<copy file="images/full-images/person.png" todir="build/jar/images/full-images"/>
+		<copy file="images/half-images/0.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/1.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/2.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/3.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/4.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/5.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/6.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/7.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/8.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/9.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/10.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/11.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/12.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/13.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/14.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/15.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/16.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/17.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/18.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/19.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/20.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/21.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/22.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/23.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/24.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/25.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/26.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/27.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/28.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/29.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/30.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/31.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/32.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/33.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/34.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/35.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/36.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/37.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/38.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/39.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/40.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/41.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/42.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/43.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/44.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/45.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/46.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/47.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/48.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/49.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/50.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/51.png" todir="build/jar/images/half-images"/>
+		<copy file="images/half-images/52.png" todir="build/jar/images/half-images"/>
+		<copy file="help.txt" todir="build/jar"/>
+        <jar destfile="build/jar/Hearts.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="Frame.Hearts"/>
+			<attribute name="Class-Path" value="images/full-images/0.png"/>	
+			<attribute name="Class-Path" value="images/full-images/1.png"/>
+			<attribute name="Class-Path" value="images/full-images/2.png"/>	
+			<attribute name="Class-Path" value="images/full-images/3.png"/>
+			<attribute name="Class-Path" value="images/full-images/4.png"/>	
+			<attribute name="Class-Path" value="images/full-images/5.png"/>
+			<attribute name="Class-Path" value="images/full-images/6.png"/>	
+			<attribute name="Class-Path" value="images/full-images/7.png"/>
+			<attribute name="Class-Path" value="images/full-images/8.png"/>	
+			<attribute name="Class-Path" value="images/full-images/9.png"/>
+			<attribute name="Class-Path" value="images/full-images/10.png"/>
+			<attribute name="Class-Path" value="images/full-images/11.png"/>	
+			<attribute name="Class-Path" value="images/full-images/12.png"/>
+			<attribute name="Class-Path" value="images/full-images/13.png"/>	
+			<attribute name="Class-Path" value="images/full-images/14.png"/>
+			<attribute name="Class-Path" value="images/full-images/15.png"/>	
+			<attribute name="Class-Path" value="images/full-images/16.png"/>
+			<attribute name="Class-Path" value="images/full-images/17.png"/>	
+			<attribute name="Class-Path" value="images/full-images/18.png"/>
+			<attribute name="Class-Path" value="images/full-images/19.png"/>	
+			<attribute name="Class-Path" value="images/full-images/20.png"/>
+			<attribute name="Class-Path" value="images/full-images/21.png"/>	
+			<attribute name="Class-Path" value="images/full-images/22.png"/>
+			<attribute name="Class-Path" value="images/full-images/23.png"/>	
+			<attribute name="Class-Path" value="images/full-images/24.png"/>
+			<attribute name="Class-Path" value="images/full-images/25.png"/>	
+			<attribute name="Class-Path" value="images/full-images/26.png"/>
+			<attribute name="Class-Path" value="images/full-images/27.png"/>	
+			<attribute name="Class-Path" value="images/full-images/28.png"/>
+			<attribute name="Class-Path" value="images/full-images/29.png"/>	
+			<attribute name="Class-Path" value="images/full-images/30.png"/>
+			<attribute name="Class-Path" value="images/full-images/31.png"/>	
+			<attribute name="Class-Path" value="images/full-images/32.png"/>
+			<attribute name="Class-Path" value="images/full-images/33.png"/>	
+			<attribute name="Class-Path" value="images/full-images/34.png"/>
+			<attribute name="Class-Path" value="images/full-images/35.png"/>	
+			<attribute name="Class-Path" value="images/full-images/36.png"/>
+			<attribute name="Class-Path" value="images/full-images/37.png"/>	
+			<attribute name="Class-Path" value="images/full-images/38.png"/>
+			<attribute name="Class-Path" value="images/full-images/39.png"/>	
+			<attribute name="Class-Path" value="images/full-images/40.png"/>
+			<attribute name="Class-Path" value="images/full-images/41.png"/>	
+			<attribute name="Class-Path" value="images/full-images/42.png"/>
+			<attribute name="Class-Path" value="images/full-images/43.png"/>	
+			<attribute name="Class-Path" value="images/full-images/44.png"/>
+			<attribute name="Class-Path" value="images/full-images/45.png"/>	
+			<attribute name="Class-Path" value="images/full-images/46.png"/>
+			<attribute name="Class-Path" value="images/full-images/47.png"/>	
+			<attribute name="Class-Path" value="images/full-images/48.png"/>
+			<attribute name="Class-Path" value="images/full-images/49.png"/>	
+			<attribute name="Class-Path" value="images/full-images/50.png"/>
+			<attribute name="Class-Path" value="images/full-images/51.png"/>	
+			<attribute name="Class-Path" value="images/full-images/52.png"/>
+			<attribute name="Class-Path" value="images/full-images/53.png"/>
+			<attribute name="Class-Path" value="images/half-images/0.png"/>	
+			<attribute name="Class-Path" value="images/half-images/1.png"/>
+			<attribute name="Class-Path" value="images/half-images/2.png"/>	
+			<attribute name="Class-Path" value="images/half-images/3.png"/>
+			<attribute name="Class-Path" value="images/half-images/4.png"/>	
+			<attribute name="Class-Path" value="images/half-images/5.png"/>
+			<attribute name="Class-Path" value="images/half-images/6.png"/>	
+			<attribute name="Class-Path" value="images/half-images/7.png"/>
+			<attribute name="Class-Path" value="images/half-images/8.png"/>	
+			<attribute name="Class-Path" value="images/half-images/9.png"/>
+			<attribute name="Class-Path" value="images/half-images/10.png"/>
+			<attribute name="Class-Path" value="images/half-images/11.png"/>	
+			<attribute name="Class-Path" value="images/half-images/12.png"/>
+			<attribute name="Class-Path" value="images/half-images/13.png"/>	
+			<attribute name="Class-Path" value="images/half-images/14.png"/>
+			<attribute name="Class-Path" value="images/half-images/15.png"/>	
+			<attribute name="Class-Path" value="images/half-images/16.png"/>
+			<attribute name="Class-Path" value="images/half-images/17.png"/>	
+			<attribute name="Class-Path" value="images/half-images/18.png"/>
+			<attribute name="Class-Path" value="images/half-images/19.png"/>	
+			<attribute name="Class-Path" value="images/half-images/20.png"/>
+			<attribute name="Class-Path" value="images/half-images/21.png"/>	
+			<attribute name="Class-Path" value="images/half-images/22.png"/>
+			<attribute name="Class-Path" value="images/half-images/23.png"/>	
+			<attribute name="Class-Path" value="images/half-images/24.png"/>
+			<attribute name="Class-Path" value="images/half-images/25.png"/>	
+			<attribute name="Class-Path" value="images/half-images/26.png"/>
+			<attribute name="Class-Path" value="images/half-images/27.png"/>	
+			<attribute name="Class-Path" value="images/half-images/28.png"/>
+			<attribute name="Class-Path" value="images/half-images/29.png"/>	
+			<attribute name="Class-Path" value="images/half-images/30.png"/>
+			<attribute name="Class-Path" value="images/half-images/31.png"/>	
+			<attribute name="Class-Path" value="images/half-images/32.png"/>
+			<attribute name="Class-Path" value="images/half-images/33.png"/>	
+			<attribute name="Class-Path" value="images/half-images/34.png"/>
+			<attribute name="Class-Path" value="images/half-images/35.png"/>	
+			<attribute name="Class-Path" value="images/half-images/36.png"/>
+			<attribute name="Class-Path" value="images/half-images/37.png"/>	
+			<attribute name="Class-Path" value="images/half-images/38.png"/>
+			<attribute name="Class-Path" value="images/half-images/39.png"/>	
+			<attribute name="Class-Path" value="images/half-images/40.png"/>
+			<attribute name="Class-Path" value="images/half-images/41.png"/>	
+			<attribute name="Class-Path" value="images/half-images/42.png"/>
+			<attribute name="Class-Path" value="images/half-images/43.png"/>	
+			<attribute name="Class-Path" value="images/half-images/44.png"/>
+			<attribute name="Class-Path" value="images/half-images/45.png"/>	
+			<attribute name="Class-Path" value="images/half-images/46.png"/>
+			<attribute name="Class-Path" value="images/half-images/47.png"/>	
+			<attribute name="Class-Path" value="images/half-images/48.png"/>
+			<attribute name="Class-Path" value="images/half-images/49.png"/>	
+			<attribute name="Class-Path" value="images/half-images/50.png"/>
+			<attribute name="Class-Path" value="images/half-images/51.png"/>	
+			<attribute name="Class-Path" value="images/half-images/52.png"/>
+			<attribute name="Class-Path" value="images/half-images/53.png"/>
+			<attribute name="Class-Path" value="images/full-images/arrowToLeft.png"/>
+			<attribute name="Class-Path" value="images/full-images/arrowToRight.png"/>
+			<attribute name="Class-Path" value="images/full-images/back.png"/>
+			<attribute name="Class-Path" value="images/full-images/history.png"/>
+			<attribute name="Class-Path" value="images/ful-images/brokeHeart.png"/>
+			<attribute name="Class-Path" value="images/full-images/question.png"/>
+			<attribute name="Class-Path" value="images/full-images/person.png"/>
+			<attribute name="Class-Path" value="help.txt"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="jarServer" depends="jar">
+        <jar destfile="build/jar/ServerHearts.jar" basedir="build/classes">
+            <manifest>
+                <attribute name="Main-Class" value="server.ServerHearts"/>
+            </manifest>
+        </jar>
+    </target>
+
+    <target name="runServer" depends="jarServer">
+        <java jar="build/jar/ServerHearts.jar" fork="true"/>
+    </target>
+
+    <target name="run" depends="jar">
+        <java jar="build/jar/Hearts.jar" fork="true"/>
+    </target>
+
+</project>

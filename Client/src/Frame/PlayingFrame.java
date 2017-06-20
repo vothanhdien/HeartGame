@@ -92,7 +92,7 @@ public class PlayingFrame extends JFrame implements ActionListener {
     JButton jbExchange;
     //ket qua
 
-    int indexRound = 0;
+    int indexRound = 1;
 
     String winners = "";
     JPanel jpResult;
@@ -114,7 +114,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
         state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
 
         Container container = this.getContentPane();
-//        System.out.println(player.getName());
         this.setTitle(state.getPlayer().getName());
         //container.add(new Game(player, listNickName));
 
@@ -414,7 +413,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
         if (cm.equals("Help")) {
             try {
                 String text = new String(Files.readAllBytes(Paths.get("help.txt")), StandardCharsets.UTF_8);
-//                System.out.println(text);
                 JScrollPane jsp = new JScrollPane();
 
                 JOptionPane.showMessageDialog(null, text, "Help", 1);
@@ -600,7 +598,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                 State receive_state = new State();
                 while (true) {
                     receive_state = (State) SocketController.get_object_from_socket(socket);
-                    System.out.println(receive_state.getCommand());
                     switch (receive_state.getCommand()) {
                         case GAME_OVER:
                             state.setWinners(receive_state.getWinnners());
@@ -611,13 +608,13 @@ public class PlayingFrame extends JFrame implements ActionListener {
                             return;
                         case INIT:
                             //do somethings
-                            indexRound++;
                             jbExchange.setText(howToExchangeCard.get(indexRound % 4));
                             jlHeart.setEnabled(false);
                             state = receive_state;
                             updateAllButtonCards();
                             break;
                         case SHOW_RESULT:
+                            indexRound++;
                             ShowResult(receive_state.getPlayerScores());
                             updatePane4Card(state.getCurrentRound());
                             break;
