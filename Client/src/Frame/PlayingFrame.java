@@ -302,10 +302,10 @@ public class PlayingFrame extends JFrame implements ActionListener {
 
         this.addWindowListener(new WindowAdapter() {
             public void windowClosing(WindowEvent e) {
-                System.exit(0);
+                new MainFrame();
             }
         });
-        this.setPreferredSize(new Dimension(1000, 600));
+        this.setPreferredSize(new Dimension(1100, 700));
         this.pack();
         this.setVisible(true);
 
@@ -690,12 +690,6 @@ public class PlayingFrame extends JFrame implements ActionListener {
                     + "</div></html>");
             jpResult.add(tmp);
         }
-//        String message = String.format("\n\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|\t%2d \t\t|",
-//                playerScores.get(index), playerScores.get(++index % 4),
-//                playerScores.get(++index % 4), playerScores.get(++index % 4));
-//        result = result.concat(message);
-//        System.out.println(result);
-//        JPanel jp = new JPanel();
 
         JOptionPane.showConfirmDialog(null, jpResult, "Result", JOptionPane.YES_NO_OPTION);
     }

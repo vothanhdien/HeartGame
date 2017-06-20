@@ -41,7 +41,7 @@ public class LoginFrame extends JFrame {
     JLabel jlmsg;
     State state = null;
     int number = 4;
-
+//    JDialog waitingdlg;
     public LoginFrame(int number) throws HeadlessException {
         this.setTitle("login to server");
 
@@ -86,7 +86,21 @@ public class LoginFrame extends JFrame {
         jbConnect.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                login();
+                String name = jtfName.getText();
+                String server = jtfServer.getText();
+                int port = Integer.parseInt(jtfPort.getText());
+                if (name.isEmpty() || server.isEmpty() || port < 0) {
+                    JOptionPane.showMessageDialog(null, "Fill all blank");
+                    return;
+                }
+                ShowProgressDialog();
+                
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        login();
+                    }
+                }).start();
             }
         });
         JButton jbExit = new JButton("Cancel");
@@ -94,7 +108,6 @@ public class LoginFrame extends JFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 JFrame.setDefaultLookAndFeelDecorated(true);
-
                 MainFrame mf = new MainFrame();
                 dispose();
                 
@@ -137,37 +150,29 @@ public class LoginFrame extends JFrame {
         constraint.gridy = 3;
         constraint.gridwidth = 1;
         container.add(jbConnect, constraint);
-        
+
         constraint.gridx = 2;
         constraint.gridy = 3;
         constraint.gridwidth = 1;
         container.add(jbExit, constraint);
-        
-        
-        
+
         //Thong bao doi nguoi choi
         jlmsg = new JLabel("Waiting another player");
 //        jlmsg.setVisible(false);
         jpbWaiting = new JProgressBar();
         jpbWaiting.setIndeterminate(true);
 
-        
         constraint.gridx = 1;
         constraint.gridy = 4;
         constraint.gridwidth = 1;
         container.add(jlmsg, constraint);
-        
+
         constraint.gridx = 1;
         constraint.gridy = 5;
         constraint.gridwidth = 1;
         container.add(jpbWaiting, constraint);
-        
-        
-        this.addWindowListener(new WindowAdapter() {
-            public void windowClosing(WindowEvent e) {
-                System.exit(0);
-            }
-        });
+
+        this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setLocationRelativeTo(null);
         this.pack();
         this.setVisible(true);
@@ -179,57 +184,17 @@ public class LoginFrame extends JFrame {
         String name = jtfName.getText();
         String server = jtfServer.getText();
         int port = Integer.parseInt(jtfPort.getText());
-        if (name.isEmpty() || server.isEmpty() || port < 0) {
-            JOptionPane.showMessageDialog(null, "Fill all blank");
-            return;
-        }
         try {
-            
-            Thread thread = new Thread(new Runnable() {
-                @Override
-                public void run() {
-                    LoginFrame temp = null;
-                    while (true) {
-                        if (state != null) {
-                            break;
-                        } else {
-                            
-                        }
-                    }
-                    JOptionPane.showMessageDialog(null, "Waiting another player","Waiting another player",1);
-//                    jlmsg.setVisible(true);
-//                    jpbWaiting.setVisible(true);
-//                    invalidate();
-//                    repaint();
-                }
-            });
-            thread.start();
-            
-            
 
             Socket socket = new Socket(server, port);
             HumanPlayer hp = new HumanPlayer(name);
             SocketController.send_object_to_socket(socket, number);
             SocketController.send_object_to_socket(socket, hp);
-//            Thread thread = new Thread(new Runnable() {
-//                @Override
-//                public void run() {
-//                    while (true) {
-//                        if (state != null) {
-//                            break;
-//                        } else {
-//                            jlmsg.setVisible(true);
-//                            jpbWaiting.setVisible(true);
-//                        }
-//                    }
-//                }
-//            });
-//            thread.start();
+
             state = (State) SocketController.get_object_from_socket(socket);
-            hp = (HumanPlayer)state.getPlayer();
+            hp = (HumanPlayer) state.getPlayer();
 
 //            state.setNickName(arrageListNickName(state.getNickName(), state.getPlayerIndex()));
-            
             PlayingFrame playingFrame = new PlayingFrame(socket, state);
             dispose();
         } catch (Exception ex) {
@@ -237,22 +202,22 @@ public class LoginFrame extends JFrame {
         }
     }
 
-//    private void ShowProgressDialog() {
-//
-//        final JDialog dlg = new JDialog(new JFrame(), "Waiting another palyer", true);
-//        JProgressBar dpb = new JProgressBar(0);
-//        dlg.add(BorderLayout.CENTER, dpb);
-//        dlg.add(BorderLayout.NORTH, new JLabel("Progress..."));
-////        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-//        dlg.setSize(300, 75);
-//        dpb.setIndeterminate(true);
-//
-//        Thread t = new Thread(new Runnable() {
-//            public void run() {
-//                dlg.setVisible(true);
-//            }
-//        });
-//        t.start();
-//    }
+    private void ShowProgressDialog() {
 
+        final JDialog waitingdlg = new JDialog(this, "Waiting another player", true);
+        JProgressBar dpb = new JProgressBar(0);
+        waitingdlg.add(BorderLayout.CENTER, dpb);
+        waitingdlg.add(BorderLayout.NORTH, new JLabel("Waiting another player..."));
+//        dlg.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+        waitingdlg.setLocationRelativeTo(null);
+        waitingdlg.setSize(300, 75);
+        dpb.setIndeterminate(true);
+
+        Thread t = new Thread(new Runnable() {
+            public void run() {
+                waitingdlg.setVisible(true);
+            }
+        });
+        t.start();
+    }
 }
